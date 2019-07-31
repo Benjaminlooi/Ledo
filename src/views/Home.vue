@@ -1,6 +1,6 @@
 <template>
-  <v-app id="ledo">
-    <v-navigation-drawer v-model="drawer" mobile-break-point=900 app>
+  <div>
+    <v-navigation-drawer v-model="drawer" mobile-break-point="900" app>
       <template v-slot:prepend>
         <v-list-item two-line>
           <v-list-item-avatar>
@@ -34,16 +34,14 @@
     <v-content>
       <v-container fluid fill-height>
         <v-layout align-center justify-center>
-          <v-flex text-center>
-
-          </v-flex>
+          <v-flex text-center></v-flex>
         </v-layout>
       </v-container>
     </v-content>
     <!-- <v-footer color="indigo" app>
       <span class="white--text">&copy; 2019</span>
-    </v-footer> -->
-  </v-app>
+    </v-footer>-->
+  </div>
 </template>
 
 <script>
@@ -59,7 +57,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.days-navbar{
+.days-navbar {
   position: fixed;
   top: 0;
   left: 256px;
