@@ -16,7 +16,8 @@
 
       <v-divider></v-divider>
       <v-list dense>
-        <v-list-item @click>
+        <!-- <v-list-item @click> -->
+        <v-list-item>
           <v-list-item-action>
             <v-icon>mdi-home</v-icon>
           </v-list-item-action>
