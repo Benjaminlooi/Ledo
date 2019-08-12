@@ -8,7 +8,7 @@
           </v-list-item-avatar>
 
           <v-list-item-content>
-            <v-list-item-title>Jane Smith</v-list-item-title>
+            <v-list-item-title>{{$store.state.user.displayName}}</v-list-item-title>
             <v-list-item-subtitle>Logged In</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -48,12 +48,20 @@
 <script>
 export default {
   props: {
-    source: String
+    // source: String
   },
-
   data: () => ({
-    drawer: null
-  })
+    drawer: null,
+
+    userid: null
+  }),
+  methods: {
+    //
+  },
+  created() {
+    let date = new Date();
+    console.log(date)
+  }
 };
 </script>
 

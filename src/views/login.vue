@@ -16,6 +16,9 @@
                   <v-btn @click="googleLogin" color="primary">
                     <v-icon>mdi-google</v-icon>
                   </v-btn>
+                  <v-btn @click="debug1" color="red">
+                    <v-icon>mdi-google</v-icon>
+                  </v-btn>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -35,34 +38,55 @@ import { firebase } from "@/plugins/firebase";
 
 export default {
   data: () => ({
-    dialog: true
+    dialog: true,
+
+    auth: {
+      provider: null,
+    }
   }),
   methods: {
+    debug1() {
+      console.log(this.$store.state.user);
+    },
     googleLogin() {
       firebase
         .auth()
-        .signInWithPopup(provider)
-        .then(function(result) {
+        .signInWithPopup(this.auth.provider)
+        .then(result => {
+          // console.log("result: ", result);
           // This gives you a Google Access Token. You can use it to access the Google API.
-          var token = result.credential.accessToken;
+          this.$store.commit("setAccessToken", result.credential.accessToken)
           // The signed-in user info.
-          var user = result.user;
+          this.$store.commit("setUser", result.user);
           // ...
+          this.$router.push({path: '/home'})
         })
         .catch(function(error) {
+          console.log("error: ", error);
           // Handle Errors here.
-          var errorCode = error.code;
-          var errorMessage = error.message;
+          // var errorCode = error.code;
+          // var errorMessage = error.message;
           // The email of the user's account used.
-          var email = error.email;
+          // var email = error.email;
           // The firebase.auth.AuthCredential type that was used.
-          var credential = error.credential;
+          // var credential = error.credential;
           // ...
+        });
+    },
+    googleLogout() {
+      firebase
+        .auth()
+        .signOut()
+        .then(function() {
+          // Sign-out successful.
+        })
+        .catch(function(error) {
+          // An error happened.
         });
     }
   },
   created() {
-    var provider = new firebase.auth.GoogleAuthProvider();
+    this.auth.provider = new firebase.auth.GoogleAuthProvider();
   }
 };
 </script>
