@@ -41,7 +41,7 @@ export default {
     dialog: true,
 
     auth: {
-      provider: null,
+      provider: null
     }
   }),
   methods: {
@@ -55,10 +55,10 @@ export default {
         .then(result => {
           // console.log("result: ", result);
           // This gives you a Google Access Token. You can use it to access the Google API.
-          this.$store.commit("setAccessToken", result.credential.accessToken)
+          this.$store.commit("setAccessToken", result.credential.accessToken);
           // The signed-in user info.
           this.$store.commit("setUser", result.user);
-          // ...
+
           this.$router.push({path: '/home'})
         })
         .catch(function(error) {
@@ -70,7 +70,6 @@ export default {
           // var email = error.email;
           // The firebase.auth.AuthCredential type that was used.
           // var credential = error.credential;
-          // ...
         });
     },
     googleLogout() {

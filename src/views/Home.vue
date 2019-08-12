@@ -1,13 +1,13 @@
 <template>
   <div>
-    <v-navigation-drawer v-model="drawer" mobile-break-point="900" app>
+    <v-navigation-drawer v-model="drawer" :disable-resize-watcher="false" mobile-break-point="900" app>
       <template v-slot:prepend>
         <v-list-item two-line>
           <v-list-item-avatar>
             <img src="https://randomuser.me/api/portraits/women/81.jpg" />
           </v-list-item-avatar>
 
-          <v-list-item-content>
+          <v-list-item-content v-if="$store.state.user">
             <v-list-item-title>{{$store.state.user.displayName}}</v-list-item-title>
             <v-list-item-subtitle>Logged In</v-list-item-subtitle>
           </v-list-item-content>
@@ -34,9 +34,25 @@
 
     <v-content>
       <v-container fluid fill-height>
-        <v-layout align-center justify-center>
+        <!-- <v-layout align-center justify-center>
           <v-flex text-center></v-flex>
-        </v-layout>
+        </v-layout>-->
+
+        <v-list>
+          <v-list-item v-for="item in items" :key="item.title">
+            <v-list-item-icon>
+              <v-icon v-if="item.icon" color="pink">star</v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-content>
+              <v-list-item-title v-text="item.title"></v-list-item-title>
+            </v-list-item-content>
+
+            <v-list-item-avatar>
+              <v-img :src="item.avatar"></v-img>
+            </v-list-item-avatar>
+          </v-list-item>
+        </v-list>
       </v-container>
     </v-content>
     <!-- <v-footer color="indigo" app>
@@ -46,6 +62,8 @@
 </template>
 
 <script>
+import { firebase } from "@/plugins/firebase";
+
 export default {
   props: {
     // source: String
@@ -53,14 +71,42 @@ export default {
   data: () => ({
     drawer: null,
 
-    userid: null
+    userid: null,
+
+    items: [
+      {
+        icon: true,
+        title: "Jason Oner",
+        avatar: "https://cdn.vuetifyjs.com/images/lists/1.jpg"
+      },
+      {
+        title: "Travis Howard",
+        avatar: "https://cdn.vuetifyjs.com/images/lists/2.jpg"
+      },
+      {
+        title: "Ali Connors",
+        avatar: "https://cdn.vuetifyjs.com/images/lists/3.jpg"
+      },
+      {
+        title: "Cindy Baker",
+        avatar: "https://cdn.vuetifyjs.com/images/lists/4.jpg"
+      }
+    ]
   }),
   methods: {
     //
   },
   created() {
     let date = new Date();
-    console.log(date)
+
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        // User is signed in.
+        this.$store.commit("setUser", user);
+      } else {
+        // User is signed out.
+      }
+    });
   }
 };
 </script>
