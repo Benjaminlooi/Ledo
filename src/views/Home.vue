@@ -33,6 +33,15 @@
             <v-list-item-title>Logout</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+
+        <v-list-item @click="debug">
+          <v-list-item-action>
+            <v-icon>mdi-logout</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Debug</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
 
@@ -56,22 +65,34 @@
             </div>
           </div>
           <v-list>
-            <draggable v-model="items" group="people" @start="drag=true" @end="drag=false">
-              <v-list-item v-for="item in items" :key="item.title" @click="test">
-                <v-list-item-action style="margin-right: 0;">
-                  <v-radio-group v-model="item.isDone" @click.native.prevent="toggleIsDone(item.id)">
-                    <v-radio value="yes"></v-radio>
-                  </v-radio-group>
+            <draggable v-model="todo_items" group="people" @start="drag=true" @end="drag=false">
+              <v-list-item v-for="todo_item in todo_items" :key="todo_item.title" @click>
+                <v-list-item-action style="margin: 0 16px 0 0">
+                  <v-checkbox v-model="todo_item.isDone"></v-checkbox>
                 </v-list-item-action>
                 <v-list-item-content>
-                  <v-list-item-title v-text="item.title"></v-list-item-title>
+                  <v-list-item-title v-text="todo_item.title"></v-list-item-title>
                 </v-list-item-content>
 
-                <v-list-item-action>
-                  <v-btn small icon>
-                    <v-icon color="grey lighten-1">mdi-dots-vertical</v-icon>
-                  </v-btn>
-                </v-list-item-action>
+                <v-menu open-on-hover left offset-x>
+                  <template v-slot:activator="{ on }">
+                    <v-list-item-action style="margin: 0 0 0 16px">
+                      <v-btn small icon>
+                        <v-icon color="grey lighten-1" v-on="on">mdi-dots-vertical</v-icon>
+                      </v-btn>
+                    </v-list-item-action>
+                  </template>
+
+                  <v-list>
+                    <v-list-item
+                      v-for="(item, index) in items"
+                      :key="index"
+                      @click="todo_item_menu_click"
+                    >
+                      <v-list-item-title>{{ item.title }}</v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
               </v-list-item>
             </draggable>
           </v-list>
@@ -88,10 +109,10 @@
             </div>
           </div>
           <v-list>
-            <draggable v-model="items" group="people" @start="drag=true" @end="drag=false">
-              <v-list-item v-for="item in items" :key="item.title" @click="test">
+            <draggable v-model="todo_items" group="people" @start="drag=true" @end="drag=false">
+              <v-list-item v-for="todo_item in todo_items" :key="todo_item.title" @click>
                 <v-list-item-content>
-                  <v-list-item-title v-text="item.title"></v-list-item-title>
+                  <v-list-item-title v-text="todo_item.title"></v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </draggable>
@@ -109,10 +130,10 @@
             </div>
           </div>
           <v-list>
-            <draggable v-model="items" group="people" @start="drag=true" @end="drag=false">
-              <v-list-item v-for="item in items" :key="item.title" @click="test">
+            <draggable v-model="todo_items" group="people" @start="drag=true" @end="drag=false">
+              <v-list-item v-for="todo_item in todo_items" :key="todo_item.title" @click>
                 <v-list-item-content>
-                  <v-list-item-title v-text="item.title"></v-list-item-title>
+                  <v-list-item-title v-text="todo_item.title"></v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </draggable>
@@ -149,60 +170,61 @@ export default {
     },
 
     items: [
-      {
-        id: 0,
-        isDone: "no",
-        title: "Jason Oner"
-      },
-      {
-        id: 1,
-        isDone: "no",
-        title: "Travis Howard"
-      },
-      {
-        id: 2,
-        isDone: "no",
-        title: "Ali Connors"
-      },
-      {
-        id: 3,
-        isDone: "no",
-        title: "Cindy Baker"
-      }
+      { title: "Click Me" },
+      { title: "Click Me" },
+      { title: "Click Me" },
+      { title: "Click Me 2" }
     ]
+
+    // todo_items: [
+    //   {
+    //     id: 0,
+    //     isDone: true,
+    //     title: "Jason Oner"
+    //   },
+    //   {
+    //     id: 1,
+    //     isDone: false,
+    //     title: "Travis Howard"
+    //   }
+    // ]
   }),
+  computed: {
+    todo_items() {
+      return this.$store.state.tasks;
+    }
+  },
   watch: {
-    items: function() {
-      console.log(this.items);
+    todo_items: function() {
+      // console.log(this.todo_items);
     }
   },
   methods: {
-    //
-    test() {
-      //
+    debug() {
+      this.$store.dispatch("getUserTasks");
+      // this.todo_items.forEach(item => {
+      //   console.log(item.isDone);
+      // });
     },
     onSubmit(inputVal) {
-      this.items.push({
-        title: inputVal
-      });
+      this.$store.dispatch('addUserTask', inputVal)
     },
     toggleIsDone(id) {
-
       console.log("running toggleIsDone");
-      let item = this.items.filter(item => {
+      let item = this.todo_items.filter(item => {
         return item.id == id;
       });
 
-      console.log(id)
-      console.log(item[0])
-      console.log(item[0].isDone)
+      console.log(id);
+      console.log(item[0]);
+      console.log(item[0].isDone);
       if (item[0].isDone === "yes") {
-        console.log('is true')
+        console.log("is yes");
         item[0].isDone = "no";
-      } else if (item[0].isDone === "false") {
-        console.log('is false')
-        // item[0].isDone = "true";
       }
+    },
+    todo_item_menu_click() {
+      //
     },
     signOut() {
       firebase
@@ -213,6 +235,7 @@ export default {
         })
         .catch(function(error) {
           // An error happened.
+          console.log(error)
         });
     }
   },
@@ -221,12 +244,15 @@ export default {
     this.date.month = months[date.getMonth()];
     this.date.date = date.getDate();
 
+    //check if login(ed)
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         // User is signed in.
         this.$store.commit("setUser", user);
+        //get user's tasks
+        this.$store.dispatch("getUserTasks");
       } else {
-        // User is signed out.
+        // User is signed out. Redirect to login
         this.$router.push({ path: "/login" });
       }
     });
