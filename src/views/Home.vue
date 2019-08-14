@@ -233,7 +233,7 @@
           <v-btn color="white" text @click="snackbar = false">Close</v-btn>
         </v-snackbar>
 
-        <v-dialog v-model="taskEditDialog" persistent max-width="600px">
+        <v-dialog v-model="taskEditDialog.isShow" persistent max-width="600px">
           <template v-slot:activator="{ on }">
             <v-btn color="primary" dark v-on="on">Open Dialog</v-btn>
           </template>
@@ -283,8 +283,8 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="taskEditDialog = false">Close</v-btn>
-              <v-btn color="blue darken-1" text @click="taskEditDialog = false">Save</v-btn>
+              <v-btn color="blue darken-1" text @click="taskEditDialog.isShow = false">Close</v-btn>
+              <v-btn color="blue darken-1" text @click="taskEditDialog.isShow = false">Save</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -312,7 +312,10 @@ export default {
   data: () => ({
     drawer: null,
     snackbar_taskDeleteSuccess: false,
-    taskEditDialog: false,
+    taskEditDialog: {
+      isShow: false,
+      
+    },
 
     listgroup: true,
 
@@ -439,10 +442,22 @@ export default {
     },
     todo_item_dblclick(pos, index) {
       let today = new Date();
-      let d = new Date();
-      d.setDate(today.getDate() + pos);
+      let d1 = new Date();
+      d1.setDate(today.getDate() + pos);
 
+      let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`;
+      let i;
+      this.$store.state.tasks.forEach((task, index) => {
+        let d2 = new Date(task.date);
+        if (d1.getFullYear() === d2.getFullYear() &&
+          d1.getMonth() === d2.getMonth() &&
+          d1.getDate() === d2.getDate()) {
 
+          i = index;
+        }
+      })
+
+      console.log(this.$store.state.tasks[i].list[index])
     },
     signOut() {
       firebase
