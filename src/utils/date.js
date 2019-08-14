@@ -26,5 +26,15 @@ export var months = [
   "Sept",
   "Oct",
   "Nov",
-  "DecZ"
+  "Dec"
 ];
+
+export var day = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday"
+]

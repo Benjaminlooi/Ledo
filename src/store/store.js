@@ -11,6 +11,30 @@ export default new Vuex.Store({
     // isLoggedIn: false,
     // user: null
     tasks: []
+    // tasks: [
+    //   {
+    //     date: "08-14-2019",
+    //     list: [{
+    //       title: 'kill rabbits',
+    //       isDone: false
+    //     },
+    //     {
+    //       title: 'kill dogs',
+    //       isDone: false
+    //     }]
+    //   },
+    //   {
+    //     date: "08-15-2019",
+    //     list: [{
+    //       title: 'next day',
+    //       isDone: false
+    //     },
+    //     {
+    //       title: 'is next day',
+    //       isDone: false
+    //     }]
+    //   }
+    // ]
   },
   mutations: {
     setAccessToken(state, payload) {
@@ -19,46 +43,78 @@ export default new Vuex.Store({
     setUser(state, payload) {
       state.user = payload
     },
-    setTasks(state, payload) {
-      state.tasks.push({
-        id: payload.id,
-        isDone: payload.isDone,
-        title: payload.title
+    setDayList(state, payload) {
+      state.tasks.push(payload)
+    },
+    addTask(state, payload) {
+      let d1 = new Date(payload.date);
+      let isWrote = false;
+      state.tasks.forEach((task, index) => {
+        if (task) {
+          let d2 = new Date(task.date);
+          if (d1.getFullYear() === d2.getFullYear() &&
+            d1.getMonth() === d2.getMonth() &&
+            d1.getDate() === d2.getDate()) {
+
+            state.tasks[index].list.push({
+              isDone: payload.isDone,
+              title: payload.title
+            })
+            isWrote = true;
+          }
+        }
       })
+      if (!isWrote) {
+        let date = `${d1.getMonth() + 1}-${d1.getDate()}-${d1.getFullYear()}`
+        state.tasks.push({
+          date: date,
+          list: [{
+            isDone: payload.isDone,
+            title: payload.title
+          }]
+        })
+      }
     },
     clearTasksArr(state) {
       state.tasks = []
     }
   },
   actions: {
-    getUserTasks({ commit, state }) {
+    getDayList({ commit, state }, payload) {
       //clear current tasks array
-      commit('clearTasksArr');
+      // commit('clearTasksArr');
+      let d1 = new Date(payload.date);
+      let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`;
+      // console.log(date)
 
-
-      if (state.user.uid) {
-        firestore.collection(state.user.uid).get().then(querySnapshot => {
-          querySnapshot.forEach(doc => {
-            // console.log(doc.id, " => ", doc.data());
-            commit('setTasks', {
-              id: doc.id,
-              title: doc.data().title,
-              isDone: doc.data().isDone
-            })
-          })
+      if (state.user) {
+        firestore.collection(state.user.uid).doc(date).get().then(doc => {
+          if (doc.exists) {
+            commit('setDayList', doc.data());
+          }
         })
       }
     },
     addUserTask({ dispatch, commit, state }, payload) {
-      firestore.collection(state.user.uid).add({
-        title: payload,
-        isDone: false
-      }).then(docRef => {
-        // console.log("Document written with ID: ", docRef.id);
-        dispatch('getUserTasks');
-      }).catch(function (error) {
-        console.error("Error adding document: ", error);
-      });
+      commit('addTask', payload);
+
+      dispatch('updateDayList', payload)
+    },
+    updateDayList({ commit, state }, payload) {
+      let d1 = new Date(payload.date);
+      let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`;
+      let i;
+      state.tasks.forEach((task, index) => {
+        let d2 = new Date(task.date);
+        if (d1.getFullYear() === d2.getFullYear() &&
+          d1.getMonth() === d2.getMonth() &&
+          d1.getDate() === d2.getDate()) {
+
+          i = index;
+        }
+      })
+      firestore.collection(state.user.uid).doc(date).set(
+        state.tasks[i], { merge: true })
     }
   }
 })
