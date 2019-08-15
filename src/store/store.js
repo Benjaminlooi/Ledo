@@ -132,7 +132,7 @@ export default new Vuex.Store({
           i = index;
         }
       })
-      console.log(payload)
+      // console.log(payload)
       firestore.collection(state.user.uid).doc(date).set(
         state.tasks[i])
     }

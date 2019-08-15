@@ -59,6 +59,12 @@
     </v-navigation-drawer>
 
     <v-content>
+      <v-btn absolute icon top right fab x-small style="top: 19px; left: 10px;" @click="movePosPrev">
+        <v-icon>mdi-arrow-left-drop-circle-outline</v-icon>
+      </v-btn>
+      <v-btn absolute icon top right fab x-small style="top: 19px; right: 10px;" @click="movePosNext">
+        <v-icon>mdi-arrow-right-drop-circle-outline</v-icon>
+      </v-btn>
       <div class="todo-main">
         <!-- ==== FIRST ==== -->
         <div class="current-day">
@@ -93,7 +99,7 @@
                   <v-list-item-title v-text="todo_item.title" style="font-size: 0.85em;"></v-list-item-title>
                 </v-list-item-content>
 
-                <v-menu open-on-hover left offset-x>
+                <v-menu open-on-hover left offset-x close-delay="200">
                   <template v-slot:activator="{ on }">
                     <v-list-item-action style="margin: 0 0 0 16px">
                       <v-btn small icon>
@@ -153,7 +159,7 @@
                   <v-list-item-title v-text="todo_item.title" style="font-size: 0.85em;"></v-list-item-title>
                 </v-list-item-content>
 
-                <v-menu open-on-hover left offset-x>
+                <v-menu open-on-hover left offset-x close-delay="200">
                   <template v-slot:activator="{ on }">
                     <v-list-item-action style="margin: 0 0 0 16px">
                       <v-btn small icon>
@@ -212,7 +218,7 @@
                   <v-list-item-title v-text="todo_item.title" style="font-size: 0.85em;"></v-list-item-title>
                 </v-list-item-content>
 
-                <v-menu open-on-hover left offset-x>
+                <v-menu open-on-hover left offset-x close-delay="200">
                   <template v-slot:activator="{ on }">
                     <v-list-item-action style="margin: 0 0 0 16px">
                       <v-btn small icon>
@@ -343,6 +349,7 @@ export default {
     // source: String
   },
   data: () => ({
+    pos: 0,
     drawer: null,
     snackbar_taskCompleteSuccess: false,
     snackbar_taskDeleteSuccess: false,
@@ -438,6 +445,12 @@ export default {
       //
       this.snackbar_taskDeleteSuccess = true;
     },
+    movePosPrev() {
+      //
+    },
+    movePosNext() {
+      this.pos++;
+    },
     getLists() {
       let d = new Date();
       let d1 = new Date();
@@ -521,7 +534,6 @@ export default {
         }
       });
 
-      console.log(this.$store.state.tasks[i].list[list_index]);
       this.taskEditDialog.title = this.$store.state.tasks[i].list[
         list_index
       ].title;
@@ -536,13 +548,15 @@ export default {
       this.taskEditDialog.isShow = true;
     },
     updateTask() {
-      this.taskEditDialog.notes = (!this.taskEditDialog.notes) ? '' : this.taskEditDialog.notes;
+      this.taskEditDialog.notes = !this.taskEditDialog.notes
+        ? ""
+        : this.taskEditDialog.notes;
       this.taskEditDialog.isShow = false;
       this.$store.dispatch("updateUserTask", {
         date: this.taskEditDialog.date,
         title: this.taskEditDialog.title,
         notes:
-          (this.taskEditDialog.notes === "") ? 'nope' : this.taskEditDialog.notes,
+          this.taskEditDialog.notes === "" ? "nope" : this.taskEditDialog.notes,
         taskIndex: this.taskEditDialog.task_index,
         listIndex: this.taskEditDialog.list_index
       });
