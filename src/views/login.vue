@@ -1,9 +1,10 @@
 <template>
   <v-app id="ledo">
     <v-layout justify-center>
+      <h1 class="headline">Ledo</h1>
       <v-dialog v-model="dialog" persistent max-width="300px">
         <template v-slot:activator="{ on }">
-          <v-btn color="primary" dark v-on="on">Login</v-btn>
+          <!-- <v-btn color="primary" dark v-on="on">Login</v-btn> -->
         </template>
         <v-card>
           <v-card-title>
@@ -16,16 +17,16 @@
                   <v-btn @click="googleLogin" color="primary">
                     <v-icon>mdi-google</v-icon>
                   </v-btn>
-                  <v-btn @click="debug1" color="red">
+                  <!-- <v-btn @click="debug1" color="red">
                     <v-icon>mdi-google</v-icon>
-                  </v-btn>
+                  </v-btn> -->
                 </v-flex>
               </v-layout>
             </v-container>
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" text @click="dialog = false">Close</v-btn>
+            <!-- <v-btn color="blue darken-1" text @click="dialog = false">Close</v-btn> -->
           </v-card-actions>
         </v-card>
       </v-dialog>

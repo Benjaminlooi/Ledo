@@ -8,33 +8,8 @@ export default new Vuex.Store({
   state: {
     isLoggedIn: false,
     user: null,
-    // isLoggedIn: false,
-    // user: null
-    tasks: []
-    // tasks: [
-    //   {
-    //     date: "08-14-2019",
-    //     list: [{
-    //       title: 'kill rabbits',
-    //       isDone: false
-    //     },
-    //     {
-    //       title: 'kill dogs',
-    //       isDone: false
-    //     }]
-    //   },
-    //   {
-    //     date: "08-15-2019",
-    //     list: [{
-    //       title: 'next day',
-    //       isDone: false
-    //     },
-    //     {
-    //       title: 'is next day',
-    //       isDone: false
-    //     }]
-    //   }
-    // ]
+    tasks: [],
+    gettedList: []
   },
   mutations: {
     setAccessToken(state, payload) {
@@ -78,6 +53,20 @@ export default new Vuex.Store({
     removeTask(state, payload) {
       state.tasks[payload.taskIndex].list.splice(payload.listIndex, 1);
     },
+    updateTaskList(state, payload){
+      let d1 = new Date(payload.date);
+      let i;
+      state.tasks.forEach((task, index) => {
+        let d2 = new Date(task.date);
+        if (d1.getFullYear() === d2.getFullYear() &&
+          d1.getMonth() === d2.getMonth() &&
+          d1.getDate() === d2.getDate()) {
+
+          i = index;
+        }
+      })
+      state.tasks[i].list = payload.data
+    },
     updateTask(state, payload){
       state.tasks[payload.taskIndex].list[payload.listIndex].title = payload.title;
       state.tasks[payload.taskIndex].list[payload.listIndex].notes = payload.notes;
@@ -92,6 +81,7 @@ export default new Vuex.Store({
       // commit('clearTasksArr');
       let d1 = new Date(payload.date);
       let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`;
+      state.gettedList.push(date);
       // console.log(date)
 
       if (state.user) {
@@ -104,7 +94,6 @@ export default new Vuex.Store({
     },
     addUserTask({ dispatch, commit, state }, payload) {
       commit('addTask', payload);
-
       dispatch('updateDayList', payload)
     },
     removeUserTask({ dispatch, commit, state }, payload) {
@@ -117,6 +106,10 @@ export default new Vuex.Store({
     },
     updateUserTask({ dispatch, commit, state }, payload){
       commit('updateTask', payload);
+      dispatch('updateDayList', payload);
+    },
+    reorderUserTask({ dispatch, commit, state }, payload){
+      commit('updateTaskList', payload);
       dispatch('updateDayList', payload);
     },
     updateDayList({ commit, state }, payload) {

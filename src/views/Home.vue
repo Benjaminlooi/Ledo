@@ -16,62 +16,122 @@
 
       <v-divider></v-divider>
       <v-list dense>
-        <v-list-item>
+        <!-- <v-list-item>
           <v-list-item-action>
             <v-icon>mdi-home</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Home</v-list-item-title>
           </v-list-item-content>
-        </v-list-item>
+        </v-list-item>-->
 
-        <v-list-item @click="signOut">
+        <!-- <v-list-item @click="signOut">
           <v-list-item-action>
             <v-icon>mdi-logout</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Logout</v-list-item-title>
           </v-list-item-content>
-        </v-list-item>
+        </v-list-item>-->
 
-        <v-list-item @click="debug">
+        <!-- <v-list-item @click="debug">
           <v-list-item-action>
             <v-icon>mdi-logout</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Debug</v-list-item-title>
           </v-list-item-content>
-        </v-list-item>
+        </v-list-item>-->
 
-        <v-list-group v-model="listgroup" no-action>
+        <v-list-group v-model="listgroup">
           <template v-slot:activator>
             <v-list-item-content>
               <v-list-item-title>Labels</v-list-item-title>
             </v-list-item-content>
           </template>
           <v-list-item @click>
+            <v-list-item-icon>
+              <v-icon color="red">mdi-checkbox-blank-circle-outline</v-icon>
+            </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title>blue</v-list-item-title>
+              <v-list-item-title>priority 1</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item @click>
+            <v-list-item-icon>
+              <v-icon color="yellow accent-4">mdi-checkbox-blank-circle-outline</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>priority 2</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item @click>
+            <v-list-item-icon>
+              <v-icon color="blue">mdi-checkbox-blank-circle-outline</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>priority 3</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item @click>
+            <v-list-item-icon>
+              <v-icon>mdi-checkbox-blank-circle-outline</v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>priority 4</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list-group>
       </v-list>
+
+      <template v-slot:append>
+        <div class="pa-2">
+          <v-btn block color="light-blue darken-1" dark @click="signOut">
+            Logout
+            <v-icon right dark>mdi-logout</v-icon>
+          </v-btn>
+        </div>
+      </template>
     </v-navigation-drawer>
 
     <v-content>
-      <v-btn absolute icon top right fab x-small style="top: 19px; left: 10px;" @click="movePosPrev">
+      <v-btn
+        absolute
+        icon
+        top
+        right
+        fab
+        x-small
+        style="top: 19px; left: 10px;"
+        @click="movePosPrev"
+      >
         <v-icon>mdi-arrow-left-drop-circle-outline</v-icon>
       </v-btn>
-      <v-btn absolute icon top right fab x-small style="top: 19px; right: 10px;" @click="movePosNext">
+      <v-btn
+        absolute
+        icon
+        top
+        right
+        fab
+        x-small
+        style="top: 19px; right: 10px;"
+        @click="movePosNext"
+      >
         <v-icon>mdi-arrow-right-drop-circle-outline</v-icon>
       </v-btn>
       <div class="todo-main">
         <!-- ==== FIRST ==== -->
-        <div class="current-day">
+        <div :class="{'next-day': !isToday(date_1), 'current-day': isToday(date_1)}">
           <div class="days-navbar">
-            <div class="date-day">
+            <div v-if="isToday(date_1)" class="date-day">
               Today
-              <span class="date-label">{{this.date.month}} {{this.date.date}}</span>
+              <span class="date-label">{{date_1.getMonth() | toMonth}} {{date_1.getDate()}}</span>
+            </div>
+            <div v-else class="date-day">
+              {{date_1.getDay() | toDay }}
+              <span
+                class="date-label"
+              >{{date_1.getMonth() | toMonth}} {{date_1.getDate()}}</span>
             </div>
 
             <div class="add-task">
@@ -93,7 +153,7 @@
                 @dblclick="todo_item_dblclick(0, index)"
               >
                 <v-list-item-action style="margin: 0 16px 0 0">
-                  <v-checkbox v-model="todo_item.isDone" @click.native="toggleIsDone(0)"></v-checkbox>
+                  <v-checkbox v-model="todo_item.isDone" @click.native="toggleIsDone(0)" ></v-checkbox>
                 </v-list-item-action>
                 <v-list-item-content>
                   <v-list-item-title v-text="todo_item.title" style="font-size: 0.85em;"></v-list-item-title>
@@ -125,9 +185,13 @@
         <!-- ==== END FIRST ==== -->
 
         <!-- ==== SECOND ==== -->
-        <div class="next-day">
+        <div :class="{'next-day': !isToday(date_2), 'current-day': isToday(date_2)}">
           <div class="days-navbar">
-            <div class="date-day">
+            <div v-if="isToday(date_2)" class="date-day">
+              Today
+              <span class="date-label">{{date_2.getMonth() | toMonth}} {{date_2.getDate()}}</span>
+            </div>
+            <div v-else class="date-day">
               {{date_2.getDay() | toDay }}
               <span
                 class="date-label"
@@ -184,10 +248,14 @@
         </div>
         <!-- ==== END SECOND ==== -->
         <!-- ==== THIRD ==== -->
-        <div class="next-day">
+        <div :class="{'next-day': !isToday(date_3), 'current-day': isToday(date_3)}">
           <div class="days-navbar">
-            <div class="date-day">
-              {{date_3.getDay() | toDay}}
+            <div v-if="isToday(date_3)" class="date-day">
+              Today
+              <span class="date-label">{{date_3.getMonth() | toMonth}} {{date_3.getDate()}}</span>
+            </div>
+            <div v-else class="date-day">
+              {{date_3.getDay() | toDay }}
               <span
                 class="date-label"
               >{{date_3.getMonth() | toMonth}} {{date_3.getDate()}}</span>
@@ -267,7 +335,7 @@
 
         <v-dialog v-model="taskEditDialog.isShow" max-width="600px">
           <template v-slot:activator="{ on }">
-            <v-btn color="primary" dark v-on="on">Open Dialog</v-btn>
+            <!-- <v-btn color="primary" dark v-on="on">Open Dialog</v-btn> -->
           </template>
           <v-card>
             <v-card-title style="border-bottom: 1px solid #acacac">
@@ -372,16 +440,25 @@ export default {
     items: [{ title: "Complete" }, { title: "Remove" }, { title: "Label" }]
   }),
   computed: {
+    date_1() {
+      let today = new Date();
+      let day_1 = new Date();
+      day_1.setDate(today.getDate() + 0 + this.pos);
+      // console.log(day_1 .getDay())
+      return day_1;
+    },
     date_2() {
       let today = new Date();
-      let tomorrow = new Date();
-      tomorrow.setDate(today.getDate() + 1);
-      return tomorrow;
+      let day_2 = new Date();
+      day_2.setDate(today.getDate() + 1 + this.pos);
+      // console.log(day_2.getDay())
+      return day_2;
     },
     date_3() {
       let today = new Date();
       let day_3 = new Date();
-      day_3.setDate(today.getDate() + 2);
+      day_3.setDate(today.getDate() + 2 + this.pos);
+      // console.log(day_3.getDay())
       return day_3;
     },
     todo_items_1: {
@@ -393,7 +470,7 @@ export default {
             return (
               d1.getFullYear() === d2.getFullYear() &&
               d1.getMonth() === d2.getMonth() &&
-              d1.getDate() === d2.getDate()
+              d1.getDate() + this.pos === d2.getDate()
             );
           }
         });
@@ -401,7 +478,13 @@ export default {
         else return null;
       },
       set(value) {
-        // this.$store.commit('updateList', value)
+        let today = new Date();
+        let d1 = new Date();
+        d1.setDate(today.getDate() + this.pos)
+        this.$store.dispatch('reorderUserTask', {
+          date: d1,
+          data: value
+        })
       }
     },
     todo_items_2() {
@@ -412,7 +495,7 @@ export default {
           return (
             d1.getFullYear() === d2.getFullYear() &&
             d1.getMonth() === d2.getMonth() &&
-            d1.getDate() + 1 === d2.getDate()
+            d1.getDate() + 1 + this.pos === d2.getDate()
           );
         }
       });
@@ -427,7 +510,7 @@ export default {
           return (
             d1.getFullYear() === d2.getFullYear() &&
             d1.getMonth() === d2.getMonth() &&
-            d1.getDate() + 2 === d2.getDate()
+            d1.getDate() + 2 + this.pos === d2.getDate()
           );
         }
       });
@@ -446,10 +529,38 @@ export default {
       this.snackbar_taskDeleteSuccess = true;
     },
     movePosPrev() {
-      //
+      --this.pos;
+
+      let d1 = new Date(this.date_1);
+      let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`;
+      if (!this.$store.state.gettedList.includes(date)) {
+        this.$store.dispatch("getDayList", { date: this.date_1 });
+      }
     },
     movePosNext() {
-      this.pos++;
+      ++this.pos;
+
+      let d1 = new Date(this.date_3);
+      let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`;
+      if (!this.$store.state.gettedList.includes(date)) {
+        this.$store.dispatch("getDayList", { date: this.date_3 });
+      }
+    },
+    isToday(date) {
+      let d1 = new Date();
+      let d2 = new Date(date);
+      if (
+        d1.getFullYear() === d2.getFullYear() &&
+        d1.getMonth() === d2.getMonth() &&
+        d1.getDate() === d2.getDate()
+      ) {
+        return true;
+      }
+    },
+    getSingleList(i) {
+      let d = new Date();
+      let newDate = new Date();
+      // newDate.setDate(d.getDate() + 3 + )
     },
     getLists() {
       let d = new Date();
@@ -467,21 +578,21 @@ export default {
     onSubmit(inputVal, pos) {
       let today = new Date();
       let theDate = new Date();
-      theDate.setDate(today.getDate() + pos);
+      theDate.setDate(today.getDate() + pos + this.pos);
       this.$store.dispatch("addUserTask", {
         title: inputVal,
         isDone: false,
         date: theDate
       });
     },
-    toggleIsDone(id) {
+    toggleIsDone(pos) {
       this.snackbar_taskCompleteSuccess = true;
-      this.updateDayList(id);
+      this.updateDayList(pos);
     },
-    updateDayList(date) {
+    updateDayList(pos) {
       let today = new Date();
       let d = new Date();
-      d.setDate(today.getDate() + date);
+      d.setDate(today.getDate() + pos + this.pos);
 
       this.$store.dispatch("updateDayList", {
         date: d
@@ -492,7 +603,7 @@ export default {
         case 1:
           let today = new Date();
           let d1 = new Date();
-          d1.setDate(today.getDate() + pos);
+          d1.setDate(today.getDate() + pos + this.pos);
 
           let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`;
           let i;
@@ -519,7 +630,7 @@ export default {
     todo_item_dblclick(pos, list_index) {
       let today = new Date();
       let d1 = new Date();
-      d1.setDate(today.getDate() + pos);
+      d1.setDate(today.getDate() + pos + this.pos);
 
       let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`;
       let i;
@@ -594,12 +705,10 @@ export default {
   },
   filters: {
     toDay: function(value) {
-      if (!value) return "";
-      return (value = day[value]);
+      return day[value];
     },
     toMonth: function(value) {
-      if (!value) return value;
-      return (value = months[value]);
+      return months[value];
     }
   }
 };
