@@ -75,6 +75,13 @@ export default new Vuex.Store({
         })
       }
     },
+    removeTask(state, payload) {
+      state.tasks[payload.taskIndex].list.splice(payload.listIndex, 1);
+    },
+    updateTask(state, payload){
+      state.tasks[payload.taskIndex].list[payload.listIndex].title = payload.title;
+      state.tasks[payload.taskIndex].list[payload.listIndex].notes = payload.notes;
+    },
     clearTasksArr(state) {
       state.tasks = []
     }
@@ -100,6 +107,18 @@ export default new Vuex.Store({
 
       dispatch('updateDayList', payload)
     },
+    removeUserTask({ dispatch, commit, state }, payload) {
+      if (payload.listIndex > -1) {
+        commit('removeTask', payload)
+        dispatch('updateDayList', {
+          date: payload.date
+        })
+      }
+    },
+    updateUserTask({ dispatch, commit, state }, payload){
+      commit('updateTask', payload);
+      dispatch('updateDayList', payload);
+    },
     updateDayList({ commit, state }, payload) {
       let d1 = new Date(payload.date);
       let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`;
@@ -113,8 +132,9 @@ export default new Vuex.Store({
           i = index;
         }
       })
+      console.log(payload)
       firestore.collection(state.user.uid).doc(date).set(
-        state.tasks[i], { merge: true })
+        state.tasks[i])
     }
   }
 })

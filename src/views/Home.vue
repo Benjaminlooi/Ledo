@@ -80,7 +80,12 @@
           </div>
           <v-list>
             <draggable v-model="todo_items_1" group="people" @start="drag=true" @end="drag=false">
-              <v-list-item v-for="(todo_item, index) in todo_items_1" :key="todo_item.title" @click @dblclick="todo_item_dblclick(0, index)">
+              <v-list-item
+                v-for="(todo_item, index) in todo_items_1"
+                :key="todo_item.title"
+                @click
+                @dblclick="todo_item_dblclick(0, index)"
+              >
                 <v-list-item-action style="margin: 0 16px 0 0">
                   <v-checkbox v-model="todo_item.isDone" @click.native="toggleIsDone(0)"></v-checkbox>
                 </v-list-item-action>
@@ -99,9 +104,9 @@
 
                   <v-list>
                     <v-list-item
-                      v-for="(item, index) in items"
-                      :key="index"
-                      @click="todo_item_menu_click"
+                      v-for="(item, menu_index) in items"
+                      :key="menu_index"
+                      @click="todo_item_menu_click(menu_index,0,index)"
                     >
                       <v-list-item-title>{{ item.title }}</v-list-item-title>
                     </v-list-item>
@@ -135,7 +140,12 @@
           </div>
           <v-list>
             <draggable v-model="todo_items_2" group="people" @start="drag=true" @end="drag=false">
-              <v-list-item v-for="todo_item in todo_items_2" :key="todo_item.title" @click>
+              <v-list-item
+                v-for="(todo_item, index) in todo_items_2"
+                :key="todo_item.title"
+                @click
+                @dblclick="todo_item_dblclick(1, index)"
+              >
                 <v-list-item-action style="margin: 0 16px 0 0">
                   <v-checkbox v-model="todo_item.isDone" @click.native="toggleIsDone(1)"></v-checkbox>
                 </v-list-item-action>
@@ -154,9 +164,9 @@
 
                   <v-list>
                     <v-list-item
-                      v-for="(item, index) in items"
-                      :key="index"
-                      @click="todo_item_menu_click"
+                      v-for="(item, menu_index) in items"
+                      :key="menu_index"
+                      @click="todo_item_menu_click(menu_index,1,index)"
                     >
                       <v-list-item-title>{{ item.title }}</v-list-item-title>
                     </v-list-item>
@@ -189,7 +199,12 @@
           </div>
           <v-list>
             <draggable v-model="todo_items_3" group="people" @start="drag=true" @end="drag=false">
-              <v-list-item v-for="todo_item in todo_items_3" :key="todo_item.title" @click>
+              <v-list-item
+                v-for="(todo_item, index) in todo_items_3"
+                :key="todo_item.title"
+                @click
+                @dblclick="todo_item_dblclick(2, index)"
+              >
                 <v-list-item-action style="margin: 0 16px 0 0">
                   <v-checkbox v-model="todo_item.isDone" @click.native="toggleIsDone(2)"></v-checkbox>
                 </v-list-item-action>
@@ -208,9 +223,9 @@
 
                   <v-list>
                     <v-list-item
-                      v-for="(item, index) in items"
-                      :key="index"
-                      @click="todo_item_menu_click"
+                      v-for="(item, menu_index) in items"
+                      :key="menu_index"
+                      @click="todo_item_menu_click(menu_index,2,index)"
                     >
                       <v-list-item-title>{{ item.title }}</v-list-item-title>
                     </v-list-item>
@@ -223,68 +238,86 @@
         <!-- ==== END THIRD ==== -->
 
         <v-snackbar
+          v-model="snackbar_taskCompleteSuccess"
+          :timeout="4000"
+          color="success"
+          bottom
+          right
+        >
+          Task Completed
+          <v-btn color="white" text @click="snackbar_taskCompleteSuccess = false">Close</v-btn>
+        </v-snackbar>
+
+        <v-snackbar
           v-model="snackbar_taskDeleteSuccess"
           :timeout="4000"
           color="success"
           bottom
           right
         >
-          Task deleted
-          <v-btn color="white" text @click="snackbar = false">Close</v-btn>
+          Task Deleted
+          <v-btn color="white" text @click="snackbar_taskDeleteSuccess = false">Close</v-btn>
         </v-snackbar>
 
-        <v-dialog v-model="taskEditDialog.isShow" persistent max-width="600px">
+        <v-dialog v-model="taskEditDialog.isShow" max-width="600px">
           <template v-slot:activator="{ on }">
             <v-btn color="primary" dark v-on="on">Open Dialog</v-btn>
           </template>
           <v-card>
-            <v-card-title>
-              <span class="headline">User Profile</span>
+            <v-card-title style="border-bottom: 1px solid #acacac">
+              <v-text-field
+                label="Subject"
+                v-model="taskEditDialog.title"
+                single-line
+                full-width
+                hide-details
+                class="title"
+              ></v-text-field>
+              <!-- <v-container>
+                <v-row>
+                  <v-col cols="12">
+                    <v-text-field
+                      label="Subject"
+                      :value="taskEditDialog.title"
+                      single-line
+                      full-width
+                      hide-details
+                      class="title"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-text-field
+                      label="Add subtask..."
+                      value="t"
+                      single-line
+                      full-width
+                      hide-details
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+              </v-container>-->
+            </v-card-title>
+            <v-card-title style="border-bottom: 1px solid #acacac">
+              <v-text-field label="Add subtask..." single-line></v-text-field>
             </v-card-title>
             <v-card-text>
-              <v-container>
-                <v-row>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field label="Legal first name*" required></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      label="Legal middle name"
-                      hint="example of helper text only on focus"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field
-                      label="Legal last name*"
-                      hint="example of persistent helper text"
-                      persistent-hint
-                      required
-                    ></v-text-field>
-                  </v-col>
+              <v-container fluid>
+                <v-row no-gutters>
                   <v-col cols="12">
-                    <v-text-field label="Email*" required></v-text-field>
-                  </v-col>
-                  <v-col cols="12">
-                    <v-text-field label="Password*" type="password" required></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6">
-                    <v-select :items="['0-17', '18-29', '30-54', '54+']" label="Age*" required></v-select>
-                  </v-col>
-                  <v-col cols="12" sm="6">
-                    <v-autocomplete
-                      :items="['Skiing', 'Ice hockey', 'Soccer', 'Basketball', 'Hockey', 'Reading', 'Writing', 'Coding', 'Basejump']"
-                      label="Interests"
-                      multiple
-                    ></v-autocomplete>
+                    <v-textarea
+                      label="Notes..."
+                      v-model="taskEditDialog.notes"
+                      rows="6"
+                      full-width
+                      no-resize
+                    ></v-textarea>
                   </v-col>
                 </v-row>
               </v-container>
-              <small>*indicates required field</small>
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="taskEditDialog.isShow = false">Close</v-btn>
-              <v-btn color="blue darken-1" text @click="taskEditDialog.isShow = false">Save</v-btn>
+              <v-btn block color="light-blue darken-1" dark @click="updateTask">Save task and close</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -311,10 +344,14 @@ export default {
   },
   data: () => ({
     drawer: null,
+    snackbar_taskCompleteSuccess: false,
     snackbar_taskDeleteSuccess: false,
     taskEditDialog: {
       isShow: false,
-      
+      title: null,
+      notes: "",
+      task_index: null,
+      list_index: null
     },
 
     listgroup: true,
@@ -414,10 +451,10 @@ export default {
       this.$store.dispatch("getDayList", { date: d2 });
       this.$store.dispatch("getDayList", { date: d3 });
     },
-    onSubmit(inputVal, date) {
+    onSubmit(inputVal, pos) {
       let today = new Date();
       let theDate = new Date();
-      theDate.setDate(today.getDate() + date);
+      theDate.setDate(today.getDate() + pos);
       this.$store.dispatch("addUserTask", {
         title: inputVal,
         isDone: false,
@@ -425,7 +462,7 @@ export default {
       });
     },
     toggleIsDone(id) {
-      this.snackbar_taskDeleteSuccess = true;
+      this.snackbar_taskCompleteSuccess = true;
       this.updateDayList(id);
     },
     updateDayList(date) {
@@ -437,10 +474,36 @@ export default {
         date: d
       });
     },
-    todo_item_menu_click() {
-      //
+    todo_item_menu_click(menu_index, pos, task_index) {
+      switch (menu_index) {
+        case 1:
+          let today = new Date();
+          let d1 = new Date();
+          d1.setDate(today.getDate() + pos);
+
+          let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`;
+          let i;
+          this.$store.state.tasks.forEach((task, index) => {
+            let d2 = new Date(task.date);
+            if (
+              d1.getFullYear() === d2.getFullYear() &&
+              d1.getMonth() === d2.getMonth() &&
+              d1.getDate() === d2.getDate()
+            ) {
+              i = index;
+            }
+          });
+
+          this.$store.dispatch("removeUserTask", {
+            taskIndex: i,
+            listIndex: task_index,
+            date: d1
+          });
+          this.snackbar_taskDeleteSuccess = true;
+          break;
+      }
     },
-    todo_item_dblclick(pos, index) {
+    todo_item_dblclick(pos, list_index) {
       let today = new Date();
       let d1 = new Date();
       d1.setDate(today.getDate() + pos);
@@ -449,15 +512,40 @@ export default {
       let i;
       this.$store.state.tasks.forEach((task, index) => {
         let d2 = new Date(task.date);
-        if (d1.getFullYear() === d2.getFullYear() &&
+        if (
+          d1.getFullYear() === d2.getFullYear() &&
           d1.getMonth() === d2.getMonth() &&
-          d1.getDate() === d2.getDate()) {
-
+          d1.getDate() === d2.getDate()
+        ) {
           i = index;
         }
-      })
+      });
 
-      console.log(this.$store.state.tasks[i].list[index])
+      console.log(this.$store.state.tasks[i].list[list_index]);
+      this.taskEditDialog.title = this.$store.state.tasks[i].list[
+        list_index
+      ].title;
+      this.taskEditDialog.notes = this.$store.state.tasks[i].list[
+        list_index
+      ].notes;
+      this.taskEditDialog.date = d1;
+
+      this.taskEditDialog.task_index = i;
+      this.taskEditDialog.list_index = list_index;
+
+      this.taskEditDialog.isShow = true;
+    },
+    updateTask() {
+      this.taskEditDialog.notes = (!this.taskEditDialog.notes) ? '' : this.taskEditDialog.notes;
+      this.taskEditDialog.isShow = false;
+      this.$store.dispatch("updateUserTask", {
+        date: this.taskEditDialog.date,
+        title: this.taskEditDialog.title,
+        notes:
+          (this.taskEditDialog.notes === "") ? 'nope' : this.taskEditDialog.notes,
+        taskIndex: this.taskEditDialog.task_index,
+        listIndex: this.taskEditDialog.list_index
+      });
     },
     signOut() {
       firebase
