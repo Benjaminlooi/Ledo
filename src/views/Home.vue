@@ -25,15 +25,6 @@
           </v-list-item-content>
         </v-list-item>-->
 
-        <!-- <v-list-item @click="signOut">
-          <v-list-item-action>
-            <v-icon>mdi-logout</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Logout</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>-->
-
         <!-- <v-list-item @click="debug">
           <v-list-item-action>
             <v-icon>mdi-logout</v-icon>
@@ -144,22 +135,22 @@
               />
             </div>
           </div>
-          <v-list>
-            <draggable v-model="todo_items_1" group="people" @start="drag=true" @end="drag=false">
+          <draggable v-model="todo_items_1" group="people" @start="drag=true" @end="drag=false">
+            <v-slide-y-transition class="py-0" group tag="v-list">
               <v-list-item
                 v-for="(todo_item, index) in todo_items_1"
-                :key="todo_item.title"
+                :key="index"
                 @click
                 @dblclick="todo_item_dblclick(0, index)"
               >
                 <v-list-item-action style="margin: 0 16px 0 0">
-                  <v-checkbox v-model="todo_item.isDone" @click.native="toggleIsDone(0)" ></v-checkbox>
+                  <v-checkbox v-model="todo_item.isDone" @click.native="toggleIsDone(0)"></v-checkbox>
                 </v-list-item-action>
                 <v-list-item-content>
                   <v-list-item-title v-text="todo_item.title" style="font-size: 0.85em;"></v-list-item-title>
                 </v-list-item-content>
 
-                <v-menu open-on-hover left offset-x close-delay="200">
+                <v-menu open-on-hover dense left offset-x close-delay="200">
                   <template v-slot:activator="{ on }">
                     <v-list-item-action style="margin: 0 0 0 16px">
                       <v-btn small icon>
@@ -179,8 +170,8 @@
                   </v-list>
                 </v-menu>
               </v-list-item>
-            </draggable>
-          </v-list>
+            </v-slide-y-transition>
+          </draggable>
         </div>
         <!-- ==== END FIRST ==== -->
 
@@ -208,11 +199,11 @@
               />
             </div>
           </div>
-          <v-list>
-            <draggable v-model="todo_items_2" group="people" @start="drag=true" @end="drag=false">
+          <draggable v-model="todo_items_2" group="people" @start="drag=true" @end="drag=false">
+            <v-slide-y-transition class="py-0" group tag="v-list">
               <v-list-item
                 v-for="(todo_item, index) in todo_items_2"
-                :key="todo_item.title"
+                :key="index"
                 @click
                 @dblclick="todo_item_dblclick(1, index)"
               >
@@ -223,7 +214,7 @@
                   <v-list-item-title v-text="todo_item.title" style="font-size: 0.85em;"></v-list-item-title>
                 </v-list-item-content>
 
-                <v-menu open-on-hover left offset-x close-delay="200">
+                <v-menu open-on-hover dense left offset-x close-delay="200">
                   <template v-slot:activator="{ on }">
                     <v-list-item-action style="margin: 0 0 0 16px">
                       <v-btn small icon>
@@ -243,8 +234,8 @@
                   </v-list>
                 </v-menu>
               </v-list-item>
-            </draggable>
-          </v-list>
+            </v-slide-y-transition>
+          </draggable>
         </div>
         <!-- ==== END SECOND ==== -->
         <!-- ==== THIRD ==== -->
@@ -271,43 +262,48 @@
               />
             </div>
           </div>
-          <v-list>
-            <draggable v-model="todo_items_3" group="people" @start="drag=true" @end="drag=false">
-              <v-list-item
-                v-for="(todo_item, index) in todo_items_3"
-                :key="todo_item.title"
-                @click
-                @dblclick="todo_item_dblclick(2, index)"
-              >
-                <v-list-item-action style="margin: 0 16px 0 0">
-                  <v-checkbox v-model="todo_item.isDone" @click.native="toggleIsDone(2)"></v-checkbox>
-                </v-list-item-action>
-                <v-list-item-content>
-                  <v-list-item-title v-text="todo_item.title" style="font-size: 0.85em;"></v-list-item-title>
-                </v-list-item-content>
-
-                <v-menu open-on-hover left offset-x close-delay="200">
-                  <template v-slot:activator="{ on }">
-                    <v-list-item-action style="margin: 0 0 0 16px">
-                      <v-btn small icon>
-                        <v-icon color="grey lighten-1" v-on="on">mdi-dots-vertical</v-icon>
-                      </v-btn>
-                    </v-list-item-action>
-                  </template>
-
-                  <v-list>
+          <draggable v-model="todo_items_3" group="people" @start="drag=true" @end="drag=false">
+            <v-slide-y-transition class="py-0" group tag="v-list">
+              <template v-for="(todo_item, index) in todo_items_3">
+                <div :key="index">
+                  <v-hover v-slot:default="{ hover }">
                     <v-list-item
-                      v-for="(item, menu_index) in items"
-                      :key="menu_index"
-                      @click="todo_item_menu_click(menu_index,2,index)"
+                      :elevation="hover ? 24 : 2"
+                      @click
+                      @dblclick="todo_item_dblclick(2, index)"
                     >
-                      <v-list-item-title>{{ item.title }}</v-list-item-title>
+                      <v-list-item-action style="margin: 0 16px 0 0">
+                        <v-checkbox v-model="todo_item.isDone" @click.native="toggleIsDone(2)"></v-checkbox>
+                      </v-list-item-action>
+                      <v-list-item-content>
+                        <v-list-item-title v-text="todo_item.title" style="font-size: 0.85em;"></v-list-item-title>
+                      </v-list-item-content>
+
+                      <v-menu open-on-hover left offset-x close-delay="200">
+                        <template v-slot:activator="{ on }">
+                          <v-list-item-action style="margin: 0 0 0 16px">
+                            <v-btn small icon>
+                              <v-icon color="grey lighten-1" v-on="on">mdi-dots-vertical</v-icon>
+                            </v-btn>
+                          </v-list-item-action>
+                        </template>
+
+                        <v-list>
+                          <v-list-item
+                            v-for="(item, menu_index) in items"
+                            :key="menu_index"
+                            @click="todo_item_menu_click(menu_index,2,index)"
+                          >
+                            <v-list-item-title>{{ item.title }}</v-list-item-title>
+                          </v-list-item>
+                        </v-list>
+                      </v-menu>
                     </v-list-item>
-                  </v-list>
-                </v-menu>
-              </v-list-item>
-            </draggable>
-          </v-list>
+                  </v-hover>
+                </div>
+              </template>
+            </v-slide-y-transition>
+          </draggable>
         </div>
         <!-- ==== END THIRD ==== -->
 
@@ -480,42 +476,64 @@ export default {
       set(value) {
         let today = new Date();
         let d1 = new Date();
-        d1.setDate(today.getDate() + this.pos)
-        this.$store.dispatch('reorderUserTask', {
+        d1.setDate(today.getDate() + this.pos);
+        this.$store.dispatch("reorderUserTask", {
           date: d1,
           data: value
-        })
+        });
       }
     },
-    todo_items_2() {
-      let d1 = new Date();
-      let tasks = this.$store.state.tasks.filter(task => {
-        if (task) {
-          let d2 = new Date(task.date);
-          return (
-            d1.getFullYear() === d2.getFullYear() &&
-            d1.getMonth() === d2.getMonth() &&
-            d1.getDate() + 1 + this.pos === d2.getDate()
-          );
-        }
-      });
-      if (tasks.length) return tasks[0].list;
-      else return null;
+    todo_items_2: {
+      get() {
+        let d1 = new Date();
+        let tasks = this.$store.state.tasks.filter(task => {
+          if (task) {
+            let d2 = new Date(task.date);
+            return (
+              d1.getFullYear() === d2.getFullYear() &&
+              d1.getMonth() === d2.getMonth() &&
+              d1.getDate() + 1 + this.pos === d2.getDate()
+            );
+          }
+        });
+        if (tasks.length) return tasks[0].list;
+        else return null;
+      },
+      set(value) {
+        let today = new Date();
+        let d1 = new Date();
+        d1.setDate(today.getDate() + 1 + this.pos);
+        this.$store.dispatch("reorderUserTask", {
+          date: d1,
+          data: value
+        });
+      }
     },
-    todo_items_3() {
-      let d1 = new Date();
-      let tasks = this.$store.state.tasks.filter(task => {
-        if (task) {
-          let d2 = new Date(task.date);
-          return (
-            d1.getFullYear() === d2.getFullYear() &&
-            d1.getMonth() === d2.getMonth() &&
-            d1.getDate() + 2 + this.pos === d2.getDate()
-          );
-        }
-      });
-      if (tasks.length) return tasks[0].list;
-      else return null;
+    todo_items_3: {
+      get() {
+        let d1 = new Date();
+        let tasks = this.$store.state.tasks.filter(task => {
+          if (task) {
+            let d2 = new Date(task.date);
+            return (
+              d1.getFullYear() === d2.getFullYear() &&
+              d1.getMonth() === d2.getMonth() &&
+              d1.getDate() + 2 + this.pos === d2.getDate()
+            );
+          }
+        });
+        if (tasks.length) return tasks[0].list;
+        else return null;
+      },
+      set(value) {
+        let today = new Date();
+        let d1 = new Date();
+        d1.setDate(today.getDate() + 2 + this.pos);
+        this.$store.dispatch("reorderUserTask", {
+          date: d1,
+          data: value
+        });
+      }
     }
   },
   watch: {
