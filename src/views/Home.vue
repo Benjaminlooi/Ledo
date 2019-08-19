@@ -131,7 +131,7 @@
                 placeholder="Add task +"
                 data-list="20190812"
                 data-type="Aug 12"
-                @keydown.enter="onSubmit($event.target.value, 0);$event.target.value = ''"
+                @keydown.enter="onSubmit_addTask($event.target.value, 0);$event.target.value = ''"
               />
             </div>
           </div>
@@ -195,7 +195,7 @@
                 placeholder="Add task +"
                 data-list="20190812"
                 data-type="Aug 12"
-                @keydown.enter="onSubmit($event.target.value, 1);$event.target.value = ''"
+                @keydown.enter="onSubmit_addTask($event.target.value, 1);$event.target.value = ''"
               />
             </div>
           </div>
@@ -258,7 +258,7 @@
                 placeholder="Add task +"
                 data-list="20190812"
                 data-type="Aug 12"
-                @keydown.enter="onSubmit($event.target.value, 2);$event.target.value = ''"
+                @keydown.enter="onSubmit_addTask($event.target.value, 2);$event.target.value = ''"
               />
             </div>
           </div>
@@ -593,7 +593,17 @@ export default {
       this.$store.dispatch("getDayList", { date: d2 });
       this.$store.dispatch("getDayList", { date: d3 });
     },
-    onSubmit(inputVal, pos) {
+    onSubmit_addTask(inputVal, pos) {
+      let today = new Date();
+      let theDate = new Date();
+      theDate.setDate(today.getDate() + pos + this.pos);
+      this.$store.dispatch("addUserTask", {
+        title: inputVal,
+        isDone: false,
+        date: theDate
+      });
+    },
+    onSubmit_addSubTask(inputVal, pos) {
       let today = new Date();
       let theDate = new Date();
       theDate.setDate(today.getDate() + pos + this.pos);
@@ -684,8 +694,7 @@ export default {
       this.$store.dispatch("updateUserTask", {
         date: this.taskEditDialog.date,
         title: this.taskEditDialog.title,
-        notes:
-          this.taskEditDialog.notes === "" ? "nope" : this.taskEditDialog.notes,
+        notes: this.taskEditDialog.notes,
         taskIndex: this.taskEditDialog.task_index,
         listIndex: this.taskEditDialog.list_index
       });
