@@ -50,6 +50,15 @@ export default new Vuex.Store({
         })
       }
     },
+    addSubTask(state, payload) {
+      if(!state.tasks[payload.taskIndex].list[payload.listIndex].subTasks){
+        state.tasks[payload.taskIndex].list[payload.listIndex].subTasks = [];
+      }
+      state.tasks[payload.taskIndex].list[payload.listIndex].subTasks.push({
+        isDone: payload.isDone,
+        title: payload.title
+      })
+    },
     removeTask(state, payload) {
       state.tasks[payload.taskIndex].list.splice(payload.listIndex, 1);
     },
@@ -92,11 +101,15 @@ export default new Vuex.Store({
         })
       }
     },
-    addUserTask({ dispatch, commit, state }, payload) {
+    addUserTask({ dispatch, commit }, payload) {
       commit('addTask', payload);
       dispatch('updateDayList', payload)
     },
-    removeUserTask({ dispatch, commit, state }, payload) {
+    addUserSubTask({dispatch, commit }, payload ) {
+      commit('addSubTask', payload);
+      dispatch('updateDayList', payload)
+    },
+    removeUserTask({ dispatch, commit }, payload) {
       if (payload.listIndex > -1) {
         commit('removeTask', payload)
         dispatch('updateDayList', {
@@ -104,15 +117,15 @@ export default new Vuex.Store({
         })
       }
     },
-    updateUserTask({ dispatch, commit, state }, payload){
+    updateUserTask({ dispatch, commit }, payload){
       commit('updateTask', payload);
       dispatch('updateDayList', payload);
     },
-    reorderUserTask({ dispatch, commit, state }, payload){
+    reorderUserTask({ dispatch, commit }, payload){
       commit('updateTaskList', payload);
       dispatch('updateDayList', payload);
     },
-    updateDayList({ commit, state }, payload) {
+    updateDayList({ state }, payload) {
       let d1 = new Date(payload.date);
       let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`;
       let i;

@@ -129,8 +129,6 @@
               <input
                 type="text"
                 placeholder="Add task +"
-                data-list="20190812"
-                data-type="Aug 12"
                 @keydown.enter="onSubmit_addTask($event.target.value, 0);$event.target.value = ''"
               />
             </div>
@@ -140,7 +138,7 @@
               <v-list-item
                 v-for="(todo_item, index) in todo_items_1"
                 :key="index"
-                @click
+                @click.prevent
                 @dblclick="todo_item_dblclick(0, index)"
               >
                 <v-list-item-action style="margin: 0 16px 0 0">
@@ -193,8 +191,6 @@
               <input
                 type="text"
                 placeholder="Add task +"
-                data-list="20190812"
-                data-type="Aug 12"
                 @keydown.enter="onSubmit_addTask($event.target.value, 1);$event.target.value = ''"
               />
             </div>
@@ -204,7 +200,7 @@
               <v-list-item
                 v-for="(todo_item, index) in todo_items_2"
                 :key="index"
-                @click
+                @click.prevent
                 @dblclick="todo_item_dblclick(1, index)"
               >
                 <v-list-item-action style="margin: 0 16px 0 0">
@@ -256,8 +252,6 @@
               <input
                 type="text"
                 placeholder="Add task +"
-                data-list="20190812"
-                data-type="Aug 12"
                 @keydown.enter="onSubmit_addTask($event.target.value, 2);$event.target.value = ''"
               />
             </div>
@@ -269,7 +263,7 @@
                   <v-hover v-slot:default="{ hover }">
                     <v-list-item
                       :elevation="hover ? 24 : 2"
-                      @click
+                      @click.prevent
                       @dblclick="todo_item_dblclick(2, index)"
                     >
                       <v-list-item-action style="margin: 0 16px 0 0">
@@ -368,8 +362,18 @@
               </v-container>-->
             </v-card-title>
             <v-card-title style="border-bottom: 1px solid #acacac">
-              <v-text-field label="Add subtask..." single-line></v-text-field>
+              <v-text-field
+                label="Add subtask..."
+                single-line
+                @keydown.enter="onSubmit_addSubTask($event.target.value, 0);$event.target.value = ''"
+              ></v-text-field>
+              <v-list>
+                <v-list-item v-for="(subTask, index) in taskEditDialog.subTasks" :key="index">
+                  {{subTask.title}}
+                </v-list-item>
+              </v-list>
             </v-card-title>
+
             <v-card-text>
               <v-container fluid>
                 <v-row no-gutters>
@@ -422,7 +426,8 @@ export default {
       title: null,
       notes: "",
       task_index: null,
-      list_index: null
+      list_index: null,
+      subTasks: []
     },
 
     listgroup: true,
@@ -573,12 +578,7 @@ export default {
         d1.getDate() === d2.getDate()
       ) {
         return true;
-      }
-    },
-    getSingleList(i) {
-      let d = new Date();
-      let newDate = new Date();
-      // newDate.setDate(d.getDate() + 3 + )
+      } else return false;
     },
     getLists() {
       let d = new Date();
@@ -597,6 +597,7 @@ export default {
       let today = new Date();
       let theDate = new Date();
       theDate.setDate(today.getDate() + pos + this.pos);
+
       this.$store.dispatch("addUserTask", {
         title: inputVal,
         isDone: false,
@@ -607,10 +608,13 @@ export default {
       let today = new Date();
       let theDate = new Date();
       theDate.setDate(today.getDate() + pos + this.pos);
-      this.$store.dispatch("addUserTask", {
+
+      this.$store.dispatch("addUserSubTask", {
         title: inputVal,
         isDone: false,
-        date: theDate
+        date: this.taskEditDialog.date,
+        taskIndex: this.taskEditDialog.task_index,
+        listIndex: this.taskEditDialog.list_index
       });
     },
     toggleIsDone(pos) {
@@ -619,36 +623,43 @@ export default {
     },
     updateDayList(pos) {
       let today = new Date();
-      let d = new Date();
-      d.setDate(today.getDate() + pos + this.pos);
+      let theDate = new Date();
+      theDate.setDate(today.getDate() + pos + this.pos);
 
       this.$store.dispatch("updateDayList", {
-        date: d
+        date: theDate
       });
     },
-    todo_item_menu_click(menu_index, pos, task_index) {
+    searchForTaskIndexGivenDate(pos) {
+      let today = new Date();
+      let d1 = new Date();
+      d1.setDate(today.getDate() + pos + this.pos);
+
+      let task_index;
+      this.$store.state.tasks.forEach((task, index) => {
+        let d2 = new Date(task.date);
+        if (
+          d1.getFullYear() === d2.getFullYear() &&
+          d1.getMonth() === d2.getMonth() &&
+          d1.getDate() === d2.getDate()
+        ) {
+          task_index = index;
+        }
+      });
+      return task_index;
+    },
+    todo_item_menu_click(menu_index, pos, list_index) {
       switch (menu_index) {
         case 1:
           let today = new Date();
           let d1 = new Date();
           d1.setDate(today.getDate() + pos + this.pos);
 
-          let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`;
-          let i;
-          this.$store.state.tasks.forEach((task, index) => {
-            let d2 = new Date(task.date);
-            if (
-              d1.getFullYear() === d2.getFullYear() &&
-              d1.getMonth() === d2.getMonth() &&
-              d1.getDate() === d2.getDate()
-            ) {
-              i = index;
-            }
-          });
+          let task_index = this.searchForTaskIndexGivenDate(pos);
 
           this.$store.dispatch("removeUserTask", {
-            taskIndex: i,
-            listIndex: task_index,
+            taskIndex: task_index,
+            listIndex: list_index,
             date: d1
           });
           this.snackbar_taskDeleteSuccess = true;
@@ -657,34 +668,22 @@ export default {
     },
     todo_item_dblclick(pos, list_index) {
       let today = new Date();
-      let d1 = new Date();
-      d1.setDate(today.getDate() + pos + this.pos);
+      let theDate = new Date();
+      theDate.setDate(today.getDate() + pos + this.pos);
 
-      let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`;
-      let i;
-      this.$store.state.tasks.forEach((task, index) => {
-        let d2 = new Date(task.date);
-        if (
-          d1.getFullYear() === d2.getFullYear() &&
-          d1.getMonth() === d2.getMonth() &&
-          d1.getDate() === d2.getDate()
-        ) {
-          i = index;
-        }
-      });
+      let task_index = this.searchForTaskIndexGivenDate(pos);
 
-      this.taskEditDialog.title = this.$store.state.tasks[i].list[
+      this.taskEditDialog.title = this.$store.state.tasks[task_index].list[
         list_index
       ].title;
-      this.taskEditDialog.notes = this.$store.state.tasks[i].list[
+      this.taskEditDialog.notes = this.$store.state.tasks[task_index].list[
         list_index
       ].notes;
-      this.taskEditDialog.date = d1;
-
-      this.taskEditDialog.task_index = i;
+      this.taskEditDialog.date = theDate;
+      this.taskEditDialog.task_index = task_index;
       this.taskEditDialog.list_index = list_index;
-
       this.taskEditDialog.isShow = true;
+      this.taskEditDialog.subTasks = this.$store.state.tasks[task_index].list[list_index].subTasks;
     },
     updateTask() {
       this.taskEditDialog.notes = !this.taskEditDialog.notes
