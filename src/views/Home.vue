@@ -464,14 +464,16 @@ export default {
     },
     todo_items_1: {
       get() {
+        let today = new Date();
         let d1 = new Date();
+        d1.setDate(today.getDate() + 0 + this.pos);
         let tasks = this.$store.state.tasks.filter(task => {
           if (task) {
             let d2 = new Date(task.date);
             return (
               d1.getFullYear() === d2.getFullYear() &&
               d1.getMonth() === d2.getMonth() &&
-              d1.getDate() + this.pos === d2.getDate()
+              d1.getDate() === d2.getDate()
             );
           }
         });
@@ -490,14 +492,16 @@ export default {
     },
     todo_items_2: {
       get() {
+        let today = new Date();
         let d1 = new Date();
+        d1.setDate(today.getDate() + 1 + this.pos);
         let tasks = this.$store.state.tasks.filter(task => {
           if (task) {
             let d2 = new Date(task.date);
             return (
               d1.getFullYear() === d2.getFullYear() &&
               d1.getMonth() === d2.getMonth() &&
-              d1.getDate() + 1 + this.pos === d2.getDate()
+              d1.getDate() === d2.getDate()
             );
           }
         });
@@ -516,14 +520,16 @@ export default {
     },
     todo_items_3: {
       get() {
+        let today = new Date();
         let d1 = new Date();
+        d1.setDate(today.getDate() + 2 + this.pos);
         let tasks = this.$store.state.tasks.filter(task => {
           if (task) {
             let d2 = new Date(task.date);
             return (
               d1.getFullYear() === d2.getFullYear() &&
               d1.getMonth() === d2.getMonth() &&
-              d1.getDate() + 2 + this.pos === d2.getDate()
+              d1.getDate() === d2.getDate()
             );
           }
         });
