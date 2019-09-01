@@ -45,15 +45,7 @@
               <v-icon color="red">mdi-checkbox-blank-circle-outline</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title>priority 1</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item @click>
-            <v-list-item-icon>
-              <v-icon color="yellow accent-4">mdi-checkbox-blank-circle-outline</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>priority 2</v-list-item-title>
+              <v-list-item-title>High priority</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
           <v-list-item @click>
@@ -61,7 +53,7 @@
               <v-icon color="blue">mdi-checkbox-blank-circle-outline</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title>priority 3</v-list-item-title>
+              <v-list-item-title>Normal priority</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
           <v-list-item @click>
@@ -69,7 +61,7 @@
               <v-icon>mdi-checkbox-blank-circle-outline</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title>priority 4</v-list-item-title>
+              <v-list-item-title>Low priority</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list-group>
@@ -142,7 +134,11 @@
                 @dblclick="todo_item_dblclick(0, index)"
               >
                 <v-list-item-action style="margin: 0 16px 0 0">
-                  <v-checkbox v-model="todo_item.isDone" @click.native="toggleIsDone(0)"></v-checkbox>
+                  <v-checkbox
+                    :class="{'priority-zero': todo_item.priority == 0, 'priority-one': todo_item.priority == 1, 'priority-two': todo_item.priority == 2}"
+                    v-model="todo_item.isDone"
+                    @click.native="toggleIsDone(0)"
+                  ></v-checkbox>
                 </v-list-item-action>
                 <v-list-item-content>
                   <v-list-item-title v-text="todo_item.title" style="font-size: 0.85em;"></v-list-item-title>
@@ -204,7 +200,11 @@
                 @dblclick="todo_item_dblclick(1, index)"
               >
                 <v-list-item-action style="margin: 0 16px 0 0">
-                  <v-checkbox v-model="todo_item.isDone" @click.native="toggleIsDone(1)"></v-checkbox>
+                  <v-checkbox
+                    :class="{'priority-zero': todo_item.priority == 0, 'priority-one': todo_item.priority == 1, 'priority-two': todo_item.priority == 2}"
+                    v-model="todo_item.isDone"
+                    @click.native="toggleIsDone(1)"
+                  ></v-checkbox>
                 </v-list-item-action>
                 <v-list-item-content>
                   <v-list-item-title v-text="todo_item.title" style="font-size: 0.85em;"></v-list-item-title>
@@ -258,44 +258,43 @@
           </div>
           <draggable v-model="todo_items_3" group="people" @start="drag=true" @end="drag=false">
             <v-slide-y-transition class="py-0" group tag="v-list">
-              <template v-for="(todo_item, index) in todo_items_3">
-                <div :key="index">
-                  <v-hover v-slot:default="{ hover }">
+              <v-list-item
+                v-for="(todo_item, index) in todo_items_3"
+                :key="index"
+                @click.prevent
+                @dblclick="todo_item_dblclick(2, index)"
+              >
+                <v-list-item-action style="margin: 0 16px 0 0">
+                  <v-checkbox
+                    :class="{'priority-zero': todo_item.priority == 0, 'priority-one': todo_item.priority == 1, 'priority-two': todo_item.priority == 2}"
+                    v-model="todo_item.isDone"
+                    @click.native="toggleIsDone(2)"
+                  ></v-checkbox>
+                </v-list-item-action>
+                <v-list-item-content>
+                  <v-list-item-title v-text="todo_item.title" style="font-size: 0.85em;"></v-list-item-title>
+                </v-list-item-content>
+
+                <v-menu open-on-hover left offset-x close-delay="200">
+                  <template v-slot:activator="{ on }">
+                    <v-list-item-action style="margin: 0 0 0 16px">
+                      <v-btn small icon>
+                        <v-icon color="grey lighten-1" v-on="on">mdi-dots-vertical</v-icon>
+                      </v-btn>
+                    </v-list-item-action>
+                  </template>
+
+                  <v-list>
                     <v-list-item
-                      :elevation="hover ? 24 : 2"
-                      @click.prevent
-                      @dblclick="todo_item_dblclick(2, index)"
+                      v-for="(item, menu_index) in items"
+                      :key="menu_index"
+                      @click="todo_item_menu_click(menu_index,2,index)"
                     >
-                      <v-list-item-action style="margin: 0 16px 0 0">
-                        <v-checkbox v-model="todo_item.isDone" @click.native="toggleIsDone(2)"></v-checkbox>
-                      </v-list-item-action>
-                      <v-list-item-content>
-                        <v-list-item-title v-text="todo_item.title" style="font-size: 0.85em;"></v-list-item-title>
-                      </v-list-item-content>
-
-                      <v-menu open-on-hover left offset-x close-delay="200">
-                        <template v-slot:activator="{ on }">
-                          <v-list-item-action style="margin: 0 0 0 16px">
-                            <v-btn small icon>
-                              <v-icon color="grey lighten-1" v-on="on">mdi-dots-vertical</v-icon>
-                            </v-btn>
-                          </v-list-item-action>
-                        </template>
-
-                        <v-list>
-                          <v-list-item
-                            v-for="(item, menu_index) in items"
-                            :key="menu_index"
-                            @click="todo_item_menu_click(menu_index,2,index)"
-                          >
-                            <v-list-item-title>{{ item.title }}</v-list-item-title>
-                          </v-list-item>
-                        </v-list>
-                      </v-menu>
+                      <v-list-item-title>{{ item.title }}</v-list-item-title>
                     </v-list-item>
-                  </v-hover>
-                </div>
-              </template>
+                  </v-list>
+                </v-menu>
+              </v-list-item>
             </v-slide-y-transition>
           </draggable>
         </div>
@@ -368,9 +367,10 @@
                 @keydown.enter="onSubmit_addSubTask($event.target.value, 0);$event.target.value = ''"
               ></v-text-field>
               <v-list>
-                <v-list-item v-for="(subTask, index) in taskEditDialog.subTasks" :key="index">
-                  {{subTask.title}}
-                </v-list-item>
+                <v-list-item
+                  v-for="(subTask, index) in taskEditDialog.subTasks"
+                  :key="index"
+                >{{subTask.title}}</v-list-item>
               </v-list>
             </v-card-title>
 
@@ -689,7 +689,9 @@ export default {
       this.taskEditDialog.task_index = task_index;
       this.taskEditDialog.list_index = list_index;
       this.taskEditDialog.isShow = true;
-      this.taskEditDialog.subTasks = this.$store.state.tasks[task_index].list[list_index].subTasks;
+      this.taskEditDialog.subTasks = this.$store.state.tasks[task_index].list[
+        list_index
+      ].subTasks;
     },
     updateTask() {
       this.taskEditDialog.notes = !this.taskEditDialog.notes

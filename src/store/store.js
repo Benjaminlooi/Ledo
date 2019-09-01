@@ -33,7 +33,8 @@ export default new Vuex.Store({
 
             state.tasks[index].list.push({
               isDone: payload.isDone,
-              title: payload.title
+              title: payload.title,
+              priority: 1
             })
             isWrote = true;
           }
