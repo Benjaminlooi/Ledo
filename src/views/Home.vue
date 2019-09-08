@@ -25,14 +25,14 @@
           </v-list-item-content>
         </v-list-item>-->
 
-        <!-- <v-list-item @click="debug">
+        <v-list-item @click="debug">
           <v-list-item-action>
             <v-icon>mdi-logout</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Debug</v-list-item-title>
           </v-list-item-content>
-        </v-list-item>-->
+        </v-list-item>
 
         <v-list-group v-model="listgroup">
           <template v-slot:activator>
@@ -42,7 +42,7 @@
           </template>
           <v-list-item @click>
             <v-list-item-icon>
-              <v-icon color="red">mdi-checkbox-blank-circle-outline</v-icon>
+              <v-icon color="red">mdi-circle-slice-8</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>High priority</v-list-item-title>
@@ -50,7 +50,7 @@
           </v-list-item>
           <v-list-item @click>
             <v-list-item-icon>
-              <v-icon color="blue">mdi-checkbox-blank-circle-outline</v-icon>
+              <v-icon color="blue">mdi-circle-slice-8</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>Normal priority</v-list-item-title>
@@ -58,7 +58,7 @@
           </v-list-item>
           <v-list-item @click>
             <v-list-item-icon>
-              <v-icon>mdi-checkbox-blank-circle-outline</v-icon>
+              <v-icon>mdi-circle-slice-8</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
               <v-list-item-title>Low priority</v-list-item-title>
@@ -145,21 +145,33 @@
                 </v-list-item-content>
 
                 <v-menu open-on-hover dense left offset-x close-delay="200">
-                  <template v-slot:activator="{ on }">
+                  <template v-slot:activator="{ on: taskMenu }">
                     <v-list-item-action style="margin: 0 0 0 16px">
-                      <v-btn small icon>
-                        <v-icon color="grey lighten-1" v-on="on">mdi-dots-vertical</v-icon>
+                      <v-btn small icon v-on="taskMenu">
+                        <v-icon color="grey lighten-1">mdi-dots-vertical</v-icon>
                       </v-btn>
                     </v-list-item-action>
                   </template>
 
                   <v-list>
-                    <v-list-item
-                      v-for="(item, menu_index) in items"
-                      :key="menu_index"
-                      @click="todo_item_menu_click(menu_index,0,index)"
-                    >
-                      <v-list-item-title>{{ item.title }}</v-list-item-title>
+                    <v-list-item @click="todo_item_menu_click(0,0,index)">
+                      <v-list-item-title>Complete</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="todo_item_menu_click(1,0,index)">
+                      <v-list-item-title>Remove</v-list-item-title>
+                    </v-list-item>
+
+                    <v-list-item @click="todo_item_menu_click(2,0,index)">
+                      <v-icon color="red">mdi-circle-slice-8</v-icon>
+                      <v-list-item-title>High Priority</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="todo_item_menu_click(3,0,index)">
+                      <v-icon color="blue">mdi-circle-slice-8</v-icon>
+                      <v-list-item-title>Normal Priority</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="todo_item_menu_click(4,0,index)">
+                      <v-icon>mdi-circle-slice-8</v-icon>
+                      <v-list-item-title>Low Priority</v-list-item-title>
                     </v-list-item>
                   </v-list>
                 </v-menu>
@@ -234,6 +246,7 @@
           </draggable>
         </div>
         <!-- ==== END SECOND ==== -->
+
         <!-- ==== THIRD ==== -->
         <div :class="{'next-day': !isToday(date_3), 'current-day': isToday(date_3)}">
           <div class="days-navbar">
@@ -555,7 +568,6 @@ export default {
   methods: {
     debug() {
       //
-      this.snackbar_taskDeleteSuccess = true;
     },
     movePosPrev() {
       --this.pos;
