@@ -46,13 +46,14 @@ export default new Vuex.Store({
           date: date,
           list: [{
             isDone: payload.isDone,
-            title: payload.title
+            title: payload.title,
+            priority: 0
           }]
         })
       }
     },
     addSubTask(state, payload) {
-      if(!state.tasks[payload.taskIndex].list[payload.listIndex].subTasks){
+      if (!state.tasks[payload.taskIndex].list[payload.listIndex].subTasks) {
         state.tasks[payload.taskIndex].list[payload.listIndex].subTasks = [];
       }
       state.tasks[payload.taskIndex].list[payload.listIndex].subTasks.push({
@@ -63,7 +64,7 @@ export default new Vuex.Store({
     removeTask(state, payload) {
       state.tasks[payload.taskIndex].list.splice(payload.listIndex, 1);
     },
-    updateTaskList(state, payload){
+    updateTaskOrder(state, payload) {
       let d1 = new Date(payload.date);
       let i;
       state.tasks.forEach((task, index) => {
@@ -77,9 +78,13 @@ export default new Vuex.Store({
       })
       state.tasks[i].list = payload.data
     },
-    updateTask(state, payload){
-      state.tasks[payload.taskIndex].list[payload.listIndex].title = payload.title;
-      state.tasks[payload.taskIndex].list[payload.listIndex].notes = payload.notes;
+    updateTask(state, payload) {
+      if (payload.title)
+        state.tasks[payload.taskIndex].list[payload.listIndex].title = payload.title;
+      if (payload.notes)
+        state.tasks[payload.taskIndex].list[payload.listIndex].notes = payload.notes;
+      if (payload.priority || payload.priority === 0)
+        state.tasks[payload.taskIndex].list[payload.listIndex].priority = payload.priority;
     },
     clearTasksArr(state) {
       state.tasks = []
@@ -104,29 +109,29 @@ export default new Vuex.Store({
     },
     addUserTask({ dispatch, commit }, payload) {
       commit('addTask', payload);
-      dispatch('updateDayList', payload)
+      dispatch('pushDayList', payload)
     },
-    addUserSubTask({dispatch, commit }, payload ) {
+    addUserSubTask({ dispatch, commit }, payload) {
       commit('addSubTask', payload);
-      dispatch('updateDayList', payload)
+      dispatch('pushDayList', payload)
     },
     removeUserTask({ dispatch, commit }, payload) {
       if (payload.listIndex > -1) {
         commit('removeTask', payload)
-        dispatch('updateDayList', {
+        dispatch('pushDayList', {
           date: payload.date
         })
       }
     },
-    updateUserTask({ dispatch, commit }, payload){
+    updateUserTask({ dispatch, commit }, payload) {
       commit('updateTask', payload);
-      dispatch('updateDayList', payload);
+      dispatch('pushDayList', payload);
     },
-    reorderUserTask({ dispatch, commit }, payload){
-      commit('updateTaskList', payload);
-      dispatch('updateDayList', payload);
+    reorderUserTask({ dispatch, commit }, payload) {
+      commit('updateTaskOrder', payload);
+      dispatch('pushDayList', payload);
     },
-    updateDayList({ state }, payload) {
+    pushDayList({ state }, payload) {
       let d1 = new Date(payload.date);
       let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`;
       let i;

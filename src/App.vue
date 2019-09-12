@@ -9,13 +9,19 @@ export default {};
 </script>
 
 <style lang="scss">
-.priority-zero i.v-icon {
-  color: #717171;
+.priority-zero {
+  i.v-icon {
+    color: #717171 !important;
+  }
 }
-.priority-one i.v-icon {
-  color: #2191ea;
+.priority-one {
+  i.v-icon {
+    color: #2191ea !important;
+  }
 }
-.priority-two i.v-icon {
-  color: #ed5245;
+.priority-two {
+  i.v-icon {
+    color: #ed5245 !important;
+  }
 }
 </style>

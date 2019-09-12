@@ -33,38 +33,22 @@
             <v-list-item-title>Debug</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
+      </v-list>
 
-        <v-list-group v-model="listgroup">
-          <template v-slot:activator>
-            <v-list-item-content>
-              <v-list-item-title>Labels</v-list-item-title>
-            </v-list-item-content>
-          </template>
-          <v-list-item @click>
+      <v-list dense nav>
+          <v-list-item-content>
+            <v-list-item-title>Labels</v-list-item-title>
+          </v-list-item-content>
+        <v-list-item-group v-model="listPriority">
+          <v-list-item @click v-for="(list , i) in priorityList" :key="i">
             <v-list-item-icon>
-              <v-icon color="red">mdi-circle-slice-8</v-icon>
+              <v-icon :color="list.iconColor">mdi-circle-slice-8</v-icon>
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title>High priority</v-list-item-title>
+              <v-list-item-title>{{list.title}}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item @click>
-            <v-list-item-icon>
-              <v-icon color="blue">mdi-circle-slice-8</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>Normal priority</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item @click>
-            <v-list-item-icon>
-              <v-icon>mdi-circle-slice-8</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>Low priority</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-group>
+        </v-list-item-group>
       </v-list>
 
       <template v-slot:append>
@@ -443,7 +427,12 @@ export default {
       subTasks: []
     },
 
-    listgroup: true,
+    listPriority: null,
+    priorityList: [
+      { iconColor: "red", title: "High priority" },
+      { iconColor: "blue", title: "Normal priority" },
+      { iconColor: "", title: "Low priority" }
+    ],
 
     userid: null,
     date: {
@@ -561,9 +550,9 @@ export default {
     }
   },
   watch: {
-    // todo_items: function() {
-    //   // console.log(this.todo_items);
-    // }
+    listPriority: function() {
+
+    }
   },
   methods: {
     debug() {
@@ -637,14 +626,14 @@ export default {
     },
     toggleIsDone(pos) {
       this.snackbar_taskCompleteSuccess = true;
-      this.updateDayList(pos);
+      this.pushDayList(pos);
     },
-    updateDayList(pos) {
+    pushDayList(pos) {
       let today = new Date();
       let theDate = new Date();
       theDate.setDate(today.getDate() + pos + this.pos);
 
-      this.$store.dispatch("updateDayList", {
+      this.$store.dispatch("pushDayList", {
         date: theDate
       });
     },
@@ -667,20 +656,47 @@ export default {
       return task_index;
     },
     todo_item_menu_click(menu_index, pos, list_index) {
+      let today = new Date();
+      let d1 = new Date();
+      d1.setDate(today.getDate() + pos + this.pos);
+
+      let task_index = this.searchForTaskIndexGivenDate(pos);
       switch (menu_index) {
+        case 0:
+          // this.$el.
+          // this.toggleIsDone(pos);
+          break;
         case 1:
-          let today = new Date();
-          let d1 = new Date();
-          d1.setDate(today.getDate() + pos + this.pos);
-
-          let task_index = this.searchForTaskIndexGivenDate(pos);
-
           this.$store.dispatch("removeUserTask", {
             taskIndex: task_index,
             listIndex: list_index,
             date: d1
           });
           this.snackbar_taskDeleteSuccess = true;
+          break;
+        case 2:
+          this.$store.dispatch("updateUserTask", {
+            taskIndex: task_index,
+            listIndex: list_index,
+            date: d1,
+            priority: 2
+          });
+          break;
+        case 3:
+          this.$store.dispatch("updateUserTask", {
+            taskIndex: task_index,
+            listIndex: list_index,
+            date: d1,
+            priority: 1
+          });
+          break;
+        case 4:
+          this.$store.dispatch("updateUserTask", {
+            taskIndex: task_index,
+            listIndex: list_index,
+            date: d1,
+            priority: 0
+          });
           break;
       }
     },
@@ -701,6 +717,12 @@ export default {
       this.taskEditDialog.task_index = task_index;
       this.taskEditDialog.list_index = list_index;
       this.taskEditDialog.isShow = true;
+      console.log(
+        this.$store.state.tasks[task_index].list[list_index].priority
+      );
+      this.taskEditDialog.priority = this.$store.state.tasks[task_index].list[
+        list_index
+      ].priority;
       this.taskEditDialog.subTasks = this.$store.state.tasks[task_index].list[
         list_index
       ].subTasks;
@@ -715,7 +737,8 @@ export default {
         title: this.taskEditDialog.title,
         notes: this.taskEditDialog.notes,
         taskIndex: this.taskEditDialog.task_index,
-        listIndex: this.taskEditDialog.list_index
+        listIndex: this.taskEditDialog.list_index,
+        priority: this.taskEditDialog.priority
       });
     },
     signOut() {
