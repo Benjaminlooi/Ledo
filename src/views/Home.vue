@@ -36,9 +36,20 @@
       </v-list>
 
       <v-list dense nav>
-          <v-list-item-content>
-            <v-list-item-title>Labels</v-list-item-title>
-          </v-list-item-content>
+        <v-list-item-content>
+          <v-list-item-title>
+            Labels
+            <v-btn
+              v-if="listPriority !== undefined"
+              text
+              x-small
+              color="primary"
+              right
+              absolute
+              @click="listPriority = undefined"
+            >Clear labels</v-btn>
+          </v-list-item-title>
+        </v-list-item-content>
         <v-list-item-group v-model="listPriority">
           <v-list-item @click v-for="(list , i) in priorityList" :key="i">
             <v-list-item-icon>
@@ -88,7 +99,9 @@
       </v-btn>
       <div class="todo-main">
         <!-- ==== FIRST ==== -->
-        <div :class="{'next-day': !isToday(date_1), 'current-day': isToday(date_1)}">
+        <div
+          :class="{'next-day': !isToday(date_1), 'current-day': isToday(date_1), 'any-day': !isTodayOnScreen}"
+        >
           <div class="days-navbar">
             <div v-if="isToday(date_1)" class="date-day">
               Today
@@ -137,7 +150,7 @@
                     </v-list-item-action>
                   </template>
 
-                  <v-list>
+                  <v-list dense>
                     <v-list-item @click="todo_item_menu_click(0,0,index)">
                       <v-list-item-title>Complete</v-list-item-title>
                     </v-list-item>
@@ -166,7 +179,9 @@
         <!-- ==== END FIRST ==== -->
 
         <!-- ==== SECOND ==== -->
-        <div :class="{'next-day': !isToday(date_2), 'current-day': isToday(date_2)}">
+        <div
+          :class="{'next-day': !isToday(date_2), 'current-day': isToday(date_2), 'any-day': !isTodayOnScreen}"
+        >
           <div class="days-navbar">
             <div v-if="isToday(date_2)" class="date-day">
               Today
@@ -207,21 +222,33 @@
                 </v-list-item-content>
 
                 <v-menu open-on-hover dense left offset-x close-delay="200">
-                  <template v-slot:activator="{ on }">
+                  <template v-slot:activator="{ on: taskMenu }">
                     <v-list-item-action style="margin: 0 0 0 16px">
-                      <v-btn small icon>
-                        <v-icon color="grey lighten-1" v-on="on">mdi-dots-vertical</v-icon>
+                      <v-btn small icon v-on="taskMenu">
+                        <v-icon color="grey lighten-1">mdi-dots-vertical</v-icon>
                       </v-btn>
                     </v-list-item-action>
                   </template>
 
-                  <v-list>
-                    <v-list-item
-                      v-for="(item, menu_index) in items"
-                      :key="menu_index"
-                      @click="todo_item_menu_click(menu_index,1,index)"
-                    >
-                      <v-list-item-title>{{ item.title }}</v-list-item-title>
+                  <v-list dense>
+                    <v-list-item @click="todo_item_menu_click(0,1,index)">
+                      <v-list-item-title>Complete</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="todo_item_menu_click(1,1,index)">
+                      <v-list-item-title>Remove</v-list-item-title>
+                    </v-list-item>
+
+                    <v-list-item @click="todo_item_menu_click(2,1,index)">
+                      <v-icon color="red">mdi-circle-slice-8</v-icon>
+                      <v-list-item-title>High Priority</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="todo_item_menu_click(3,1,index)">
+                      <v-icon color="blue">mdi-circle-slice-8</v-icon>
+                      <v-list-item-title>Normal Priority</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="todo_item_menu_click(4,1,index)">
+                      <v-icon>mdi-circle-slice-8</v-icon>
+                      <v-list-item-title>Low Priority</v-list-item-title>
                     </v-list-item>
                   </v-list>
                 </v-menu>
@@ -232,7 +259,9 @@
         <!-- ==== END SECOND ==== -->
 
         <!-- ==== THIRD ==== -->
-        <div :class="{'next-day': !isToday(date_3), 'current-day': isToday(date_3)}">
+        <div
+          :class="{'next-day': !isToday(date_3), 'current-day': isToday(date_3), 'any-day': !isTodayOnScreen}"
+        >
           <div class="days-navbar">
             <div v-if="isToday(date_3)" class="date-day">
               Today
@@ -273,21 +302,33 @@
                 </v-list-item-content>
 
                 <v-menu open-on-hover left offset-x close-delay="200">
-                  <template v-slot:activator="{ on }">
+                  <template v-slot:activator="{ on: taskMenu }">
                     <v-list-item-action style="margin: 0 0 0 16px">
-                      <v-btn small icon>
-                        <v-icon color="grey lighten-1" v-on="on">mdi-dots-vertical</v-icon>
+                      <v-btn small icon v-on="taskMenu">
+                        <v-icon color="grey lighten-1">mdi-dots-vertical</v-icon>
                       </v-btn>
                     </v-list-item-action>
                   </template>
 
-                  <v-list>
-                    <v-list-item
-                      v-for="(item, menu_index) in items"
-                      :key="menu_index"
-                      @click="todo_item_menu_click(menu_index,2,index)"
-                    >
-                      <v-list-item-title>{{ item.title }}</v-list-item-title>
+                  <v-list dense>
+                    <v-list-item @click="todo_item_menu_click(0,2,index)">
+                      <v-list-item-title>Complete</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="todo_item_menu_click(1,2,index)">
+                      <v-list-item-title>Remove</v-list-item-title>
+                    </v-list-item>
+
+                    <v-list-item @click="todo_item_menu_click(2,2,index)">
+                      <v-icon color="red">mdi-circle-slice-8</v-icon>
+                      <v-list-item-title>High Priority</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="todo_item_menu_click(3,2,index)">
+                      <v-icon color="blue">mdi-circle-slice-8</v-icon>
+                      <v-list-item-title>Normal Priority</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="todo_item_menu_click(4,2,index)">
+                      <v-icon>mdi-circle-slice-8</v-icon>
+                      <v-list-item-title>Low Priority</v-list-item-title>
                     </v-list-item>
                   </v-list>
                 </v-menu>
@@ -427,7 +468,7 @@ export default {
       subTasks: []
     },
 
-    listPriority: null,
+    listPriority: undefined,
     priorityList: [
       { iconColor: "red", title: "High priority" },
       { iconColor: "blue", title: "Normal priority" },
@@ -479,8 +520,26 @@ export default {
             );
           }
         });
-        if (tasks.length) return tasks[0].list;
-        else return null;
+        if (tasks.length) {
+          if (this.listPriority !== undefined) {
+            let priorityFilter;
+            switch (this.listPriority) {
+              case 0:
+                priorityFilter = 2;
+                break;
+              case 1:
+                priorityFilter = 1;
+                break;
+              case 2:
+                priorityFilter = 0;
+                break;
+            }
+            let list = tasks[0].list.filter(
+              taskList => taskList.priority == priorityFilter
+            );
+            return list;
+          } else return tasks[0].list;
+        } else return null;
       },
       set(value) {
         let today = new Date();
@@ -507,8 +566,26 @@ export default {
             );
           }
         });
-        if (tasks.length) return tasks[0].list;
-        else return null;
+        if (tasks.length) {
+          if (this.listPriority !== undefined) {
+            let priorityFilter;
+            switch (this.listPriority) {
+              case 0:
+                priorityFilter = 2;
+                break;
+              case 1:
+                priorityFilter = 1;
+                break;
+              case 2:
+                priorityFilter = 0;
+                break;
+            }
+            let list = tasks[0].list.filter(
+              taskList => taskList.priority == priorityFilter
+            );
+            return list;
+          } else return tasks[0].list;
+        } else return null;
       },
       set(value) {
         let today = new Date();
@@ -535,8 +612,26 @@ export default {
             );
           }
         });
-        if (tasks.length) return tasks[0].list;
-        else return null;
+        if (tasks.length) {
+          if (this.listPriority !== undefined) {
+            let priorityFilter;
+            switch (this.listPriority) {
+              case 0:
+                priorityFilter = 2;
+                break;
+              case 1:
+                priorityFilter = 1;
+                break;
+              case 2:
+                priorityFilter = 0;
+                break;
+            }
+            let list = tasks[0].list.filter(
+              taskList => taskList.priority == priorityFilter
+            );
+            return list;
+          } else return tasks[0].list;
+        } else return null;
       },
       set(value) {
         let today = new Date();
@@ -547,12 +642,19 @@ export default {
           data: value
         });
       }
+    },
+    isTodayOnScreen() {
+      if (
+        this.isToday(this.date_1) ||
+        this.isToday(this.date_2) ||
+        this.isToday(this.date_3)
+      ) {
+        return true;
+      } else return false;
     }
   },
   watch: {
-    listPriority: function() {
-
-    }
+    listPriority: function() {}
   },
   methods: {
     debug() {
@@ -796,6 +898,12 @@ export default {
 .next-day {
   flex: 0 0 27.5%;
   max-width: calc(27.5% - 3px);
+  flex-direction: column;
+  margin-left: 3px;
+}
+.any-day {
+  flex: 0 0 33.3% !important;
+  max-width: calc(33.3% - 3px) !important;
   flex-direction: column;
   margin-left: 3px;
 }
