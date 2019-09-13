@@ -7,13 +7,13 @@
 
       <v-btn text @click="dialogLogIn = true">Login</v-btn>
 
-      <v-btn text>Signup</v-btn>
+      <v-btn text @click="dialogSignUp = true">Signup</v-btn>
     </v-app-bar>
 
     <v-content>
-      <v-container style="height: 100vh">
+      <v-container fluid style="height: 100vh; padding: 0;">
         <div class="intro">
-          <div class="intro-text pa-5">
+          <div class="intro-text px-12 py-8">
             <h1>Overcome Procrastination and Start Getting Things Done</h1>
           </div>
           <div class="intro-right"></div>
@@ -21,7 +21,7 @@
       </v-container>
     </v-content>
 
-    <v-dialog v-model="dialogLogIn" max-width="410px">
+    <v-dialog v-model="dialogLogIn" max-width="410px" persistent>
       <v-card>
         <v-toolbar light elevation="0">
           <v-toolbar-title>Login</v-toolbar-title>
@@ -35,31 +35,53 @@
           <v-btn block @click="googleLogin" color="primary">
             <v-icon left>mdi-google</v-icon>Log in with Google Account
           </v-btn>
-          <!-- <v-divider class="my-4"></v-divider>
-          <v-btn block @click="debug1" color="red">
-            <v-icon left>mdi-google</v-icon>Log in with Google Account
-          </v-btn>-->
         </v-card-text>
-        <span class="or-text">OR</span>
         <v-divider class="mx-4"></v-divider>
+        <span class="or-text">OR...</span>
         <v-card-text>
-          <v-text-field label="Email" outlined></v-text-field>
-          <v-text-field label="Password" outlined></v-text-field>
-          <v-btn block dark color="blue darken-1" @click="dialogLogIn = false">Log In</v-btn>
-          <v-divider class="mt-5 mb-3"></v-divider>
+          <v-form ref="formLogin" v-model="formLoginIsValid" :lazy-validation="false">
+            <v-alert v-if="errorLogin" type="error">{{errorLoginMessage}}</v-alert>
+            <v-text-field
+              type="email"
+              v-model="inputEmail"
+              name="email"
+              label="Email"
+              :rules="emailRules"
+              outlined
+            ></v-text-field>
+            <v-text-field
+              :type="inputPasswordLoginShow ? 'text' : 'password'"
+              name="password"
+              v-model="inputPassword"
+              label="Password"
+              :append-icon="inputPasswordLoginShow ? 'mdi-eye' : 'mdi-eye-off'"
+              :rules="passwordRules"
+              hint="At least 6 characters"
+              @click:append="inputPasswordLoginShow = !inputPasswordLoginShow"
+              outlined
+            ></v-text-field>
+            <v-btn
+              block
+              color="blue darken-1"
+              :disabled="!formLoginIsValid"
+              @click="passwordLogin"
+              style="color: white;"
+            >Log In</v-btn>
+            <v-divider class="mt-5 mb-3"></v-divider>
 
-          <span style="width: 100%;">
-            Don't have an account?
-            <a
-              @click="dialogLogIn = false; dialogSignUp = true"
-              class="text-center"
-            >Sign up in seconds</a>
-          </span>
+            <span style="width: 100%;">
+              Don't have an account?
+              <a
+                @click="dialogLogIn = false; dialogSignUp = true"
+                class="text-center"
+              >Sign up in seconds</a>
+            </span>
+          </v-form>
         </v-card-text>
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="dialogSignUp" max-width="410px">
+    <v-dialog v-model="dialogSignUp" max-width="410px" persistent>
       <v-card>
         <v-toolbar light elevation="0">
           <v-toolbar-title>Login</v-toolbar-title>
@@ -73,17 +95,48 @@
           <v-btn block @click="googleLogin" color="primary">
             <v-icon left>mdi-google</v-icon>Sign Up with Google Account
           </v-btn>
-          <!-- <v-divider class="my-4"></v-divider>
-          <v-btn block @click="debug1" color="red">
-            <v-icon left>mdi-google</v-icon>Log in with Google Account
-          </v-btn>-->
         </v-card-text>
-        <v-divider class="mx-4">or</v-divider>
+
+        <v-divider class="mx-4"></v-divider>
+        <span class="or-text">OR...</span>
         <v-card-text>
-          <v-text-field label="Your name" outlined></v-text-field>
-          <v-text-field label="Email" outlined></v-text-field>
-          <v-text-field label="Password" outlined></v-text-field>
-          <v-btn block dark color="blue darken-1" @click="dialogSignUp = false">Create My Account</v-btn>
+          <v-form ref="formSignUp" v-model="formSignUpIsValid" :lazy-validation="false">
+            <v-alert v-if="errorSignUp" type="error">{{errorSignUpMessage}}</v-alert>
+            <v-text-field
+              type="text"
+              name="name"
+              v-model="inputName"
+              label="Your name"
+              :rules="nameRules"
+              outlined
+            ></v-text-field>
+            <v-text-field
+              type="email"
+              v-model="inputEmail"
+              name="email"
+              label="Email"
+              :rules="emailRules"
+              outlined
+            ></v-text-field>
+            <v-text-field
+              :type="inputPasswordLoginShow ? 'text' : 'password'"
+              name="password"
+              v-model="inputPassword"
+              label="Password"
+              :append-icon="inputPasswordLoginShow ? 'mdi-eye' : 'mdi-eye-off'"
+              :rules="passwordRules"
+              hint="At least 6 characters"
+              @click:append="inputPasswordLoginShow = !inputPasswordLoginShow"
+              outlined
+            ></v-text-field>
+            <v-btn
+              block
+              color="blue darken-1"
+              style="color: white;"
+              :disabled="!formSignUpIsValid"
+              @click="passwordSignup"
+            >Create My Account</v-btn>
+          </v-form>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -95,8 +148,28 @@ import { firebase } from "@/plugins/firebase";
 
 export default {
   data: () => ({
-    dialogLogIn: true,
+    dialogLogIn: false,
     dialogSignUp: false,
+
+    inputName: undefined,
+    inputEmail: undefined,
+    inputPassword: undefined,
+    inputPasswordLoginShow: false,
+    nameRules: [v => !!v || "Name is required"],
+    emailRules: [
+      v => !!v || "E-mail is required",
+      v => /.+@.+\..+/.test(v) || "E-mail must be valid"
+    ],
+    passwordRules: [
+      v => !!v || "Password is required",
+      v => (v && v.length >= 6) || "Password must be at least 6 characters"
+    ],
+    formLoginIsValid: false,
+    formSignUpIsValid: false,
+    errorLogin: false,
+    errorLoginMessage: "",
+    errorSignUp: false,
+    errorSignUpMessage: "",
 
     auth: {
       provider: null
@@ -130,6 +203,46 @@ export default {
           // var credential = error.credential;
         });
     },
+    passwordLogin() {
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(this.inputEmail, this.inputPassword)
+        .catch(error => {
+          // Handle Errors here.
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          // ...
+          console.log("error! ", error);
+          this.errorLogin = true;
+          this.errorLoginMessage = errorMessage;
+        });
+    },
+    passwordSignup() {
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(this.inputEmail, this.inputPassword)
+        .then(user => {
+          if (user) {
+            var u = firebase.auth().currentUser;
+            u.updateProfile({
+              displayName: this.inputName
+            })
+              .then(function() {
+                // Update successful.
+              })
+              .catch(function(error) {
+                // An error happened.
+              });
+          }
+        })
+        .catch(function(error) {
+          // Handle Errors here.
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          console.log("error! ", error);
+          // ...
+        });
+    },
     googleLogout() {
       firebase
         .auth()
@@ -143,6 +256,15 @@ export default {
     }
   },
   created() {
+    //check if login(ed)
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        // User is signed in.
+        this.$store.commit("setUser", user);
+        this.$router.push({ path: "/home" });
+      }
+    });
+
     this.auth.provider = new firebase.auth.GoogleAuthProvider();
   }
 };
@@ -160,6 +282,10 @@ export default {
 }
 .intro-right {
   flex: 40%;
+  height: 100%;
+  background: url(../assets/boy.png) bottom left no-repeat,
+    url(../assets/frame.png) center no-repeat, #40596b;
+  background-size: 100%, cover;
 }
 .or-text {
   width: 100%;

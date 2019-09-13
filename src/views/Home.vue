@@ -8,7 +8,7 @@
           </v-list-item-avatar>
 
           <v-list-item-content v-if="$store.state.user">
-            <v-list-item-title>{{$store.state.user.displayName}}</v-list-item-title>
+            <v-list-item-title>{{displayName}}</v-list-item-title>
             <v-list-item-subtitle>Logged In</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -25,14 +25,14 @@
           </v-list-item-content>
         </v-list-item>-->
 
-        <v-list-item @click="debug">
+        <!-- <v-list-item @click="debug">
           <v-list-item-action>
             <v-icon>mdi-logout</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Debug</v-list-item-title>
           </v-list-item-content>
-        </v-list-item>
+        </v-list-item> -->
       </v-list>
 
       <v-list dense nav>
@@ -484,6 +484,9 @@ export default {
     items: [{ title: "Complete" }, { title: "Remove" }, { title: "Label" }]
   }),
   computed: {
+    displayName() {
+      return this.$store.state.user.displayName;
+    },
     date_1() {
       let today = new Date();
       let day_1 = new Date();
@@ -819,9 +822,6 @@ export default {
       this.taskEditDialog.task_index = task_index;
       this.taskEditDialog.list_index = list_index;
       this.taskEditDialog.isShow = true;
-      console.log(
-        this.$store.state.tasks[task_index].list[list_index].priority
-      );
       this.taskEditDialog.priority = this.$store.state.tasks[task_index].list[
         list_index
       ].priority;
@@ -864,6 +864,8 @@ export default {
     //check if login(ed)
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
+        console.log("yes")
+        console.log(user)
         // User is signed in.
         this.$store.commit("setUser", user);
         //get user's tasks
