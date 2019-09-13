@@ -25,14 +25,14 @@
           </v-list-item-content>
         </v-list-item>-->
 
-        <!-- <v-list-item @click="debug">
+        <v-list-item @click="debug">
           <v-list-item-action>
             <v-icon>mdi-logout</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Debug</v-list-item-title>
           </v-list-item-content>
-        </v-list-item> -->
+        </v-list-item>
       </v-list>
 
       <v-list dense nav>
@@ -85,6 +85,24 @@
       >
         <v-icon>mdi-arrow-left-drop-circle-outline</v-icon>
       </v-btn>
+
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            v-on="on"
+            v-if="pos > 1 || pos < -1"
+            absolute
+            x-small
+            icon
+            fab
+            style="top: -3px; right: -3px; z-index: 55;"
+            @click="pos = 0"
+          >
+            <v-icon>mdi-restore</v-icon>
+          </v-btn>
+        </template>
+        <span>Reset</span>
+      </v-tooltip>
       <v-btn
         absolute
         icon
@@ -128,7 +146,7 @@
                 v-for="(todo_item, index) in todo_items_1"
                 :key="index"
                 @click.prevent
-                @dblclick="todo_item_dblclick(0, index)"
+                @dblclick.native="todo_item_dblclick(0, index)"
               >
                 <v-list-item-action style="margin: 0 16px 0 0">
                   <v-checkbox
@@ -208,7 +226,7 @@
                 v-for="(todo_item, index) in todo_items_2"
                 :key="index"
                 @click.prevent
-                @dblclick="todo_item_dblclick(1, index)"
+                @dblclick.native="todo_item_dblclick(1, index)"
               >
                 <v-list-item-action style="margin: 0 16px 0 0">
                   <v-checkbox
@@ -288,7 +306,7 @@
                 v-for="(todo_item, index) in todo_items_3"
                 :key="index"
                 @click.prevent
-                @dblclick="todo_item_dblclick(2, index)"
+                @dblclick.native="todo_item_dblclick(2, index)"
               >
                 <v-list-item-action style="margin: 0 16px 0 0">
                   <v-checkbox
@@ -864,8 +882,6 @@ export default {
     //check if login(ed)
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        console.log("yes")
-        console.log(user)
         // User is signed in.
         this.$store.commit("setUser", user);
         //get user's tasks
