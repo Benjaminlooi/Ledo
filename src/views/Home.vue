@@ -1,84 +1,95 @@
 <template>
   <div>
-    <v-navigation-drawer v-model="drawer" :permanent="true" app>
-      <template v-slot:prepend>
-        <v-list-item two-line>
-          <v-list-item-avatar>
-            <img v-if="$store.state.user" :src="$store.state.user.photoURL" />
-          </v-list-item-avatar>
+    <v-scroll-y-transition>
+      <v-navigation-drawer v-model="drawer" :permanent="true" app>
+        <template v-slot:prepend>
+          <v-list-item two-line>
+            <v-list-item-avatar>
+              <img v-if="$store.state.user" :src="$store.state.user.photoURL" />
+            </v-list-item-avatar>
 
-          <v-list-item-content v-if="$store.state.user">
-            <v-list-item-title>{{displayName}}</v-list-item-title>
-            <v-list-item-subtitle>
-              <v-btn
-                @click="navDrawerView = 1"
-                color="success"
-                x-small
-                outlined
-                style="font-size: 0.7em;"
-              >Edit Profile</v-btn>
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-      </template>
-
-      <v-divider></v-divider>
-      <v-list dense>
-        <!-- <v-list-item>
-          <v-list-item-action>
-            <v-icon>mdi-home</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Home</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>-->
-
-        <v-list-item @click="debug">
-          <v-list-item-action>
-            <v-icon>mdi-logout</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title>Debug</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-
-      <v-list dense nav>
-        <v-list-item-content>
-          <v-list-item-title>
-            Filter
-            <v-btn
-              v-if="listPriority !== undefined"
-              text
-              x-small
-              color="primary"
-              right
-              absolute
-              @click="listPriority = undefined"
-            >Clear filter</v-btn>
-          </v-list-item-title>
-        </v-list-item-content>
-        <v-list-item-group v-model="listPriority">
-          <v-list-item @click v-for="(list , i) in priorityList" :key="i">
-            <v-list-item-icon>
-              <v-icon :color="list.iconColor">mdi-circle-slice-8</v-icon>
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title>{{list.title}}</v-list-item-title>
+            <v-list-item-content v-if="$store.state.user">
+              <v-list-item-title>{{displayName}}</v-list-item-title>
+              <v-list-item-subtitle>
+                <v-btn
+                  @click="navDrawerView = 1"
+                  color="#F0595A"
+                  x-small
+                  outlined
+                  style="font-size: 0.7em;"
+                >Edit Profile</v-btn>
+              </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
-        </v-list-item-group>
-      </v-list>
+        </template>
 
-      <template v-slot:append>
-        <div class="pa-2">
-          <v-btn block color="light-blue darken-1" dark @click="signOut">
-            Logout
-            <v-icon right dark>mdi-logout</v-icon>
-          </v-btn>
-        </div>
-      </template>
-    </v-navigation-drawer>
+        <v-divider></v-divider>
+        <v-list dense>
+          <v-list-item @click="contentView = 0">
+            <v-list-item-action>
+              <v-icon>mdi-home</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>3 days</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list-item @click="contentView = 1">
+            <v-list-item-action>
+              <v-icon>mdi-home</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Calander</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list-item @click="debug">
+            <v-list-item-action>
+              <v-icon>mdi-logout</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Debug</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+
+        <v-list dense nav>
+          <v-list-item-content>
+            <v-list-item-title>
+              Filter
+              <v-btn
+                v-if="listPriority !== undefined"
+                text
+                x-small
+                color="primary"
+                right
+                absolute
+                @click="listPriority = undefined"
+              >Clear filter</v-btn>
+            </v-list-item-title>
+          </v-list-item-content>
+          <v-list-item-group v-model="listPriority">
+            <v-list-item @click v-for="(list , i) in priorityList" :key="i">
+              <v-list-item-icon>
+                <v-icon :color="list.iconColor">mdi-circle-slice-8</v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title>{{list.title}}</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+
+        <template v-slot:append>
+          <div class="pa-2">
+            <v-btn block color="#F0595A" dark @click="signOut">
+              Logout
+              <v-icon right dark>mdi-logout</v-icon>
+            </v-btn>
+          </div>
+        </template>
+      </v-navigation-drawer>
+    </v-scroll-y-transition>
 
     <v-scroll-y-transition>
       <v-navigation-drawer
@@ -108,7 +119,7 @@
                 <v-list-item-avatar size="62" style="margin: 0;">
                   <img class="imageEdit" :src="$store.state.user.photoURL" />
                   <v-fade-transition>
-                    <v-overlay v-if="hover" absolute color="#444">
+                    <v-overlay v-if="hover" absolute color="#F0595A">
                       <v-btn icon width="62" height="62">
                         <v-icon>mdi-camera</v-icon>
                       </v-btn>
@@ -124,7 +135,12 @@
             <v-list-item-title style="font-size: 13px; color: gray;">Name</v-list-item-title>
             <v-list-item-title style="font-size: 13px;">
               {{$store.state.user.displayName}}
-              <v-btn x-small outlined style="font-size: 12px; margin-left: 5px;">Edit</v-btn>
+              <v-btn
+                x-small
+                outlined
+                color="#F0595A"
+                style="font-size: 12px; margin-left: 5px;"
+              >Edit</v-btn>
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
@@ -139,409 +155,434 @@
             <v-list-item-title style="font-size: 13px; color: gray;">Password</v-list-item-title>
             <v-list-item-title style="font-size: 13px;">
               ******
-              <v-btn x-small outlined style="font-size: 12px; margin-left: 5px;">Edit</v-btn>
+              <v-btn
+                x-small
+                outlined
+                color="#F0595A"
+                style="font-size: 12px; margin-left: 5px;"
+              >Edit</v-btn>
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-navigation-drawer>
     </v-scroll-y-transition>
 
-    <v-content>
-      <v-btn
-        absolute
-        icon
-        top
-        right
-        fab
-        x-small
-        style="top: 19px; left: 10px;"
-        @click="movePosPrev"
-      >
-        <v-icon>mdi-arrow-left-drop-circle-outline</v-icon>
-      </v-btn>
-
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
-          <v-btn
-            v-on="on"
-            v-if="pos > 1 || pos < -1"
-            absolute
-            x-small
-            icon
-            fab
-            style="top: -3px; right: -3px; z-index: 55;"
-            @click="pos = 0"
-          >
-            <v-icon>mdi-restore</v-icon>
-          </v-btn>
-        </template>
-        <span>Reset</span>
-      </v-tooltip>
-      <v-btn
-        absolute
-        icon
-        top
-        right
-        fab
-        x-small
-        style="top: 19px; right: 10px;"
-        @click="movePosNext"
-      >
-        <v-icon>mdi-arrow-right-drop-circle-outline</v-icon>
-      </v-btn>
-      <div class="todo-main">
-        <!-- ==== FIRST ==== -->
-        <div
-          :class="{'next-day': !isToday(date_1), 'current-day': isToday(date_1), 'any-day': !isTodayOnScreen}"
-        >
-          <div class="days-navbar">
-            <div v-if="isToday(date_1)" class="date-day">
-              Today
-              <span class="date-label">{{date_1.getMonth() | toMonth}} {{date_1.getDate()}}</span>
-            </div>
-            <div v-else class="date-day">
-              {{date_1.getDay() | toDay }}
-              <span
-                class="date-label"
-              >{{date_1.getMonth() | toMonth}} {{date_1.getDate()}}</span>
-            </div>
-
-            <div class="add-task">
-              <input
-                type="text"
-                placeholder="Add task +"
-                @keydown.enter="onSubmit_addTask($event.target.value, 0);$event.target.value = ''"
-              />
-            </div>
-          </div>
-          <draggable
-            v-model="todo_items_1"
-            style="display: flex;"
-            group="task"
-            @start="drag=true"
-            @end="drag=false"
-          >
-            <v-slide-y-transition
-              class="py-0"
-              style="width: 100%; min-height: 50px;"
-              group
-              tag="v-list"
-            >
-              <v-list-item
-                v-for="(todo_item, index) in todo_items_1"
-                :key="index"
-                @click.prevent
-                @dblclick.native="todo_item_dblclick(0, index)"
-              >
-                <v-list-item-action style="margin: 0 16px 0 0">
-                  <v-checkbox
-                    :class="{'priority-zero': todo_item.priority == 0, 'priority-one': todo_item.priority == 1, 'priority-two': todo_item.priority == 2}"
-                    v-model="todo_item.isDone"
-                    @click.native="toggleIsDone(0, todo_item.isDone)"
-                  ></v-checkbox>
-                </v-list-item-action>
-                <v-list-item-content>
-                  <v-list-item-title v-text="todo_item.title" style="font-size: 0.85em;"></v-list-item-title>
-                </v-list-item-content>
-
-                <v-menu open-on-hover dense left offset-x close-delay="200">
-                  <template v-slot:activator="{ on: taskMenu }">
-                    <v-list-item-action style="margin: 0 0 0 16px">
-                      <v-btn small icon v-on="taskMenu">
-                        <v-icon color="grey lighten-1">mdi-dots-vertical</v-icon>
-                      </v-btn>
-                    </v-list-item-action>
-                  </template>
-
-                  <v-list dense>
-                    <v-list-item v-if="isBeforeToday(0)" @click="todo_item_menu_click(0,0,index)">
-                      <v-list-item-title>Move to today</v-list-item-title>
-                    </v-list-item>
-                    <v-list-item @click="todo_item_menu_click(1,0,index)">
-                      <v-list-item-title>Remove</v-list-item-title>
-                    </v-list-item>
-
-                    <v-list-item @click="todo_item_menu_click(2,0,index)">
-                      <v-icon color="red">mdi-circle-slice-8</v-icon>
-                      <v-list-item-title>High Priority</v-list-item-title>
-                    </v-list-item>
-                    <v-list-item @click="todo_item_menu_click(3,0,index)">
-                      <v-icon color="blue">mdi-circle-slice-8</v-icon>
-                      <v-list-item-title>Normal Priority</v-list-item-title>
-                    </v-list-item>
-                    <v-list-item @click="todo_item_menu_click(4,0,index)">
-                      <v-icon>mdi-circle-slice-8</v-icon>
-                      <v-list-item-title>Low Priority</v-list-item-title>
-                    </v-list-item>
-                  </v-list>
-                </v-menu>
-              </v-list-item>
-            </v-slide-y-transition>
-          </draggable>
-        </div>
-        <!-- ==== END FIRST ==== -->
-
-        <!-- ==== SECOND ==== -->
-        <div
-          :class="{'next-day': !isToday(date_2), 'current-day': isToday(date_2), 'any-day': !isTodayOnScreen}"
-        >
-          <div class="days-navbar">
-            <div v-if="isToday(date_2)" class="date-day">
-              Today
-              <span class="date-label">{{date_2.getMonth() | toMonth}} {{date_2.getDate()}}</span>
-            </div>
-            <div v-else class="date-day">
-              {{date_2.getDay() | toDay }}
-              <span
-                class="date-label"
-              >{{date_2.getMonth() | toMonth}} {{date_2.getDate()}}</span>
-            </div>
-
-            <div class="add-task">
-              <input
-                type="text"
-                placeholder="Add task +"
-                @keydown.enter="onSubmit_addTask($event.target.value, 1);$event.target.value = ''"
-              />
-            </div>
-          </div>
-          <draggable
-            v-model="todo_items_2"
-            style="display: flex;"
-            group="task"
-            @start="drag=true"
-            @end="drag=false"
-          >
-            <v-slide-y-transition
-              class="py-0"
-              style="width: 100%; min-height: 50px;"
-              group
-              tag="v-list"
-            >
-              <v-list-item
-                v-for="(todo_item, index) in todo_items_2"
-                :key="index"
-                @click.prevent
-                @dblclick.native="todo_item_dblclick(1, index)"
-              >
-                <v-list-item-action style="margin: 0 16px 0 0">
-                  <v-checkbox
-                    :class="{'priority-zero': todo_item.priority == 0, 'priority-one': todo_item.priority == 1, 'priority-two': todo_item.priority == 2}"
-                    v-model="todo_item.isDone"
-                    @click.native="toggleIsDone(1, todo_item.isDone)"
-                  ></v-checkbox>
-                </v-list-item-action>
-                <v-list-item-content>
-                  <v-list-item-title v-text="todo_item.title" style="font-size: 0.85em;"></v-list-item-title>
-                </v-list-item-content>
-
-                <v-menu open-on-hover dense left offset-x close-delay="200">
-                  <template v-slot:activator="{ on: taskMenu }">
-                    <v-list-item-action style="margin: 0 0 0 16px">
-                      <v-btn small icon v-on="taskMenu">
-                        <v-icon color="grey lighten-1">mdi-dots-vertical</v-icon>
-                      </v-btn>
-                    </v-list-item-action>
-                  </template>
-
-                  <v-list dense>
-                    <v-list-item v-if="isBeforeToday(0)" @click="todo_item_menu_click(0,1,index)">
-                      <v-list-item-title>Move to today</v-list-item-title>
-                    </v-list-item>
-                    <v-list-item @click="todo_item_menu_click(1,1,index)">
-                      <v-list-item-title>Remove</v-list-item-title>
-                    </v-list-item>
-
-                    <v-list-item @click="todo_item_menu_click(2,1,index)">
-                      <v-icon color="red">mdi-circle-slice-8</v-icon>
-                      <v-list-item-title>High Priority</v-list-item-title>
-                    </v-list-item>
-                    <v-list-item @click="todo_item_menu_click(3,1,index)">
-                      <v-icon color="blue">mdi-circle-slice-8</v-icon>
-                      <v-list-item-title>Normal Priority</v-list-item-title>
-                    </v-list-item>
-                    <v-list-item @click="todo_item_menu_click(4,1,index)">
-                      <v-icon>mdi-circle-slice-8</v-icon>
-                      <v-list-item-title>Low Priority</v-list-item-title>
-                    </v-list-item>
-                  </v-list>
-                </v-menu>
-              </v-list-item>
-            </v-slide-y-transition>
-          </draggable>
-        </div>
-        <!-- ==== END SECOND ==== -->
-
-        <!-- ==== THIRD ==== -->
-        <div
-          :class="{'next-day': !isToday(date_3), 'current-day': isToday(date_3), 'any-day': !isTodayOnScreen}"
-        >
-          <div class="days-navbar">
-            <div v-if="isToday(date_3)" class="date-day">
-              Today
-              <span class="date-label">{{date_3.getMonth() | toMonth}} {{date_3.getDate()}}</span>
-            </div>
-            <div v-else class="date-day">
-              {{date_3.getDay() | toDay }}
-              <span
-                class="date-label"
-              >{{date_3.getMonth() | toMonth}} {{date_3.getDate()}}</span>
-            </div>
-
-            <div class="add-task">
-              <input
-                type="text"
-                placeholder="Add task +"
-                @keydown.enter="onSubmit_addTask($event.target.value, 2);$event.target.value = ''"
-              />
-            </div>
-          </div>
-          <draggable
-            v-model="todo_items_3"
-            style="display: flex;"
-            group="task"
-            @start="drag=true"
-            @end="drag=false"
-          >
-            <v-slide-y-transition
-              class="py-0"
-              style="width: 100%; min-height: 50px;"
-              group
-              tag="v-list"
-            >
-              <v-list-item
-                v-for="(todo_item, index) in todo_items_3"
-                :key="index"
-                @click.prevent
-                @dblclick.native="todo_item_dblclick(2, index)"
-              >
-                <v-list-item-action style="margin: 0 16px 0 0">
-                  <v-checkbox
-                    :class="{'priority-zero': todo_item.priority == 0, 'priority-one': todo_item.priority == 1, 'priority-two': todo_item.priority == 2}"
-                    v-model="todo_item.isDone"
-                    @click.native="toggleIsDone(2, todo_item.isDone)"
-                  ></v-checkbox>
-                </v-list-item-action>
-                <v-list-item-content>
-                  <v-list-item-title v-text="todo_item.title" style="font-size: 0.85em;"></v-list-item-title>
-                </v-list-item-content>
-
-                <v-menu open-on-hover left offset-x close-delay="200">
-                  <template v-slot:activator="{ on: taskMenu }">
-                    <v-list-item-action style="margin: 0 0 0 16px">
-                      <v-btn small icon v-on="taskMenu">
-                        <v-icon color="grey lighten-1">mdi-dots-vertical</v-icon>
-                      </v-btn>
-                    </v-list-item-action>
-                  </template>
-
-                  <v-list dense>
-                    <v-list-item v-if="isBeforeToday(0)" @click="todo_item_menu_click(0,2,index)">
-                      <v-list-item-title>Move to today</v-list-item-title>
-                    </v-list-item>
-                    <v-list-item @click="todo_item_menu_click(1,2,index)">
-                      <v-list-item-title>Remove</v-list-item-title>
-                    </v-list-item>
-
-                    <v-list-item @click="todo_item_menu_click(2,2,index)">
-                      <v-icon color="red">mdi-circle-slice-8</v-icon>
-                      <v-list-item-title>High Priority</v-list-item-title>
-                    </v-list-item>
-                    <v-list-item @click="todo_item_menu_click(3,2,index)">
-                      <v-icon color="blue">mdi-circle-slice-8</v-icon>
-                      <v-list-item-title>Normal Priority</v-list-item-title>
-                    </v-list-item>
-                    <v-list-item @click="todo_item_menu_click(4,2,index)">
-                      <v-icon>mdi-circle-slice-8</v-icon>
-                      <v-list-item-title>Low Priority</v-list-item-title>
-                    </v-list-item>
-                  </v-list>
-                </v-menu>
-              </v-list-item>
-            </v-slide-y-transition>
-          </draggable>
-        </div>
-        <!-- ==== END THIRD ==== -->
-
-        <v-snackbar
-          v-model="snackbar_taskCompleteSuccess"
-          :timeout="3000"
-          color="success"
-          bottom
+    <v-scroll-x-transition>
+      <v-content v-if="contentView == 0">
+        <v-btn
+          absolute
+          icon
+          top
           right
+          fab
+          x-small
+          style="top: 19px; left: 10px;"
+          @click="movePosPrev"
         >
-          Task Completed
-          <v-btn color="white" text @click="snackbar_taskCompleteSuccess = false">Close</v-btn>
-        </v-snackbar>
+          <v-icon>mdi-arrow-left-drop-circle-outline</v-icon>
+        </v-btn>
 
-        <v-snackbar
-          v-model="snackbar_taskDeleteSuccess"
-          :timeout="3000"
-          color="success"
-          bottom
-          right
-        >
-          Task Deleted
-          <v-btn color="white" text @click="snackbar_taskDeleteSuccess = false">Close</v-btn>
-        </v-snackbar>
-
-        <v-dialog v-model="taskEditDialog.isShow" max-width="500px">
+        <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <!-- <v-btn color="primary" dark v-on="on">Open Dialog</v-btn> -->
-          </template>
-          <v-card>
-            <v-card-title style="border-bottom: 1px solid #acacac">
-              <v-text-field
-                label="Subject"
-                v-model="taskEditDialog.title"
-                single-line
-                full-width
-                hide-details
-                class="title"
-              ></v-text-field>
-            </v-card-title>
-            <v-card-title
-              style="border-bottom: 1px solid #acacac; display: flex; flex-direction: column;"
+            <v-btn
+              v-on="on"
+              v-if="pos > 1 || pos < -1"
+              absolute
+              x-small
+              icon
+              fab
+              style="top: -3px; right: -3px; z-index: 55;"
+              @click="pos = 0"
             >
-              <v-text-field
-                style="width: 100%;"
-                label="Add subtask..."
-                single-line
-                v-model="inputSubTask"
-                @keydown.enter="onSubmit_addSubTask($event.target.value, dialogPos)"
-              ></v-text-field>
-              <v-list dense style="width: 100%; min-height: unset;">
-                <v-list-item v-for="(subTask, index) in taskEditDialogSubTasks" :key="index">
-                  <v-list-item-content>
-                    <v-list-item-title>{{subTask.title}}</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-            </v-card-title>
+              <v-icon>mdi-restore</v-icon>
+            </v-btn>
+          </template>
+          <span>Reset</span>
+        </v-tooltip>
+        <v-btn
+          absolute
+          icon
+          top
+          right
+          fab
+          x-small
+          style="top: 19px; right: 10px;"
+          @click="movePosNext"
+        >
+          <v-icon>mdi-arrow-right-drop-circle-outline</v-icon>
+        </v-btn>
+        <div class="todo-main">
+          <!-- ==== FIRST ==== -->
+          <div
+            :class="{'next-day': !isToday(date_1), 'current-day': isToday(date_1), 'any-day': !isTodayOnScreen}"
+          >
+            <div class="days-navbar">
+              <div v-if="isToday(date_1)" class="date-day">
+                Today
+                <span class="date-label">{{date_1.getMonth() | toMonth}} {{date_1.getDate()}}</span>
+              </div>
+              <div v-else class="date-day">
+                {{date_1.getDay() | toDay }}
+                <span
+                  class="date-label"
+                >{{date_1.getMonth() | toMonth}} {{date_1.getDate()}}</span>
+              </div>
 
-            <v-card-text>
-              <v-container fluid>
-                <v-row no-gutters>
-                  <v-col cols="12">
-                    <v-textarea
-                      label="Notes..."
-                      v-model="taskEditDialog.notes"
-                      rows="6"
-                      full-width
-                      no-resize
-                    ></v-textarea>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn block color="light-blue darken-1" dark @click="updateTask">Save task and close</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </div>
-    </v-content>
+              <div class="add-task">
+                <input
+                  type="text"
+                  placeholder="Add task +"
+                  @keydown.enter="onSubmit_addTask($event.target.value, 0);$event.target.value = ''"
+                />
+              </div>
+            </div>
+            <draggable
+              v-model="todo_items_1"
+              style="display: flex;"
+              group="task"
+              @start="drag=true"
+              @end="drag=false"
+            >
+              <v-slide-y-transition
+                class="py-0"
+                style="width: 100%; min-height: 50px;"
+                group
+                tag="v-list"
+              >
+                <v-list-item
+                  v-for="(todo_item, index) in todo_items_1"
+                  :key="index"
+                  @click.prevent
+                  @dblclick.native="todo_item_dblclick(0, index)"
+                >
+                  <v-list-item-action style="margin: 0 16px 0 0">
+                    <v-checkbox
+                      :class="{'priority-zero': todo_item.priority == 0, 'priority-one': todo_item.priority == 1, 'priority-two': todo_item.priority == 2}"
+                      v-model="todo_item.isDone"
+                      @click.native="toggleIsDone(0, todo_item.isDone)"
+                    ></v-checkbox>
+                  </v-list-item-action>
+                  <v-list-item-content>
+                    <v-list-item-title v-text="todo_item.title" style="font-size: 0.85em;"></v-list-item-title>
+                  </v-list-item-content>
+
+                  <v-menu open-on-hover dense left offset-x close-delay="200">
+                    <template v-slot:activator="{ on: taskMenu }">
+                      <v-list-item-action style="margin: 0 0 0 16px">
+                        <v-btn small icon v-on="taskMenu">
+                          <v-icon color="grey lighten-1">mdi-dots-vertical</v-icon>
+                        </v-btn>
+                      </v-list-item-action>
+                    </template>
+
+                    <v-list dense>
+                      <v-list-item v-if="isBeforeToday(0)" @click="todo_item_menu_click(0,0,index)">
+                        <v-list-item-title>Move to today</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="todo_item_menu_click(1,0,index)">
+                        <v-list-item-title>Remove</v-list-item-title>
+                      </v-list-item>
+
+                      <v-list-item @click="todo_item_menu_click(2,0,index)">
+                        <v-icon color="red">mdi-circle-slice-8</v-icon>
+                        <v-list-item-title>High Priority</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="todo_item_menu_click(3,0,index)">
+                        <v-icon color="blue">mdi-circle-slice-8</v-icon>
+                        <v-list-item-title>Normal Priority</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="todo_item_menu_click(4,0,index)">
+                        <v-icon>mdi-circle-slice-8</v-icon>
+                        <v-list-item-title>Low Priority</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+                </v-list-item>
+              </v-slide-y-transition>
+            </draggable>
+          </div>
+          <!-- ==== END FIRST ==== -->
+
+          <!-- ==== SECOND ==== -->
+          <div
+            :class="{'next-day': !isToday(date_2), 'current-day': isToday(date_2), 'any-day': !isTodayOnScreen}"
+          >
+            <div class="days-navbar">
+              <div v-if="isToday(date_2)" class="date-day">
+                Today
+                <span class="date-label">{{date_2.getMonth() | toMonth}} {{date_2.getDate()}}</span>
+              </div>
+              <div v-else class="date-day">
+                {{date_2.getDay() | toDay }}
+                <span
+                  class="date-label"
+                >{{date_2.getMonth() | toMonth}} {{date_2.getDate()}}</span>
+              </div>
+
+              <div class="add-task">
+                <input
+                  type="text"
+                  placeholder="Add task +"
+                  @keydown.enter="onSubmit_addTask($event.target.value, 1);$event.target.value = ''"
+                />
+              </div>
+            </div>
+            <draggable
+              v-model="todo_items_2"
+              style="display: flex;"
+              group="task"
+              @start="drag=true"
+              @end="drag=false"
+            >
+              <v-slide-y-transition
+                class="py-0"
+                style="width: 100%; min-height: 50px;"
+                group
+                tag="v-list"
+              >
+                <v-list-item
+                  v-for="(todo_item, index) in todo_items_2"
+                  :key="index"
+                  @click.prevent
+                  @dblclick.native="todo_item_dblclick(1, index)"
+                >
+                  <v-list-item-action style="margin: 0 16px 0 0">
+                    <v-checkbox
+                      :class="{'priority-zero': todo_item.priority == 0, 'priority-one': todo_item.priority == 1, 'priority-two': todo_item.priority == 2}"
+                      v-model="todo_item.isDone"
+                      @click.native="toggleIsDone(1, todo_item.isDone)"
+                    ></v-checkbox>
+                  </v-list-item-action>
+                  <v-list-item-content>
+                    <v-list-item-title v-text="todo_item.title" style="font-size: 0.85em;"></v-list-item-title>
+                  </v-list-item-content>
+
+                  <v-menu open-on-hover dense left offset-x close-delay="200">
+                    <template v-slot:activator="{ on: taskMenu }">
+                      <v-list-item-action style="margin: 0 0 0 16px">
+                        <v-btn small icon v-on="taskMenu">
+                          <v-icon color="grey lighten-1">mdi-dots-vertical</v-icon>
+                        </v-btn>
+                      </v-list-item-action>
+                    </template>
+
+                    <v-list dense>
+                      <v-list-item v-if="isBeforeToday(0)" @click="todo_item_menu_click(0,1,index)">
+                        <v-list-item-title>Move to today</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="todo_item_menu_click(1,1,index)">
+                        <v-list-item-title>Remove</v-list-item-title>
+                      </v-list-item>
+
+                      <v-list-item @click="todo_item_menu_click(2,1,index)">
+                        <v-icon color="red">mdi-circle-slice-8</v-icon>
+                        <v-list-item-title>High Priority</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="todo_item_menu_click(3,1,index)">
+                        <v-icon color="blue">mdi-circle-slice-8</v-icon>
+                        <v-list-item-title>Normal Priority</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="todo_item_menu_click(4,1,index)">
+                        <v-icon>mdi-circle-slice-8</v-icon>
+                        <v-list-item-title>Low Priority</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+                </v-list-item>
+              </v-slide-y-transition>
+            </draggable>
+          </div>
+          <!-- ==== END SECOND ==== -->
+
+          <!-- ==== THIRD ==== -->
+          <div
+            :class="{'next-day': !isToday(date_3), 'current-day': isToday(date_3), 'any-day': !isTodayOnScreen}"
+          >
+            <div class="days-navbar">
+              <div v-if="isToday(date_3)" class="date-day">
+                Today
+                <span class="date-label">{{date_3.getMonth() | toMonth}} {{date_3.getDate()}}</span>
+              </div>
+              <div v-else class="date-day">
+                {{date_3.getDay() | toDay }}
+                <span
+                  class="date-label"
+                >{{date_3.getMonth() | toMonth}} {{date_3.getDate()}}</span>
+              </div>
+
+              <div class="add-task">
+                <input
+                  type="text"
+                  placeholder="Add task +"
+                  @keydown.enter="onSubmit_addTask($event.target.value, 2);$event.target.value = ''"
+                />
+              </div>
+            </div>
+            <draggable
+              v-model="todo_items_3"
+              style="display: flex;"
+              group="task"
+              @start="drag=true"
+              @end="drag=false"
+            >
+              <v-slide-y-transition
+                class="py-0"
+                style="width: 100%; min-height: 50px;"
+                group
+                tag="v-list"
+              >
+                <v-list-item
+                  v-for="(todo_item, index) in todo_items_3"
+                  :key="index"
+                  @click.prevent
+                  @dblclick.native="todo_item_dblclick(2, index)"
+                >
+                  <v-list-item-action style="margin: 0 16px 0 0">
+                    <v-checkbox
+                      :class="{'priority-zero': todo_item.priority == 0, 'priority-one': todo_item.priority == 1, 'priority-two': todo_item.priority == 2}"
+                      v-model="todo_item.isDone"
+                      @click.native="toggleIsDone(2, todo_item.isDone)"
+                    ></v-checkbox>
+                  </v-list-item-action>
+                  <v-list-item-content>
+                    <v-list-item-title v-text="todo_item.title" style="font-size: 0.85em;"></v-list-item-title>
+                  </v-list-item-content>
+
+                  <v-menu open-on-hover left offset-x close-delay="200">
+                    <template v-slot:activator="{ on: taskMenu }">
+                      <v-list-item-action style="margin: 0 0 0 16px">
+                        <v-btn small icon v-on="taskMenu">
+                          <v-icon color="grey lighten-1">mdi-dots-vertical</v-icon>
+                        </v-btn>
+                      </v-list-item-action>
+                    </template>
+
+                    <v-list dense>
+                      <v-list-item v-if="isBeforeToday(0)" @click="todo_item_menu_click(0,2,index)">
+                        <v-list-item-title>Move to today</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="todo_item_menu_click(1,2,index)">
+                        <v-list-item-title>Remove</v-list-item-title>
+                      </v-list-item>
+
+                      <v-list-item @click="todo_item_menu_click(2,2,index)">
+                        <v-icon color="red">mdi-circle-slice-8</v-icon>
+                        <v-list-item-title>High Priority</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="todo_item_menu_click(3,2,index)">
+                        <v-icon color="blue">mdi-circle-slice-8</v-icon>
+                        <v-list-item-title>Normal Priority</v-list-item-title>
+                      </v-list-item>
+                      <v-list-item @click="todo_item_menu_click(4,2,index)">
+                        <v-icon>mdi-circle-slice-8</v-icon>
+                        <v-list-item-title>Low Priority</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+                </v-list-item>
+              </v-slide-y-transition>
+            </draggable>
+          </div>
+          <!-- ==== END THIRD ==== -->
+
+          <v-snackbar
+            v-model="snackbar_taskCompleteSuccess"
+            :timeout="3000"
+            color="success"
+            bottom
+            right
+          >
+            Task Completed
+            <v-btn color="white" text @click="snackbar_taskCompleteSuccess = false">Close</v-btn>
+          </v-snackbar>
+
+          <v-snackbar
+            v-model="snackbar_taskDeleteSuccess"
+            :timeout="3000"
+            color="success"
+            bottom
+            right
+          >
+            Task Deleted
+            <v-btn color="white" text @click="snackbar_taskDeleteSuccess = false">Close</v-btn>
+          </v-snackbar>
+
+          <v-dialog v-model="taskEditDialog.isShow" max-width="500px">
+            <template v-slot:activator="{ on }">
+              <!-- <v-btn color="primary" dark v-on="on">Open Dialog</v-btn> -->
+            </template>
+            <v-card>
+              <v-card-title style="border-bottom: 1px solid #acacac">
+                <v-text-field
+                  label="Subject"
+                  v-model="taskEditDialog.title"
+                  single-line
+                  full-width
+                  hide-details
+                  class="title"
+                ></v-text-field>
+              </v-card-title>
+              <v-card-title
+                style="border-bottom: 1px solid #acacac; display: flex; flex-direction: column;"
+              >
+                <v-text-field
+                  style="width: 100%;"
+                  label="Add subtask..."
+                  single-line
+                  v-model="inputSubTask"
+                  @keydown.enter="onSubmit_addSubTask($event.target.value, dialogPos)"
+                ></v-text-field>
+                <v-list dense style="width: 100%; min-height: unset;">
+                  <v-list-item v-for="(subTask, index) in taskEditDialogSubTasks" :key="index">
+                    <v-list-item-content>
+                      <v-list-item-title>{{subTask.title}}</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+              </v-card-title>
+
+              <v-card-text>
+                <v-container fluid>
+                  <v-row no-gutters>
+                    <v-col cols="12">
+                      <v-textarea
+                        label="Notes..."
+                        v-model="taskEditDialog.notes"
+                        rows="6"
+                        full-width
+                        no-resize
+                      ></v-textarea>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn
+                  block
+                  color="light-blue darken-1"
+                  dark
+                  @click="updateTask"
+                >Save task and close</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </div>
+      </v-content>
+    </v-scroll-x-transition>
+
+    <v-scroll-x-transition>
+      <v-content v-if="contentView == 1">
+        <v-sheet height="500">
+          <v-calendar
+            type="month"
+            now="2019-01-08"
+            value="2019-01-08"
+            :events="events"
+          ></v-calendar>
+        </v-sheet>
+      </v-content>
+    </v-scroll-x-transition>
 
     <!-- <v-footer color="indigo" app>
       <span class="white--text">&copy; 2019</span>
@@ -567,6 +608,7 @@ export default {
     navDrawerView: 0,
     snackbar_taskCompleteSuccess: false,
     snackbar_taskDeleteSuccess: false,
+    contentView: 0,
     taskEditDialog: {
       isShow: false,
       title: null,
@@ -591,7 +633,34 @@ export default {
       date: null
     },
 
-    items: [{ title: "Complete" }, { title: "Remove" }, { title: "Label" }]
+    items: [{ title: "Complete" }, { title: "Remove" }, { title: "Label" }],
+
+    events: [
+      {
+        name: "Vacation",
+        start: "2018-12-30",
+      },
+      {
+        name: "Meeting",
+        start: "2019-01-07"
+      },
+      {
+        name: "30th Birthday",
+        start: "2019-01-03"
+      },
+      {
+        name: "New Year",
+        start: "2019-01-01"
+      },
+      {
+        name: "Conference",
+        start: "2019-01-21"
+      },
+      {
+        name: "Hackathon",
+        start: "2019-01-30",
+      }
+    ]
   }),
   computed: {
     displayName() {

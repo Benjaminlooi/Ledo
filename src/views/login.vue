@@ -1,11 +1,14 @@
 <template>
   <v-app id="ledo">
     <v-app-bar dense fixed elevation="0">
-      <v-toolbar-title>Ledo</v-toolbar-title>
+      <v-toolbar-title style="display: flex;">
+        <v-icon color="#F0595A">mdi-clipboard-check</v-icon>
+        <span style="padding-left: 2px;">Ledo</span>
+      </v-toolbar-title>
 
       <div class="flex-grow-1"></div>
 
-      <v-btn text @click="dialogLogIn = true">Login</v-btn>
+      <v-btn outlined color="#F0595A" @click="dialogLogIn = true">Login</v-btn>
 
       <v-btn text @click="dialogSignUp = true">Signup</v-btn>
     </v-app-bar>
@@ -14,7 +17,21 @@
       <v-container fluid style="height: 100vh; padding: 0;">
         <div class="intro">
           <div class="intro-text px-12 py-8">
-            <h1>Overcome Procrastination and Start Getting Things Done</h1>
+            <v-sparkline
+              :value="value"
+              :gradient="gradient"
+              :smooth="radius || false"
+              :padding="padding"
+              :line-width="width"
+              :stroke-linecap="lineCap"
+              :gradient-direction="gradientDirection"
+              :fill="fill"
+              :type="type"
+              :auto-line-width="autoLineWidth"
+              auto-draw
+              class="py-4"
+            ></v-sparkline>
+            <h1 style="font-size: 42px;">Overcome Procrastination and Start Getting Things Done</h1>
           </div>
           <div class="intro-right"></div>
         </div>
@@ -62,7 +79,7 @@
             ></v-text-field>
             <v-btn
               block
-              color="blue darken-1"
+              color="#F0595A"
               :disabled="!formLoginIsValid"
               @click="passwordLogin"
               style="color: white;"
@@ -73,7 +90,7 @@
               Don't have an account?
               <a
                 @click="dialogLogIn = false; dialogSignUp = true"
-                class="text-center"
+                class="text-center" style="color: #F0595A"
               >Sign up in seconds</a>
             </span>
           </v-form>
@@ -131,7 +148,7 @@
             ></v-text-field>
             <v-btn
               block
-              color="blue darken-1"
+              color="#F0595A"
               style="color: white;"
               :disabled="!formSignUpIsValid"
               @click="passwordSignup"
@@ -145,6 +162,15 @@
 
 <script>
 import { firebase } from "@/plugins/firebase";
+const gradients = [
+  ["#222"],
+  ["#42b3f4"],
+  ["red", "orange", "yellow"],
+  ["purple", "violet"],
+  ["#00c6ff", "#F0F", "#FF0"],
+  ["#f72047", "#ffd200", "#1feaea"],
+  ["#F0595A", "#ffd200",  "#1FEAEA", "#40596B"]
+];
 
 export default {
   data: () => ({
@@ -173,7 +199,19 @@ export default {
 
     auth: {
       provider: null
-    }
+    },
+
+    width: 4,
+    radius: 10,
+    padding: 3,
+    lineCap: "round",
+    gradient: gradients[6],
+    value: [0, 2, 3, 5, 2, 5, 1, 3, 4, 3, 6, 8, 6, 9, 10],
+    gradientDirection: "top",
+    gradients,
+    fill: false,
+    type: "trend",
+    autoLineWidth: false
   }),
   methods: {
     debug1() {
