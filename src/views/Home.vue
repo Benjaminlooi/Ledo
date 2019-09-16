@@ -38,7 +38,7 @@
       <v-list dense nav>
         <v-list-item-content>
           <v-list-item-title>
-            Labels
+            Filter
             <v-btn
               v-if="listPriority !== undefined"
               text
@@ -47,7 +47,7 @@
               right
               absolute
               @click="listPriority = undefined"
-            >Clear labels</v-btn>
+            >Clear filter</v-btn>
           </v-list-item-title>
         </v-list-item-content>
         <v-list-item-group v-model="listPriority">
@@ -140,8 +140,19 @@
               />
             </div>
           </div>
-          <draggable v-model="todo_items_1" group="people" @start="drag=true" @end="drag=false">
-            <v-slide-y-transition class="py-0" group tag="v-list">
+          <draggable
+            v-model="todo_items_1"
+            style="display: flex;"
+            group="task"
+            @start="drag=true"
+            @end="drag=false"
+          >
+            <v-slide-y-transition
+              class="py-0"
+              style="width: 100%; min-height: 50px;"
+              group
+              tag="v-list"
+            >
               <v-list-item
                 v-for="(todo_item, index) in todo_items_1"
                 :key="index"
@@ -169,8 +180,8 @@
                   </template>
 
                   <v-list dense>
-                    <v-list-item @click="todo_item_menu_click(0,0,index)">
-                      <v-list-item-title>Complete</v-list-item-title>
+                    <v-list-item v-if="isBeforeToday(0)" @click="todo_item_menu_click(0,0,index)">
+                      <v-list-item-title>Move to today</v-list-item-title>
                     </v-list-item>
                     <v-list-item @click="todo_item_menu_click(1,0,index)">
                       <v-list-item-title>Remove</v-list-item-title>
@@ -220,8 +231,19 @@
               />
             </div>
           </div>
-          <draggable v-model="todo_items_2" group="people" @start="drag=true" @end="drag=false">
-            <v-slide-y-transition class="py-0" group tag="v-list">
+          <draggable
+            v-model="todo_items_2"
+            style="display: flex;"
+            group="task"
+            @start="drag=true"
+            @end="drag=false"
+          >
+            <v-slide-y-transition
+              class="py-0"
+              style="width: 100%; min-height: 50px;"
+              group
+              tag="v-list"
+            >
               <v-list-item
                 v-for="(todo_item, index) in todo_items_2"
                 :key="index"
@@ -249,8 +271,8 @@
                   </template>
 
                   <v-list dense>
-                    <v-list-item @click="todo_item_menu_click(0,1,index)">
-                      <v-list-item-title>Complete</v-list-item-title>
+                    <v-list-item v-if="isBeforeToday(0)" @click="todo_item_menu_click(0,1,index)">
+                      <v-list-item-title>Move to today</v-list-item-title>
                     </v-list-item>
                     <v-list-item @click="todo_item_menu_click(1,1,index)">
                       <v-list-item-title>Remove</v-list-item-title>
@@ -300,8 +322,19 @@
               />
             </div>
           </div>
-          <draggable v-model="todo_items_3" group="people" @start="drag=true" @end="drag=false">
-            <v-slide-y-transition class="py-0" group tag="v-list">
+          <draggable
+            v-model="todo_items_3"
+            style="display: flex;"
+            group="task"
+            @start="drag=true"
+            @end="drag=false"
+          >
+            <v-slide-y-transition
+              class="py-0"
+              style="width: 100%; min-height: 50px;"
+              group
+              tag="v-list"
+            >
               <v-list-item
                 v-for="(todo_item, index) in todo_items_3"
                 :key="index"
@@ -329,8 +362,8 @@
                   </template>
 
                   <v-list dense>
-                    <v-list-item @click="todo_item_menu_click(0,2,index)">
-                      <v-list-item-title>Complete</v-list-item-title>
+                    <v-list-item v-if="isBeforeToday(0)" @click="todo_item_menu_click(0,2,index)">
+                      <v-list-item-title>Move to today</v-list-item-title>
                     </v-list-item>
                     <v-list-item @click="todo_item_menu_click(1,2,index)">
                       <v-list-item-title>Remove</v-list-item-title>
@@ -378,7 +411,7 @@
           <v-btn color="white" text @click="snackbar_taskDeleteSuccess = false">Close</v-btn>
         </v-snackbar>
 
-        <v-dialog v-model="taskEditDialog.isShow" max-width="600px">
+        <v-dialog v-model="taskEditDialog.isShow" max-width="500px">
           <template v-slot:activator="{ on }">
             <!-- <v-btn color="primary" dark v-on="on">Open Dialog</v-btn> -->
           </template>
@@ -392,41 +425,23 @@
                 hide-details
                 class="title"
               ></v-text-field>
-              <!-- <v-container>
-                <v-row>
-                  <v-col cols="12">
-                    <v-text-field
-                      label="Subject"
-                      :value="taskEditDialog.title"
-                      single-line
-                      full-width
-                      hide-details
-                      class="title"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col cols="12">
-                    <v-text-field
-                      label="Add subtask..."
-                      value="t"
-                      single-line
-                      full-width
-                      hide-details
-                    ></v-text-field>
-                  </v-col>
-                </v-row>
-              </v-container>-->
             </v-card-title>
-            <v-card-title style="border-bottom: 1px solid #acacac">
+            <v-card-title
+              style="border-bottom: 1px solid #acacac; display: flex; flex-direction: column;"
+            >
               <v-text-field
+                style="width: 100%;"
                 label="Add subtask..."
                 single-line
-                @keydown.enter="onSubmit_addSubTask($event.target.value, 0);$event.target.value = ''"
+                v-model="inputSubTask"
+                @keydown.enter="onSubmit_addSubTask($event.target.value, dialogPos)"
               ></v-text-field>
-              <v-list>
-                <v-list-item
-                  v-for="(subTask, index) in taskEditDialog.subTasks"
-                  :key="index"
-                >{{subTask.title}}</v-list-item>
+              <v-list dense style="width: 100%; min-height: unset;">
+                <v-list-item v-for="(subTask, index) in taskEditDialogSubTasks" :key="index">
+                  <v-list-item-content>
+                    <v-list-item-title>{{subTask.title}}</v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
               </v-list>
             </v-card-title>
 
@@ -485,6 +500,8 @@ export default {
       list_index: null,
       subTasks: []
     },
+    inputSubTask: "",
+    dialogPos: null,
 
     listPriority: undefined,
     priorityList: [
@@ -672,6 +689,23 @@ export default {
       ) {
         return true;
       } else return false;
+    },
+    taskEditDialogSubTasks() {
+      if (
+        this.taskEditDialog.task_index !== null &&
+        this.taskEditDialog.task_index !== undefined
+      ) {
+        console.log(
+          this.$store.state.tasks[this.taskEditDialog.task_index].list[
+            this.taskEditDialog.list_index
+          ].subTasks
+        );
+        console.log("yes");
+
+        return this.$store.state.tasks[this.taskEditDialog.task_index].list[
+          this.taskEditDialog.list_index
+        ].subTasks;
+      } else return [];
     }
   },
   watch: {
@@ -680,6 +714,16 @@ export default {
   methods: {
     debug() {
       //
+    },
+    isBeforeToday(pos) {
+      let today = new Date();
+      let theDate = new Date();
+      theDate.setDate(today.getDate() + pos + this.pos);
+      today.setHours(12, 0, 0, 0);
+      theDate.setHours(12, 0, 0, 0);
+      if (today.getTime() > theDate.getTime()) {
+        return true;
+      } else return false;
     },
     movePosPrev() {
       --this.pos;
@@ -735,6 +779,7 @@ export default {
       });
     },
     onSubmit_addSubTask(inputVal, pos) {
+      this.inputSubTask = "";
       let today = new Date();
       let theDate = new Date();
       theDate.setDate(today.getDate() + pos + this.pos);
@@ -786,8 +831,11 @@ export default {
       let task_index = this.searchForTaskIndexGivenDate(pos);
       switch (menu_index) {
         case 0:
-          // this.$el.
-          // this.toggleIsDone(pos);
+          this.$store.dispatch("moveTaskToToday", {
+            taskIndex: task_index,
+            listIndex: list_index,
+            date: d1,
+          });
           break;
         case 1:
           this.$store.dispatch("removeUserTask", {
@@ -824,12 +872,12 @@ export default {
       }
     },
     todo_item_dblclick(pos, list_index) {
+      this.dialogPos = pos;
       let today = new Date();
       let theDate = new Date();
       theDate.setDate(today.getDate() + pos + this.pos);
 
       let task_index = this.searchForTaskIndexGivenDate(pos);
-
       this.taskEditDialog.title = this.$store.state.tasks[task_index].list[
         list_index
       ].title;

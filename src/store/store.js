@@ -127,6 +127,27 @@ export default new Vuex.Store({
       commit('updateTask', payload);
       dispatch('pushDayList', payload);
     },
+    moveTaskToToday({ state, dispatch, commit }, payload) {
+      let today = new Date();
+      let i;
+      state.tasks.forEach((task, index) => {
+        let d2 = new Date(task.date);
+        if (today.getFullYear() === d2.getFullYear() &&
+          today.getMonth() === d2.getMonth() &&
+          today.getDate() === d2.getDate()) {
+
+          i = index;
+        }
+      })
+      state.tasks[i].list.push(state.tasks[payload.taskIndex].list[payload.listIndex]);
+      state.tasks[payload.taskIndex].list.splice(payload.listIndex, 1);
+      dispatch('pushDayList', {
+        date: payload.date
+      });
+      dispatch('pushDayList', {
+        date: today
+      });
+    },
     reorderUserTask({ dispatch, commit }, payload) {
       commit('updateTaskOrder', payload);
       dispatch('pushDayList', payload);
