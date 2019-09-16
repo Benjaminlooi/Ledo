@@ -163,7 +163,7 @@
                   <v-checkbox
                     :class="{'priority-zero': todo_item.priority == 0, 'priority-one': todo_item.priority == 1, 'priority-two': todo_item.priority == 2}"
                     v-model="todo_item.isDone"
-                    @click.native="toggleIsDone(0)"
+                    @click.native="toggleIsDone(0, todo_item.isDone)"
                   ></v-checkbox>
                 </v-list-item-action>
                 <v-list-item-content>
@@ -254,7 +254,7 @@
                   <v-checkbox
                     :class="{'priority-zero': todo_item.priority == 0, 'priority-one': todo_item.priority == 1, 'priority-two': todo_item.priority == 2}"
                     v-model="todo_item.isDone"
-                    @click.native="toggleIsDone(1)"
+                    @click.native="toggleIsDone(1, todo_item.isDone)"
                   ></v-checkbox>
                 </v-list-item-action>
                 <v-list-item-content>
@@ -345,7 +345,7 @@
                   <v-checkbox
                     :class="{'priority-zero': todo_item.priority == 0, 'priority-one': todo_item.priority == 1, 'priority-two': todo_item.priority == 2}"
                     v-model="todo_item.isDone"
-                    @click.native="toggleIsDone(2)"
+                    @click.native="toggleIsDone(2, todo_item.isDone)"
                   ></v-checkbox>
                 </v-list-item-action>
                 <v-list-item-content>
@@ -712,8 +712,9 @@ export default {
     listPriority: function() {}
   },
   methods: {
-    debug() {
+    debug(a) {
       //
+      console.log(a);
     },
     isBeforeToday(pos) {
       let today = new Date();
@@ -792,8 +793,8 @@ export default {
         listIndex: this.taskEditDialog.list_index
       });
     },
-    toggleIsDone(pos) {
-      this.snackbar_taskCompleteSuccess = true;
+    toggleIsDone(pos, isDone) {
+      if (isDone) this.snackbar_taskCompleteSuccess = true;
       this.pushDayList(pos);
     },
     pushDayList(pos) {
@@ -834,7 +835,7 @@ export default {
           this.$store.dispatch("moveTaskToToday", {
             taskIndex: task_index,
             listIndex: list_index,
-            date: d1,
+            date: d1
           });
           break;
         case 1:
