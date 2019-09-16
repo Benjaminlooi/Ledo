@@ -391,7 +391,7 @@
 
         <v-snackbar
           v-model="snackbar_taskCompleteSuccess"
-          :timeout="4000"
+          :timeout="3000"
           color="success"
           bottom
           right
@@ -402,7 +402,7 @@
 
         <v-snackbar
           v-model="snackbar_taskDeleteSuccess"
-          :timeout="4000"
+          :timeout="3000"
           color="success"
           bottom
           right
@@ -709,7 +709,7 @@ export default {
     }
   },
   watch: {
-    listPriority: function() {}
+    // listPriority: function() {}
   },
   methods: {
     debug(a) {
