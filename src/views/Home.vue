@@ -167,7 +167,7 @@
       </v-navigation-drawer>
     </v-scroll-y-transition>
 
-    <v-scroll-x-transition>
+    <v-scroll-x-transition leave-absolute>
       <v-content v-if="contentView == 0">
         <v-btn
           absolute
@@ -571,12 +571,12 @@
       </v-content>
     </v-scroll-x-transition>
 
-    <v-scroll-x-transition>
+    <v-scroll-x-transition leave-absolute>
       <v-content v-if="contentView == 1">
-        <v-sheet height="500">
+        <v-sheet height="100vh">
           <v-calendar
             type="month"
-            now="2019-01-08"
+            now="2019-09-08"
             value="2019-01-08"
             :events="events"
           ></v-calendar>
