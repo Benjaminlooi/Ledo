@@ -9,7 +9,15 @@
 
           <v-list-item-content v-if="$store.state.user">
             <v-list-item-title>{{displayName}}</v-list-item-title>
-            <v-list-item-subtitle>Logged In</v-list-item-subtitle>
+            <v-list-item-subtitle>
+              <v-btn
+                @click="navDrawerView = 1"
+                color="success"
+                x-small
+                outlined
+                style="font-size: 0.7em;"
+              >Edit Profile</v-btn>
+            </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
       </template>
@@ -71,6 +79,72 @@
         </div>
       </template>
     </v-navigation-drawer>
+
+    <v-scroll-y-transition>
+      <v-navigation-drawer
+        v-if="navDrawerView == 1"
+        v-model="drawer"
+        :permanent="true"
+        absolute
+        style="z-index: 99;"
+      >
+        <v-subheader style="font-weight: bold; font-size: 1rem; color: rgba(0, 0, 0, 0.74);">
+          Personal information
+          <div class="flex-grow-1"></div>
+          <v-btn icon @click="navDrawerView = 0">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-subheader>
+        <!-- <v-list-item-content>
+            <v-btn icon width="62" height="62">
+              <v-icon>mdi-camera</v-icon>
+            </v-btn>
+        </v-list-item-content>-->
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title style="font-size: 13px; color: gray;">Photo</v-list-item-title>
+            <v-list-item-title style="font-size: 13px;">
+              <v-hover v-slot:default="{ hover }">
+                <v-list-item-avatar size="62" style="margin: 0;">
+                  <img class="imageEdit" :src="$store.state.user.photoURL" />
+                  <v-fade-transition>
+                    <v-overlay v-if="hover" absolute color="#444">
+                      <v-btn icon width="62" height="62">
+                        <v-icon>mdi-camera</v-icon>
+                      </v-btn>
+                    </v-overlay>
+                  </v-fade-transition>
+                </v-list-item-avatar>
+              </v-hover>
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title style="font-size: 13px; color: gray;">Name</v-list-item-title>
+            <v-list-item-title style="font-size: 13px;">
+              {{$store.state.user.displayName}}
+              <v-btn x-small outlined style="font-size: 12px; margin-left: 5px;">Edit</v-btn>
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title style="font-size: 13px; color: gray;">Email</v-list-item-title>
+            <v-list-item-title style="font-size: 13px;">{{$store.state.user.email}}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title style="font-size: 13px; color: gray;">Password</v-list-item-title>
+            <v-list-item-title style="font-size: 13px;">
+              ******
+              <v-btn x-small outlined style="font-size: 12px; margin-left: 5px;">Edit</v-btn>
+            </v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-navigation-drawer>
+    </v-scroll-y-transition>
 
     <v-content>
       <v-btn
@@ -490,6 +564,7 @@ export default {
   data: () => ({
     pos: 0,
     drawer: null,
+    navDrawerView: 0,
     snackbar_taskCompleteSuccess: false,
     snackbar_taskDeleteSuccess: false,
     taskEditDialog: {
@@ -1010,5 +1085,9 @@ export default {
   // border-bottom: 1px solid #acacac;
   padding-top: 6px;
   text-align: center;
+}
+.imageEdit:hover {
+  cursor: pointer;
+  background: white;
 }
 </style>
