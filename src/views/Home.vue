@@ -604,7 +604,9 @@
       <v-content v-if="contentView == 1">
         <v-sheet height="100vh">
           <v-calendar
+          style="padding-left: 2.5px;"
             @click:date="calendarDateOnClick"
+            event-color="#F0595A"
             type="month"
             :now="calendarNow"
             :value="calendarNow"
@@ -658,7 +660,7 @@ export default {
 
     listPriority: undefined,
     priorityList: [
-      { iconColor: "red", title: "High priority" },
+      { iconColor: "#F0595A", title: "High priority" },
       { iconColor: "blue", title: "Normal priority" },
       { iconColor: "", title: "Low priority" }
     ],

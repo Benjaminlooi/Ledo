@@ -21,7 +21,7 @@ export default {};
 }
 .priority-two {
   i.v-icon {
-    color: #ed5245 !important;
+    color: #F0595A !important;
   }
 }
 </style>
