@@ -9,7 +9,7 @@
             </v-list-item-avatar>
 
             <v-list-item-content v-if="$store.state.user">
-              <v-list-item-title>{{displayName}}</v-list-item-title>
+              <v-list-item-title>{{$store.state.user.displayName}}</v-list-item-title>
               <v-list-item-subtitle>
                 <v-btn
                   @click="navDrawerView = 1"
@@ -30,27 +30,27 @@
               <v-icon>mdi-home</v-icon>
             </v-list-item-action>
             <v-list-item-content>
-              <v-list-item-title>3 days</v-list-item-title>
+              <v-list-item-title>Home</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
 
           <v-list-item @click="contentView = 1">
             <v-list-item-action>
-              <v-icon>mdi-home</v-icon>
+              <v-icon>mdi-calendar</v-icon>
             </v-list-item-action>
             <v-list-item-content>
-              <v-list-item-title>Calander</v-list-item-title>
+              <v-list-item-title>Month View</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item @click="debug">
+          <!-- <v-list-item @click="debug">
             <v-list-item-action>
               <v-icon>mdi-logout</v-icon>
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>Debug</v-list-item-title>
             </v-list-item-content>
-          </v-list-item>
+          </v-list-item> -->
         </v-list>
 
         <v-list dense nav>
@@ -133,15 +133,44 @@
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title style="font-size: 13px; color: gray;">Name</v-list-item-title>
-            <v-list-item-title style="font-size: 13px;">
+            <v-list-item-title v-if="!editingName" style="font-size: 13px;">
               {{$store.state.user.displayName}}
               <v-btn
                 x-small
                 outlined
                 color="#F0595A"
                 style="font-size: 12px; margin-left: 5px;"
+                @click="editingName = true; inputName = $store.state.user.displayName"
               >Edit</v-btn>
             </v-list-item-title>
+            <v-list-item-subtitle v-else style="font-size: 13px;">
+              <v-form ref="formSignUp" v-model="formChangeNameHasErrors" :lazy-validation="false">
+                <v-text-field
+                  type="text"
+                  ref="inputNameChange"
+                  v-model="inputName"
+                  label="Your name"
+                  :rules="nameRules"
+                  style="padding: 2px;"
+                  single-line
+                  solo
+                ></v-text-field>
+                <v-btn
+                  x-small
+                  outlined
+                  color="#F0595A"
+                  style="font-size: 12px; margin-left: 5px;"
+                  @click="changeName"
+                >Save</v-btn>
+                <v-btn
+                  x-small
+                  text
+                  color="#F0595A"
+                  style="font-size: 12px; margin-left: 5px;"
+                  @click="editingName = false; inputName = ''"
+                >Cancel</v-btn>
+              </v-form>
+            </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
         <v-list-item>
@@ -574,26 +603,21 @@
     <v-scroll-x-transition leave-absolute>
       <v-content v-if="contentView == 1">
         <v-sheet height="100vh">
-          <v-calendar
-            type="month"
-            now="2019-09-08"
-            value="2019-01-08"
-            :events="events"
-          ></v-calendar>
+          <v-calendar @click:date="calendarDateOnClick" type="month" :now="calendarNow" :value="calendarNow" :events="events"></v-calendar>
         </v-sheet>
       </v-content>
     </v-scroll-x-transition>
 
-    <!-- <v-footer color="indigo" app>
-      <span class="white--text">&copy; 2019</span>
-    </v-footer>-->
+      <!-- <v-footer color="indigo" app>
+        <span class="white--text">&copy; 2019</span>
+      </v-footer> -->
   </div>
 </template>
 
 <script>
 import { firebase } from "@/plugins/firebase";
 import draggable from "vuedraggable";
-import { months, day } from "@/utils/date";
+import { months, day, getDaysInMonth, formatDate } from "@/utils/date";
 
 export default {
   components: {
@@ -606,6 +630,12 @@ export default {
     pos: 0,
     drawer: null,
     navDrawerView: 0,
+    editingName: false,
+    inputName: "",
+    nameRules: [v => !!v || "Name is required"],
+    editingPassword: false,
+    formChangeNameHasErrors: true,
+
     snackbar_taskCompleteSuccess: false,
     snackbar_taskDeleteSuccess: false,
     contentView: 0,
@@ -633,39 +663,9 @@ export default {
       date: null
     },
 
-    items: [{ title: "Complete" }, { title: "Remove" }, { title: "Label" }],
-
-    events: [
-      {
-        name: "Vacation",
-        start: "2018-12-30",
-      },
-      {
-        name: "Meeting",
-        start: "2019-01-07"
-      },
-      {
-        name: "30th Birthday",
-        start: "2019-01-03"
-      },
-      {
-        name: "New Year",
-        start: "2019-01-01"
-      },
-      {
-        name: "Conference",
-        start: "2019-01-21"
-      },
-      {
-        name: "Hackathon",
-        start: "2019-01-30",
-      }
-    ]
+    items: [{ title: "Complete" }, { title: "Remove" }, { title: "Label" }]
   }),
   computed: {
-    displayName() {
-      return this.$store.state.user.displayName;
-    },
     date_1() {
       let today = new Date();
       let day_1 = new Date();
@@ -850,15 +850,44 @@ export default {
           this.taskEditDialog.list_index
         ].subTasks;
       } else return [];
+    },
+    calendarNow() {
+      let d = new Date();
+      return formatDate(d);
+    },
+    events() {
+      let events = [];
+      this.$store.state.tasks.forEach((task, index) => {
+        let d = new Date(task.date);
+        let date = formatDate(d);
+        if (task.list !== undefined || task.list !== 0) {
+          task.list.forEach((list, index) => {
+            events.push({
+              name: list.title,
+              start: date
+            });
+          });
+        }
+      });
+      return events;
+    },
+    nameChangeForm() {
+      return {
+        inputNameChange: this.inputName
+      };
     }
   },
   watch: {
-    // listPriority: function() {}
+    contentView: function(val) {
+      if (val === 1) {
+        this.getRemainingTasksForMonth();
+      }
+    }
   },
   methods: {
     debug(a) {
       //
-      console.log(a);
+      // console.log(a)
     },
     isBeforeToday(pos) {
       let today = new Date();
@@ -1053,6 +1082,55 @@ export default {
         listIndex: this.taskEditDialog.list_index,
         priority: this.taskEditDialog.priority
       });
+    },
+    getRemainingTasksForMonth() {
+      let today = new Date();
+      let currentMonth = today.getMonth();
+      let currentYear = today.getFullYear();
+      let daysInCurrentMonth = getDaysInMonth(currentMonth, currentYear);
+      // console.log(daysInCurrentMonth)
+      daysInCurrentMonth.forEach(days => {
+        let d1 = new Date(days);
+        let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`;
+        if (!this.$store.state.gettedList.includes(date)) {
+          this.$store.dispatch("getDayList", { date: d1 });
+        }
+      });
+    },
+    calendarDateOnClick(payload){
+      let d = new Date(payload.date);
+      let today = new Date();
+      let daysDifference = d.getDate() - today.getDate();
+      console.log(daysDifference)
+      this.pos = daysDifference;
+      this.contentView = 0;
+    },
+    changeName() {
+      this.formChangeNameHasErrors = false;
+
+      Object.keys(this.nameChangeForm).forEach(f => {
+        if (!this.nameChangeForm[f]) this.formChangeNameHasErrors = true;
+
+        this.$refs[f].validate(true);
+      });
+
+      if (!this.formChangeNameHasErrors) {
+        var user = firebase.auth().currentUser;
+        this.editingName = false;
+        user
+          .updateProfile({
+            displayName: this.inputName
+          })
+          .then(_ => {
+            this.inputName = "";
+            var user = firebase.auth().currentUser;
+            this.$store.commit("setUser", user);
+            // this.$store.commit("setUser", user);
+          })
+          .catch(function(error) {
+            // An error happened.
+          });
+      }
     },
     signOut() {
       firebase

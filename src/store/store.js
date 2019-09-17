@@ -92,12 +92,9 @@ export default new Vuex.Store({
   },
   actions: {
     getDayList({ commit, state }, payload) {
-      //clear current tasks array
-      // commit('clearTasksArr');
       let d1 = new Date(payload.date);
       let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`;
       state.gettedList.push(date);
-      // console.log(date)
 
       if (state.user) {
         firestore.collection(state.user.uid).doc(date).get().then(doc => {
