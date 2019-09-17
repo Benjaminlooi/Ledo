@@ -1112,7 +1112,6 @@ export default {
       const diffTime = d - today;
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       this.pos = diffDays;
-      console.log(diffDays)
       this.contentView = 0;
     },
     changeName() {
