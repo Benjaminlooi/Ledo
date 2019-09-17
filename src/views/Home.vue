@@ -50,7 +50,7 @@
             <v-list-item-content>
               <v-list-item-title>Debug</v-list-item-title>
             </v-list-item-content>
-          </v-list-item> -->
+          </v-list-item>-->
         </v-list>
 
         <v-list dense nav>
@@ -603,14 +603,20 @@
     <v-scroll-x-transition leave-absolute>
       <v-content v-if="contentView == 1">
         <v-sheet height="100vh">
-          <v-calendar @click:date="calendarDateOnClick" type="month" :now="calendarNow" :value="calendarNow" :events="events"></v-calendar>
+          <v-calendar
+            @click:date="calendarDateOnClick"
+            type="month"
+            :now="calendarNow"
+            :value="calendarNow"
+            :events="events"
+          ></v-calendar>
         </v-sheet>
       </v-content>
     </v-scroll-x-transition>
 
-      <!-- <v-footer color="indigo" app>
+    <!-- <v-footer color="indigo" app>
         <span class="white--text">&copy; 2019</span>
-      </v-footer> -->
+    </v-footer>-->
   </div>
 </template>
 
@@ -1097,12 +1103,14 @@ export default {
         }
       });
     },
-    calendarDateOnClick(payload){
+    calendarDateOnClick(payload) {
       let d = new Date(payload.date);
       let today = new Date();
-      let daysDifference = d.getDate() - today.getDate();
-      console.log(daysDifference)
-      this.pos = daysDifference;
+      d.setHours(0,0,0,0)
+      today.setHours(0,0,0,0);
+      const diffTime = Math.abs(d - today);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      this.pos = diffDays;
       this.contentView = 0;
     },
     changeName() {
