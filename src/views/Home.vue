@@ -196,7 +196,6 @@
             <v-list-item-subtitle v-else style="font-size: 13px;">
               <v-form v-model="formChangePasswordHasErrors" :lazy-validation="false">
                 <v-text-field
-                  type="text"
                   ref="inputPasswordChange"
                   v-model="inputPassword"
                   label="New Password"
@@ -204,9 +203,11 @@
                   style="padding: 2px;"
                   single-line
                   solo
+                  :type="inputPasswordChangeShow ? 'text' : 'password'"
+                  :append-icon="inputPasswordChangeShow ? 'mdi-eye' : 'mdi-eye-off'"
+                  @click:append="inputPasswordChangeShow = !inputPasswordChangeShow"
                 ></v-text-field>
                 <v-text-field
-                  type="text"
                   ref="inputPasswordChangeConfirmation"
                   v-model="inputPasswordConfirmation"
                   label="Retype new Password"
@@ -214,6 +215,9 @@
                   style="padding: 2px;"
                   single-line
                   solo
+                  :type="inputPasswordChangeConfirmationShow ? 'text' : 'password'"
+                  :append-icon="inputPasswordChangeConfirmationShow ? 'mdi-eye' : 'mdi-eye-off'"
+                  @click:append="inputPasswordChangeConfirmationShow = !inputPasswordChangeConfirmationShow"
                 ></v-text-field>
                 <v-btn
                   x-small
@@ -691,15 +695,14 @@ export default {
     editingPassword: false,
     inputPassword: "",
     inputPasswordConfirmation: "",
+    inputPasswordChangeShow: false,
+    inputPasswordChangeConfirmationShow: false,
     passwordRules: [
       v => !!v || "Password is required",
       v => (v && v.length >= 6) || "Password must be at least 6 characters"
     ],
     passwordConfirmationRules: [
-      v => !!v || "Password is required",
-      v =>
-        (v && v == this.inputPassword) ||
-        "Password must be at least 6 characters"
+      v => !!v || "Password Confirmation is required"
     ],
     formChangePasswordHasErrors: true,
 
@@ -1220,21 +1223,23 @@ export default {
       });
 
       if (!this.formChangePasswordHasErrors) {
-        // var user = firebase.auth().currentUser;
-        // this.editingPassword = false;
-        // user
-        //   .updateProfile({
-        //     displayName: this.inputName
-        //   })
-        //   .then(_ => {
-        //     this.inputName = "";
-        //     var user = firebase.auth().currentUser;
-        //     this.$store.commit("setUser", user);
-        //     // this.$store.commit("setUser", user);
-        //   })
-        //   .catch(function(error) {
-        //     // An error happened.
-        //   });
+        if (this.inputPassword == this.inputPasswordConfirmation) {
+          var user = firebase.auth().currentUser;
+          let newPassword = this.inputPasswordConfirmation;
+          this.editingPassword = false;
+          user
+            .updatePassword(newPassword)
+            .then(_ => {
+              this.inputPassword = "";
+              this.inputPasswordConfirmation = "";
+              var user = firebase.auth().currentUser;
+              this.$store.commit("setUser", user);
+            })
+            .catch(function(error) {
+              // An error happened.
+              console.log(error)
+            });
+        }
       }
     },
     signOut() {
