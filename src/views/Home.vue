@@ -852,7 +852,6 @@ export default {
             this.taskEditDialog.list_index
           ].subTasks
         );
-        console.log("yes");
 
         return this.$store.state.tasks[this.taskEditDialog.task_index].list[
           this.taskEditDialog.list_index
@@ -1110,9 +1109,10 @@ export default {
       let today = new Date();
       d.setHours(0,0,0,0)
       today.setHours(0,0,0,0);
-      const diffTime = Math.abs(d - today);
+      const diffTime = d - today;
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       this.pos = diffDays;
+      console.log(diffDays)
       this.contentView = 0;
     },
     changeName() {
