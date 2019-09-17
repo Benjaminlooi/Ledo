@@ -144,7 +144,7 @@
               >Edit</v-btn>
             </v-list-item-title>
             <v-list-item-subtitle v-else style="font-size: 13px;">
-              <v-form ref="formSignUp" v-model="formChangeNameHasErrors" :lazy-validation="false">
+              <v-form v-model="formChangeNameHasErrors" :lazy-validation="false">
                 <v-text-field
                   type="text"
                   ref="inputNameChange"
@@ -182,15 +182,60 @@
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title style="font-size: 13px; color: gray;">Password</v-list-item-title>
-            <v-list-item-title style="font-size: 13px;">
+            <v-list-item-title v-if="!editingPassword" style="font-size: 13px;">
               ******
               <v-btn
+                v-if="userAccountProvider == 'password'"
                 x-small
                 outlined
                 color="#F0595A"
                 style="font-size: 12px; margin-left: 5px;"
+                @click="editingPassword = true"
               >Edit</v-btn>
             </v-list-item-title>
+            <v-list-item-subtitle v-else style="font-size: 13px;">
+              <v-form v-model="formChangePasswordHasErrors" :lazy-validation="false">
+                <v-text-field
+                  type="text"
+                  ref="inputPasswordChange"
+                  v-model="inputPassword"
+                  label="New Password"
+                  :rules="passwordRules"
+                  style="padding: 2px;"
+                  single-line
+                  solo
+                ></v-text-field>
+                <v-text-field
+                  type="text"
+                  ref="inputPasswordChangeConfirmation"
+                  v-model="inputPasswordConfirmation"
+                  label="Retype new Password"
+                  :rules="passwordConfirmationRules"
+                  style="padding: 2px;"
+                  single-line
+                  solo
+                ></v-text-field>
+                <v-btn
+                  x-small
+                  outlined
+                  color="#F0595A"
+                  style="font-size: 12px; margin-left: 5px;"
+                  @click="changePassword"
+                >Save</v-btn>
+                <v-btn
+                  x-small
+                  text
+                  color="#F0595A"
+                  style="font-size: 12px; margin-left: 5px;"
+                  @click="editingPassword = false; inputPassword = '';inputPasswordConfirmation = ''"
+                >Cancel</v-btn>
+              </v-form>
+            </v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item v-if="userAccountProvider == 'google.com'">
+          <v-list-item-content>
+            <v-list-item-subtitle>Your account is linked with Google</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
       </v-navigation-drawer>
@@ -604,7 +649,7 @@
       <v-content v-if="contentView == 1">
         <v-sheet height="100vh">
           <v-calendar
-          style="padding-left: 2.5px;"
+            style="padding-left: 2.5px;"
             @click:date="calendarDateOnClick"
             event-color="#F0595A"
             type="month"
@@ -637,12 +682,26 @@ export default {
   data: () => ({
     pos: 0,
     drawer: null,
+
     navDrawerView: 0,
     editingName: false,
     inputName: "",
     nameRules: [v => !!v || "Name is required"],
-    editingPassword: false,
     formChangeNameHasErrors: true,
+    editingPassword: false,
+    inputPassword: "",
+    inputPasswordConfirmation: "",
+    passwordRules: [
+      v => !!v || "Password is required",
+      v => (v && v.length >= 6) || "Password must be at least 6 characters"
+    ],
+    passwordConfirmationRules: [
+      v => !!v || "Password is required",
+      v =>
+        (v && v == this.inputPassword) ||
+        "Password must be at least 6 characters"
+    ],
+    formChangePasswordHasErrors: true,
 
     snackbar_taskCompleteSuccess: false,
     snackbar_taskDeleteSuccess: false,
@@ -882,6 +941,15 @@ export default {
       return {
         inputNameChange: this.inputName
       };
+    },
+    passwordChangeForm() {
+      return {
+        inputPasswordChange: this.inputPassword,
+        inputPasswordChangeConfirmation: this.inputPasswordConfirmation
+      };
+    },
+    userAccountProvider() {
+      return this.$store.state.user.providerData[0].providerId;
     }
   },
   watch: {
@@ -1107,8 +1175,8 @@ export default {
     calendarDateOnClick(payload) {
       let d = new Date(payload.date);
       let today = new Date();
-      d.setHours(0,0,0,0)
-      today.setHours(0,0,0,0);
+      d.setHours(0, 0, 0, 0);
+      today.setHours(0, 0, 0, 0);
       const diffTime = d - today;
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       this.pos = diffDays;
@@ -1141,12 +1209,41 @@ export default {
           });
       }
     },
+    changePassword() {
+      this.formChangePasswordHasErrors = false;
+
+      Object.keys(this.passwordChangeForm).forEach(f => {
+        if (!this.passwordChangeForm[f])
+          this.formChangePasswordHasErrors = true;
+
+        this.$refs[f].validate(true);
+      });
+
+      if (!this.formChangePasswordHasErrors) {
+        // var user = firebase.auth().currentUser;
+        // this.editingPassword = false;
+        // user
+        //   .updateProfile({
+        //     displayName: this.inputName
+        //   })
+        //   .then(_ => {
+        //     this.inputName = "";
+        //     var user = firebase.auth().currentUser;
+        //     this.$store.commit("setUser", user);
+        //     // this.$store.commit("setUser", user);
+        //   })
+        //   .catch(function(error) {
+        //     // An error happened.
+        //   });
+      }
+    },
     signOut() {
       firebase
         .auth()
         .signOut()
-        .then(function() {
+        .then(() => {
           // Sign-out successful.
+          this.$store.commit("clearTasksArr");
         })
         .catch(function(error) {
           // An error happened.
