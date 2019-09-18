@@ -21,6 +21,14 @@ export default new Vuex.Store({
     setDayList(state, payload) {
       state.tasks.push(payload)
     },
+    initDayTask(state, payload) {
+      let d1 = new Date(payload.date);
+      let date = `${d1.getMonth() + 1}-${d1.getDate()}-${d1.getFullYear()}`
+      state.tasks.push({
+        date: date,
+        list: []
+      })
+    },
     addTask(state, payload) {
       let d1 = new Date(payload.date);
       let isWrote = false;
@@ -65,7 +73,6 @@ export default new Vuex.Store({
       state.tasks[payload.taskIndex].list.splice(payload.listIndex, 1);
     },
     updateTaskOrder(state, payload) {
-      console.log("run")
       let d1 = new Date(payload.date);
       let i;
       state.tasks.forEach((task, index) => {
@@ -77,7 +84,6 @@ export default new Vuex.Store({
           i = index;
         }
       })
-      console.log(i)
       state.tasks[i].list = payload.data
     },
     updateTask(state, payload) {
@@ -93,7 +99,7 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    getDayList({ commit, state }, payload) {
+    getDayList({ dispatch, commit, state }, payload) {
       let d1 = new Date(payload.date);
       let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`;
       state.gettedList.push(date);
@@ -102,6 +108,12 @@ export default new Vuex.Store({
         firestore.collection(state.user.uid).doc(date).get().then(doc => {
           if (doc.exists) {
             commit('setDayList', doc.data());
+          }
+          else {
+            commit('initDayTask', {
+              date: d1
+            });
+            dispatch('pushDayList', payload);
           }
         })
       }
@@ -169,7 +181,7 @@ export default new Vuex.Store({
       firestore.collection(state.user.uid).doc(date).set(
         state.tasks[i])
     },
-    makingSureDateIsInFirestore({commit}, payload){
+    makingSureDateIsInFirestore({ commit }, payload) {
 
     }
   }
