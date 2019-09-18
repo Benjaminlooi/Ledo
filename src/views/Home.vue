@@ -1321,6 +1321,7 @@ export default {
     }
   },
   created() {
+    //
     let date = new Date();
     this.date.month = months[date.getMonth()];
     this.date.date = date.getDate();
