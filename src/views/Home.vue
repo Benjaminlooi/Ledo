@@ -341,7 +341,17 @@
                     ></v-checkbox>
                   </v-list-item-action>
                   <v-list-item-content>
-                    <v-list-item-title v-text="todo_item.title" style="font-size: 0.85em;"></v-list-item-title>
+                    <v-list-item-title
+                      v-if="!todo_item.isDone"
+                      v-text="todo_item.title"
+                      style="font-size: 0.85em;"
+                    ></v-list-item-title>
+                    <v-list-item-title
+                      v-else
+                      v-text="todo_item.title"
+                      style="font-size: 0.85em; color: #B3B4B4!important;
+    text-decoration: line-through;"
+                    ></v-list-item-title>
                   </v-list-item-content>
 
                   <v-menu open-on-hover dense left offset-x close-delay="200">
@@ -432,7 +442,17 @@
                     ></v-checkbox>
                   </v-list-item-action>
                   <v-list-item-content>
-                    <v-list-item-title v-text="todo_item.title" style="font-size: 0.85em;"></v-list-item-title>
+                    <v-list-item-title
+                      v-if="!todo_item.isDone"
+                      v-text="todo_item.title"
+                      style="font-size: 0.85em;"
+                    ></v-list-item-title>
+                    <v-list-item-title
+                      v-else
+                      v-text="todo_item.title"
+                      style="font-size: 0.85em; color: #B3B4B4!important;
+    text-decoration: line-through;"
+                    ></v-list-item-title>
                   </v-list-item-content>
 
                   <v-menu open-on-hover dense left offset-x close-delay="200">
@@ -523,7 +543,17 @@
                     ></v-checkbox>
                   </v-list-item-action>
                   <v-list-item-content>
-                    <v-list-item-title v-text="todo_item.title" style="font-size: 0.85em;"></v-list-item-title>
+                    <v-list-item-title
+                      v-if="!todo_item.isDone"
+                      v-text="todo_item.title"
+                      style="font-size: 0.85em;"
+                    ></v-list-item-title>
+                    <v-list-item-title
+                      v-else
+                      v-text="todo_item.title"
+                      style="font-size: 0.85em; color: #B3B4B4!important;
+    text-decoration: line-through;"
+                    ></v-list-item-title>
                   </v-list-item-content>
 
                   <v-menu open-on-hover left offset-x close-delay="200">
@@ -1237,7 +1267,7 @@ export default {
             })
             .catch(function(error) {
               // An error happened.
-              console.log(error)
+              console.log(error);
             });
         }
       }

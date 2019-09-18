@@ -65,6 +65,7 @@ export default new Vuex.Store({
       state.tasks[payload.taskIndex].list.splice(payload.listIndex, 1);
     },
     updateTaskOrder(state, payload) {
+      console.log("run")
       let d1 = new Date(payload.date);
       let i;
       state.tasks.forEach((task, index) => {
@@ -76,6 +77,7 @@ export default new Vuex.Store({
           i = index;
         }
       })
+      console.log(i)
       state.tasks[i].list = payload.data
     },
     updateTask(state, payload) {
@@ -137,6 +139,7 @@ export default new Vuex.Store({
         }
       })
       state.tasks[i].list.push(state.tasks[payload.taskIndex].list[payload.listIndex]);
+
       state.tasks[payload.taskIndex].list.splice(payload.listIndex, 1);
       dispatch('pushDayList', {
         date: payload.date
@@ -165,6 +168,9 @@ export default new Vuex.Store({
       // console.log(payload)
       firestore.collection(state.user.uid).doc(date).set(
         state.tasks[i])
+    },
+    makingSureDateIsInFirestore({commit}, payload){
+
     }
   }
 })
