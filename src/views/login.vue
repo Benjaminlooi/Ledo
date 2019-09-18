@@ -153,6 +153,15 @@
               :disabled="!formSignUpIsValid"
               @click="passwordSignup"
             >Create My Account</v-btn>
+            <v-divider class="mt-5 mb-3"></v-divider>
+
+            <span style="width: 100%;">
+              Already have an account? 
+              <a
+                @click="dialogSignUp = false; dialogLogIn = true;"
+                class="text-center" style="color: #F0595A"
+              >Log in instead!</a>
+            </span>
           </v-form>
         </v-card-text>
       </v-card>
