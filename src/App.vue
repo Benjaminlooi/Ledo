@@ -24,4 +24,10 @@ export default {};
     color: #F0595A !important;
   }
 }
+.subtask-list{
+  &:hover {
+    background-color: #ededed;
+    cursor: pointer;
+  }
+}
 </style>

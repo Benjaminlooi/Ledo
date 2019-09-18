@@ -69,6 +69,9 @@ export default new Vuex.Store({
         title: payload.title
       })
     },
+    removeSubTask(state, payload){
+      state.tasks[payload.taskIndex].list[payload.listIndex].subTasks.splice(payload.subTaskIndex, 1);
+    },
     removeTask(state, payload) {
       state.tasks[payload.taskIndex].list.splice(payload.listIndex, 1);
     },
@@ -124,7 +127,11 @@ export default new Vuex.Store({
     },
     addUserSubTask({ dispatch, commit }, payload) {
       commit('addSubTask', payload);
-      dispatch('pushDayList', payload)
+      dispatch('pushDayList', payload);
+    },
+    removeUserSubTask({dispatch, commit}, payload){
+      commit('removeSubTask', payload);
+      dispatch('pushDayList', payload);
     },
     removeUserTask({ dispatch, commit }, payload) {
       if (payload.listIndex > -1) {

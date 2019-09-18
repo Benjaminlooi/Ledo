@@ -641,10 +641,30 @@
                   @keydown.enter="onSubmit_addSubTask($event.target.value, dialogPos)"
                 ></v-text-field>
                 <v-list dense style="width: 100%; min-height: unset;">
-                  <v-list-item v-for="(subTask, index) in taskEditDialogSubTasks" :key="index">
+                  <v-list-item
+                    class="subtask-list"
+                    v-for="(subTask, subTaskIndex) in taskEditDialogSubTasks"
+                    :key="subTaskIndex"
+                  >
+                    <v-list-item-action style="margin: 0 16px 0 0">
+                      <v-checkbox
+                        v-model="subTask.isDone"
+                        @click.native="toggleIsDone(this.dialogPos, subTask.isDone)"
+                      ></v-checkbox>
+                    </v-list-item-action>
                     <v-list-item-content>
-                      <v-list-item-title>{{subTask.title}}</v-list-item-title>
+                      <v-list-item-title v-if="!subTask.isDone">{{subTask.title}}</v-list-item-title>
+                      <v-list-item-title
+                        v-else
+                        style="color: #B3B4B4!important;
+    text-decoration: line-through;"
+                      >{{subTask.title}}</v-list-item-title>
                     </v-list-item-content>
+                    <v-list-item-action style="margin: 0 0 0 16px">
+                      <v-btn @click="deleteSubTask(subTaskIndex)" small icon>
+                        <v-icon color="grey lighten-1">mdi-close</v-icon>
+                      </v-btn>
+                    </v-list-item-action>
                   </v-list-item>
                 </v-list>
               </v-card-title>
@@ -1152,6 +1172,18 @@ export default {
           });
           break;
       }
+    },
+    deleteSubTask(subTaskIndex) {
+      let today = new Date();
+      let d1 = new Date();
+      d1.setDate(today.getDate() + this.dialogPos + this.pos);
+
+      this.$store.dispatch("removeUserSubTask", {
+        taskIndex: this.taskEditDialog.task_index,
+        listIndex: this.taskEditDialog.list_index,
+        subTaskIndex: subTaskIndex,
+        date: d1
+      });
     },
     todo_item_dblclick(pos, list_index) {
       this.dialogPos = pos;
