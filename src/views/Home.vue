@@ -760,6 +760,7 @@ export default {
     snackbar_taskDeleteSuccess: false,
     contentView: 0,
     taskEditDialog: {
+      date: null,
       isShow: false,
       title: null,
       notes: "",
@@ -959,12 +960,17 @@ export default {
         this.taskEditDialog.task_index !== null &&
         this.taskEditDialog.task_index !== undefined
       ) {
-        console.log(
+        if (
           this.$store.state.tasks[this.taskEditDialog.task_index].list[
             this.taskEditDialog.list_index
-          ].subTasks
-        );
-
+          ].subTasks == undefined
+        ) {
+          this.$store.commit("initSubTask", {
+            date: this.taskEditDialog.date,
+            taskIndex: this.taskEditDialog.task_index,
+            listIndex: this.taskEditDialog.list_index
+          });
+        }
         return this.$store.state.tasks[this.taskEditDialog.task_index].list[
           this.taskEditDialog.list_index
         ].subTasks;

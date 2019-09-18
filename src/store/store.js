@@ -60,6 +60,11 @@ export default new Vuex.Store({
         })
       }
     },
+    initSubTask(state, payload) {
+      if (!state.tasks[payload.taskIndex].list[payload.listIndex].subTasks) {
+        state.tasks[payload.taskIndex].list[payload.listIndex].subTasks = [];
+      }
+    },
     addSubTask(state, payload) {
       if (!state.tasks[payload.taskIndex].list[payload.listIndex].subTasks) {
         state.tasks[payload.taskIndex].list[payload.listIndex].subTasks = [];
@@ -69,7 +74,7 @@ export default new Vuex.Store({
         title: payload.title
       })
     },
-    removeSubTask(state, payload){
+    removeSubTask(state, payload) {
       state.tasks[payload.taskIndex].list[payload.listIndex].subTasks.splice(payload.subTaskIndex, 1);
     },
     removeTask(state, payload) {
@@ -129,7 +134,7 @@ export default new Vuex.Store({
       commit('addSubTask', payload);
       dispatch('pushDayList', payload);
     },
-    removeUserSubTask({dispatch, commit}, payload){
+    removeUserSubTask({ dispatch, commit }, payload) {
       commit('removeSubTask', payload);
       dispatch('pushDayList', payload);
     },
