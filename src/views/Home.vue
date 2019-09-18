@@ -1180,15 +1180,11 @@ export default {
       }
     },
     deleteSubTask(subTaskIndex) {
-      let today = new Date();
-      let d1 = new Date();
-      d1.setDate(today.getDate() + this.dialogPos + this.pos);
-
       this.$store.dispatch("removeUserSubTask", {
         taskIndex: this.taskEditDialog.task_index,
         listIndex: this.taskEditDialog.list_index,
         subTaskIndex: subTaskIndex,
-        date: d1
+        date: this.taskEditDialog.date,
       });
     },
     todo_item_dblclick(pos, list_index) {
