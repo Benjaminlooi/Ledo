@@ -31,7 +31,9 @@
               auto-draw
               class="py-4"
             ></v-sparkline>
-            <h1 style="font-size: 42px;">Overcome Procrastination and Start Getting Things Done</h1>
+            <h1 style="font-size: 42px;">
+              Overcome Procrastination and Start Getting Things Done
+            </h1>
           </div>
           <div class="intro-right"></div>
         </div>
@@ -56,8 +58,14 @@
         <v-divider class="mx-4"></v-divider>
         <span class="or-text">OR...</span>
         <v-card-text>
-          <v-form ref="formLogin" v-model="formLoginIsValid" :lazy-validation="false">
-            <v-alert v-if="errorLogin" type="error">{{errorLoginMessage}}</v-alert>
+          <v-form
+            ref="formLogin"
+            v-model="formLoginIsValid"
+            :lazy-validation="false"
+          >
+            <v-alert v-if="errorLogin" type="error">{{
+              errorLoginMessage
+            }}</v-alert>
             <v-text-field
               type="email"
               v-model="inputEmail"
@@ -83,15 +91,21 @@
               :disabled="!formLoginIsValid"
               @click="passwordLogin"
               style="color: white;"
-            >Log In</v-btn>
+              >Log In</v-btn
+            >
             <v-divider class="mt-5 mb-3"></v-divider>
 
             <span style="width: 100%;">
               Don't have an account?
               <a
-                @click="dialogLogIn = false; dialogSignUp = true"
-                class="text-center" style="color: #F0595A"
-              >Sign up in seconds</a>
+                @click="
+                  dialogLogIn = false;
+                  dialogSignUp = true;
+                "
+                class="text-center"
+                style="color: #F0595A"
+                >Sign up in seconds</a
+              >
             </span>
           </v-form>
         </v-card-text>
@@ -117,8 +131,14 @@
         <v-divider class="mx-4"></v-divider>
         <span class="or-text">OR...</span>
         <v-card-text>
-          <v-form ref="formSignUp" v-model="formSignUpIsValid" :lazy-validation="false">
-            <v-alert v-if="errorSignUp" type="error">{{errorSignUpMessage}}</v-alert>
+          <v-form
+            ref="formSignUp"
+            v-model="formSignUpIsValid"
+            :lazy-validation="false"
+          >
+            <v-alert v-if="errorSignUp" type="error">{{
+              errorSignUpMessage
+            }}</v-alert>
             <v-text-field
               type="text"
               name="name"
@@ -152,15 +172,21 @@
               style="color: white;"
               :disabled="!formSignUpIsValid"
               @click="passwordSignup"
-            >Create My Account</v-btn>
+              >Create My Account</v-btn
+            >
             <v-divider class="mt-5 mb-3"></v-divider>
 
             <span style="width: 100%;">
-              Already have an account? 
+              Already have an account?
               <a
-                @click="dialogSignUp = false; dialogLogIn = true;"
-                class="text-center" style="color: #F0595A"
-              >Log in instead!</a>
+                @click="
+                  dialogSignUp = false;
+                  dialogLogIn = true;
+                "
+                class="text-center"
+                style="color: #F0595A"
+                >Log in instead!</a
+              >
             </span>
           </v-form>
         </v-card-text>
@@ -178,7 +204,7 @@ const gradients = [
   ["purple", "violet"],
   ["#00c6ff", "#F0F", "#FF0"],
   ["#f72047", "#ffd200", "#1feaea"],
-  ["#F0595A", "#ffd200",  "#1FEAEA", "#40596B"]
+  ["#F0595A", "#ffd200", "#1FEAEA", "#40596B"]
 ];
 
 export default {
@@ -279,7 +305,7 @@ export default {
               })
               .catch(function(error) {
                 // An error happened.
-                console.log(error)
+                console.log(error);
               });
           }
         })
@@ -300,7 +326,7 @@ export default {
         })
         .catch(function(error) {
           // An error happened.
-          console.log(error)
+          console.log(error);
         });
     }
   },

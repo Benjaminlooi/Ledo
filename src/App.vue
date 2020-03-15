@@ -21,10 +21,10 @@ export default {};
 }
 .priority-two {
   i.v-icon {
-    color: #F0595A !important;
+    color: #f0595a !important;
   }
 }
-.subtask-list{
+.subtask-list {
   &:hover {
     background-color: #ededed;
     cursor: pointer;
