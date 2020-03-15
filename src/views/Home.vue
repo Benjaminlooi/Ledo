@@ -695,6 +695,17 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
+          <v-btn
+                v-show="!hidden"
+                color="pink"
+                dark
+                absolute
+                top
+                right
+                fab
+              >
+                <v-icon>mdi-plus</v-icon>
+              </v-btn>
         </div>
       </v-content>
     </v-scroll-x-transition>
