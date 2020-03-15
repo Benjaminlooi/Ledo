@@ -150,7 +150,7 @@ export default new Vuex.Store({
       commit('updateTask', payload);
       dispatch('pushDayList', payload);
     },
-    moveTaskToToday({ state, dispatch, commit }, payload) {
+    moveTaskToToday({ state, dispatch }, payload) {
       let today = new Date();
       let i;
       state.tasks.forEach((task, index) => {
@@ -193,8 +193,8 @@ export default new Vuex.Store({
       firestore.collection(state.user.uid).doc(date).set(
         state.tasks[i])
     },
-    makingSureDateIsInFirestore({ commit }, payload) {
+    // makingSureDateIsInFirestore({ commit }, payload) {
 
-    }
+    // }
   }
 })

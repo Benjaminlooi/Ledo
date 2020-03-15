@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-scroll-y-transition>
-      <v-navigation-drawer v-model="drawer" :permanent="true" app>
+      <v-navigation-drawer v-model="drawerIsShow" app>
         <template v-slot:prepend>
           <v-list-item two-line>
             <v-list-item-avatar>
@@ -43,14 +43,14 @@
             </v-list-item-content>
           </v-list-item>
 
-          <!-- <v-list-item @click="debug">
+          <v-list-item @click="debug">
             <v-list-item-action>
               <v-icon>mdi-logout</v-icon>
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>Debug</v-list-item-title>
             </v-list-item-content>
-          </v-list-item>-->
+          </v-list-item>
         </v-list>
 
         <v-list dense nav>
@@ -69,7 +69,7 @@
             </v-list-item-title>
           </v-list-item-content>
           <v-list-item-group v-model="listPriority">
-            <v-list-item @click v-for="(list , i) in priorityList" :key="i">
+            <v-list-item @click="doNothing()" v-for="(list , i) in priorityList" :key="i">
               <v-list-item-icon>
                 <v-icon :color="list.iconColor">mdi-circle-slice-8</v-icon>
               </v-list-item-icon>
@@ -94,7 +94,7 @@
     <v-scroll-y-transition>
       <v-navigation-drawer
         v-if="navDrawerView == 1"
-        v-model="drawer"
+        v-model="drawerIsShow"
         :permanent="true"
         absolute
         style="z-index: 99;"
@@ -735,7 +735,7 @@ export default {
   },
   data: () => ({
     pos: 0,
-    drawer: null,
+    drawerIsShow: true,
 
     navDrawerView: 0,
     editingName: false,
@@ -982,11 +982,11 @@ export default {
     },
     events() {
       let events = [];
-      this.$store.state.tasks.forEach((task, index) => {
+      this.$store.state.tasks.forEach((task) => {
         let d = new Date(task.date);
         let date = formatDate(d);
         if (task.list !== undefined || task.list !== 0) {
-          task.list.forEach((list, index) => {
+          task.list.forEach((list) => {
             events.push({
               name: list.title,
               start: date
@@ -1020,7 +1020,7 @@ export default {
   },
   methods: {
     debug(a) {
-      //
+      this.drawerIsShow = !this.drawerIsShow
       // console.log(a)
     },
     isBeforeToday(pos) {
@@ -1265,7 +1265,7 @@ export default {
           .updateProfile({
             displayName: this.inputName
           })
-          .then(_ => {
+          .then(() => {
             this.inputName = "";
             var user = firebase.auth().currentUser;
             this.$store.commit("setUser", user);
@@ -1273,6 +1273,7 @@ export default {
           })
           .catch(function(error) {
             // An error happened.
+            console.log(error)
           });
       }
     },
@@ -1293,7 +1294,7 @@ export default {
           this.editingPassword = false;
           user
             .updatePassword(newPassword)
-            .then(_ => {
+            .then(() => {
               this.inputPassword = "";
               this.inputPasswordConfirmation = "";
               var user = firebase.auth().currentUser;

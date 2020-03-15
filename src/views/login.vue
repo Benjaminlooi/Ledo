@@ -256,7 +256,7 @@ export default {
         .signInWithEmailAndPassword(this.inputEmail, this.inputPassword)
         .catch(error => {
           // Handle Errors here.
-          var errorCode = error.code;
+          // var errorCode = error.code;
           var errorMessage = error.message;
           // ...
           console.log("error! ", error);
@@ -279,13 +279,14 @@ export default {
               })
               .catch(function(error) {
                 // An error happened.
+                console.log(error)
               });
           }
         })
         .catch(function(error) {
           // Handle Errors here.
-          var errorCode = error.code;
-          var errorMessage = error.message;
+          // var errorCode = error.code;
+          // var errorMessage = error.message;
           console.log("error! ", error);
           // ...
         });
@@ -299,6 +300,7 @@ export default {
         })
         .catch(function(error) {
           // An error happened.
+          console.log(error)
         });
     }
   },
