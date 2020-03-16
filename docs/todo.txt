@@ -1,3 +1,4 @@
 -Mobile Responsiveness, swipe left/right to change date
 -change month in month view
 -currently only workable on chrome, add firefox compatibality
+-implement momentjs for dates
