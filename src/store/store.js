@@ -34,7 +34,8 @@ export default new Vuex.Store({
       let isWrote = false;
       state.tasks.forEach((task, index) => {
         if (task) {
-          let d2 = new Date(task.date);
+          let dateParts = task.date.split('-')
+          let d2 = new Date(dateParts[2], dateParts[0] -1, dateParts[1]);
           if (
             d1.getFullYear() === d2.getFullYear() &&
             d1.getMonth() === d2.getMonth() &&
@@ -90,7 +91,8 @@ export default new Vuex.Store({
       let d1 = new Date(payload.date);
       let i;
       state.tasks.forEach((task, index) => {
-        let d2 = new Date(task.date);
+        let dateParts = task.date.split('-')
+        let d2 = new Date(dateParts[2], dateParts[0] -1, dateParts[1]);
         if (
           d1.getFullYear() === d2.getFullYear() &&
           d1.getMonth() === d2.getMonth() &&
@@ -167,7 +169,8 @@ export default new Vuex.Store({
       let today = new Date();
       let i;
       state.tasks.forEach((task, index) => {
-        let d2 = new Date(task.date);
+        let dateParts = task.date.split('-')
+        let d2 = new Date(dateParts[2], dateParts[0] -1, dateParts[1]);
         if (
           today.getFullYear() === d2.getFullYear() &&
           today.getMonth() === d2.getMonth() &&
@@ -197,7 +200,8 @@ export default new Vuex.Store({
       let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`;
       let i;
       state.tasks.forEach((task, index) => {
-        let d2 = new Date(task.date);
+        let dateParts = task.date.split('-')
+        let d2 = new Date(dateParts[2], dateParts[0] -1, dateParts[1]);
         if (
           d1.getFullYear() === d2.getFullYear() &&
           d1.getMonth() === d2.getMonth() &&
@@ -206,7 +210,6 @@ export default new Vuex.Store({
           i = index;
         }
       });
-      // console.log(payload)
       firestore
         .collection(state.user.uid)
         .doc(date)
