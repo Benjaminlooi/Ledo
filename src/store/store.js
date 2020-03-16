@@ -119,13 +119,13 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    getDayList({ dispatch, commit, state }, payload) {
+    async getDayList({ dispatch, commit, state }, payload) {
       let d1 = new Date(payload.date);
       let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`;
       state.gettedList.push(date);
 
       if (state.user) {
-        firestore
+        await firestore
           .collection(state.user.uid)
           .doc(date)
           .get()
