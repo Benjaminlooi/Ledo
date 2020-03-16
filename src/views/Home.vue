@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-scroll-y-transition>
-      <v-navigation-drawer v-model="drawer" :permanent="true" app>
+      <v-navigation-drawer v-model="drawerIsShow" app>
         <template v-slot:prepend>
           <v-list-item two-line>
             <v-list-item-avatar>
@@ -9,7 +9,11 @@
             </v-list-item-avatar>
 
             <v-list-item-content v-if="$store.state.user">
-              <v-list-item-title>{{$store.state.user.displayName}}</v-list-item-title>
+              <v-list-item-title>
+                {{
+                $store.state.user.displayName
+                }}
+              </v-list-item-title>
               <v-list-item-subtitle>
                 <v-btn
                   @click="navDrawerView = 1"
@@ -43,14 +47,14 @@
             </v-list-item-content>
           </v-list-item>
 
-          <!-- <v-list-item @click="debug">
+          <v-list-item @click="debug">
             <v-list-item-action>
               <v-icon>mdi-logout</v-icon>
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>Debug</v-list-item-title>
             </v-list-item-content>
-          </v-list-item>-->
+          </v-list-item>
         </v-list>
 
         <v-list dense nav>
@@ -69,12 +73,12 @@
             </v-list-item-title>
           </v-list-item-content>
           <v-list-item-group v-model="listPriority">
-            <v-list-item @click v-for="(list , i) in priorityList" :key="i">
+            <v-list-item @click="doNothing()" v-for="(list, i) in priorityList" :key="i">
               <v-list-item-icon>
                 <v-icon :color="list.iconColor">mdi-circle-slice-8</v-icon>
               </v-list-item-icon>
               <v-list-item-content>
-                <v-list-item-title>{{list.title}}</v-list-item-title>
+                <v-list-item-title>{{ list.title }}</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list-item-group>
@@ -94,7 +98,7 @@
     <v-scroll-y-transition>
       <v-navigation-drawer
         v-if="navDrawerView == 1"
-        v-model="drawer"
+        v-model="drawerIsShow"
         :permanent="true"
         absolute
         style="z-index: 99;"
@@ -134,13 +138,16 @@
           <v-list-item-content>
             <v-list-item-title style="font-size: 13px; color: gray;">Name</v-list-item-title>
             <v-list-item-title v-if="!editingName" style="font-size: 13px;">
-              {{$store.state.user.displayName}}
+              {{ $store.state.user.displayName }}
               <v-btn
                 x-small
                 outlined
                 color="#F0595A"
                 style="font-size: 12px; margin-left: 5px;"
-                @click="editingName = true; inputName = $store.state.user.displayName"
+                @click="
+                  editingName = true;
+                  inputName = $store.state.user.displayName;
+                "
               >Edit</v-btn>
             </v-list-item-title>
             <v-list-item-subtitle v-else style="font-size: 13px;">
@@ -167,7 +174,10 @@
                   text
                   color="#F0595A"
                   style="font-size: 12px; margin-left: 5px;"
-                  @click="editingName = false; inputName = ''"
+                  @click="
+                    editingName = false;
+                    inputName = '';
+                  "
                 >Cancel</v-btn>
               </v-form>
             </v-list-item-subtitle>
@@ -176,7 +186,11 @@
         <v-list-item>
           <v-list-item-content>
             <v-list-item-title style="font-size: 13px; color: gray;">Email</v-list-item-title>
-            <v-list-item-title style="font-size: 13px;">{{$store.state.user.email}}</v-list-item-title>
+            <v-list-item-title style="font-size: 13px;">
+              {{
+              $store.state.user.email
+              }}
+            </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <v-list-item>
@@ -204,8 +218,12 @@
                   single-line
                   solo
                   :type="inputPasswordChangeShow ? 'text' : 'password'"
-                  :append-icon="inputPasswordChangeShow ? 'mdi-eye' : 'mdi-eye-off'"
-                  @click:append="inputPasswordChangeShow = !inputPasswordChangeShow"
+                  :append-icon="
+                    inputPasswordChangeShow ? 'mdi-eye' : 'mdi-eye-off'
+                  "
+                  @click:append="
+                    inputPasswordChangeShow = !inputPasswordChangeShow
+                  "
                 ></v-text-field>
                 <v-text-field
                   ref="inputPasswordChangeConfirmation"
@@ -215,9 +233,17 @@
                   style="padding: 2px;"
                   single-line
                   solo
-                  :type="inputPasswordChangeConfirmationShow ? 'text' : 'password'"
-                  :append-icon="inputPasswordChangeConfirmationShow ? 'mdi-eye' : 'mdi-eye-off'"
-                  @click:append="inputPasswordChangeConfirmationShow = !inputPasswordChangeConfirmationShow"
+                  :type="
+                    inputPasswordChangeConfirmationShow ? 'text' : 'password'
+                  "
+                  :append-icon="
+                    inputPasswordChangeConfirmationShow
+                      ? 'mdi-eye'
+                      : 'mdi-eye-off'
+                  "
+                  @click:append="
+                    inputPasswordChangeConfirmationShow = !inputPasswordChangeConfirmationShow
+                  "
                 ></v-text-field>
                 <v-btn
                   x-small
@@ -231,7 +257,11 @@
                   text
                   color="#F0595A"
                   style="font-size: 12px; margin-left: 5px;"
-                  @click="editingPassword = false; inputPassword = '';inputPasswordConfirmation = ''"
+                  @click="
+                    editingPassword = false;
+                    inputPassword = '';
+                    inputPasswordConfirmation = '';
+                  "
                 >Cancel</v-btn>
               </v-form>
             </v-list-item-subtitle>
@@ -292,25 +322,36 @@
         <div class="todo-main">
           <!-- ==== FIRST ==== -->
           <div
-            :class="{'next-day': !isToday(date_1), 'current-day': isToday(date_1), 'any-day': !isTodayOnScreen}"
+            :class="{
+              'next-day': !isToday(date_1),
+              'current-day': isToday(date_1),
+              'any-day': !isTodayOnScreen
+            }"
           >
             <div class="days-navbar">
               <div v-if="isToday(date_1)" class="date-day">
                 Today
-                <span class="date-label">{{date_1.getMonth() | toMonth}} {{date_1.getDate()}}</span>
+                <span class="date-label">
+                  {{ date_1.getMonth() | toMonth }}
+                  {{ date_1.getDate() }}
+                </span>
               </div>
               <div v-else class="date-day">
-                {{date_1.getDay() | toDay }}
-                <span
-                  class="date-label"
-                >{{date_1.getMonth() | toMonth}} {{date_1.getDate()}}</span>
+                {{ date_1.getDay() | toDay }}
+                <span class="date-label">
+                  {{ date_1.getMonth() | toMonth }}
+                  {{ date_1.getDate() }}
+                </span>
               </div>
 
               <div class="add-task">
                 <input
                   type="text"
                   placeholder="Add task +"
-                  @keydown.enter="onSubmit_addTask($event.target.value, 0);$event.target.value = ''"
+                  @keydown.enter="
+                    onSubmit_addTask($event.target.value, 0);
+                    $event.target.value = '';
+                  "
                 />
               </div>
             </div>
@@ -318,8 +359,8 @@
               v-model="todo_items_1"
               style="display: flex;"
               group="task"
-              @start="drag=true"
-              @end="drag=false"
+              @start="drag = true"
+              @end="drag = false"
             >
               <v-slide-y-transition
                 class="py-0"
@@ -335,7 +376,11 @@
                 >
                   <v-list-item-action style="margin: 0 16px 0 0">
                     <v-checkbox
-                      :class="{'priority-zero': todo_item.priority == 0, 'priority-one': todo_item.priority == 1, 'priority-two': todo_item.priority == 2}"
+                      :class="{
+                        'priority-zero': todo_item.priority == 0,
+                        'priority-one': todo_item.priority == 1,
+                        'priority-two': todo_item.priority == 2
+                      }"
                       v-model="todo_item.isDone"
                       @click.native="toggleIsDone(0, todo_item.isDone)"
                     ></v-checkbox>
@@ -364,22 +409,25 @@
                     </template>
 
                     <v-list dense>
-                      <v-list-item v-if="isBeforeToday(0)" @click="todo_item_menu_click(0,0,index)">
+                      <v-list-item
+                        v-if="isBeforeToday(0)"
+                        @click="todo_item_menu_click(0, 0, index)"
+                      >
                         <v-list-item-title>Move to today</v-list-item-title>
                       </v-list-item>
-                      <v-list-item @click="todo_item_menu_click(1,0,index)">
+                      <v-list-item @click="todo_item_menu_click(1, 0, index)">
                         <v-list-item-title>Remove</v-list-item-title>
                       </v-list-item>
 
-                      <v-list-item @click="todo_item_menu_click(2,0,index)">
+                      <v-list-item @click="todo_item_menu_click(2, 0, index)">
                         <v-icon color="red">mdi-circle-slice-8</v-icon>
                         <v-list-item-title>High Priority</v-list-item-title>
                       </v-list-item>
-                      <v-list-item @click="todo_item_menu_click(3,0,index)">
+                      <v-list-item @click="todo_item_menu_click(3, 0, index)">
                         <v-icon color="blue">mdi-circle-slice-8</v-icon>
                         <v-list-item-title>Normal Priority</v-list-item-title>
                       </v-list-item>
-                      <v-list-item @click="todo_item_menu_click(4,0,index)">
+                      <v-list-item @click="todo_item_menu_click(4, 0, index)">
                         <v-icon>mdi-circle-slice-8</v-icon>
                         <v-list-item-title>Low Priority</v-list-item-title>
                       </v-list-item>
@@ -393,25 +441,36 @@
 
           <!-- ==== SECOND ==== -->
           <div
-            :class="{'next-day': !isToday(date_2), 'current-day': isToday(date_2), 'any-day': !isTodayOnScreen}"
+            :class="{
+              'next-day': !isToday(date_2),
+              'current-day': isToday(date_2),
+              'any-day': !isTodayOnScreen
+            }"
           >
             <div class="days-navbar">
               <div v-if="isToday(date_2)" class="date-day">
                 Today
-                <span class="date-label">{{date_2.getMonth() | toMonth}} {{date_2.getDate()}}</span>
+                <span class="date-label">
+                  {{ date_2.getMonth() | toMonth }}
+                  {{ date_2.getDate() }}
+                </span>
               </div>
               <div v-else class="date-day">
-                {{date_2.getDay() | toDay }}
-                <span
-                  class="date-label"
-                >{{date_2.getMonth() | toMonth}} {{date_2.getDate()}}</span>
+                {{ date_2.getDay() | toDay }}
+                <span class="date-label">
+                  {{ date_2.getMonth() | toMonth }}
+                  {{ date_2.getDate() }}
+                </span>
               </div>
 
               <div class="add-task">
                 <input
                   type="text"
                   placeholder="Add task +"
-                  @keydown.enter="onSubmit_addTask($event.target.value, 1);$event.target.value = ''"
+                  @keydown.enter="
+                    onSubmit_addTask($event.target.value, 1);
+                    $event.target.value = '';
+                  "
                 />
               </div>
             </div>
@@ -419,8 +478,8 @@
               v-model="todo_items_2"
               style="display: flex;"
               group="task"
-              @start="drag=true"
-              @end="drag=false"
+              @start="drag = true"
+              @end="drag = false"
             >
               <v-slide-y-transition
                 class="py-0"
@@ -436,7 +495,11 @@
                 >
                   <v-list-item-action style="margin: 0 16px 0 0">
                     <v-checkbox
-                      :class="{'priority-zero': todo_item.priority == 0, 'priority-one': todo_item.priority == 1, 'priority-two': todo_item.priority == 2}"
+                      :class="{
+                        'priority-zero': todo_item.priority == 0,
+                        'priority-one': todo_item.priority == 1,
+                        'priority-two': todo_item.priority == 2
+                      }"
                       v-model="todo_item.isDone"
                       @click.native="toggleIsDone(1, todo_item.isDone)"
                     ></v-checkbox>
@@ -465,22 +528,25 @@
                     </template>
 
                     <v-list dense>
-                      <v-list-item v-if="isBeforeToday(0)" @click="todo_item_menu_click(0,1,index)">
+                      <v-list-item
+                        v-if="isBeforeToday(0)"
+                        @click="todo_item_menu_click(0, 1, index)"
+                      >
                         <v-list-item-title>Move to today</v-list-item-title>
                       </v-list-item>
-                      <v-list-item @click="todo_item_menu_click(1,1,index)">
+                      <v-list-item @click="todo_item_menu_click(1, 1, index)">
                         <v-list-item-title>Remove</v-list-item-title>
                       </v-list-item>
 
-                      <v-list-item @click="todo_item_menu_click(2,1,index)">
+                      <v-list-item @click="todo_item_menu_click(2, 1, index)">
                         <v-icon color="red">mdi-circle-slice-8</v-icon>
                         <v-list-item-title>High Priority</v-list-item-title>
                       </v-list-item>
-                      <v-list-item @click="todo_item_menu_click(3,1,index)">
+                      <v-list-item @click="todo_item_menu_click(3, 1, index)">
                         <v-icon color="blue">mdi-circle-slice-8</v-icon>
                         <v-list-item-title>Normal Priority</v-list-item-title>
                       </v-list-item>
-                      <v-list-item @click="todo_item_menu_click(4,1,index)">
+                      <v-list-item @click="todo_item_menu_click(4, 1, index)">
                         <v-icon>mdi-circle-slice-8</v-icon>
                         <v-list-item-title>Low Priority</v-list-item-title>
                       </v-list-item>
@@ -494,25 +560,36 @@
 
           <!-- ==== THIRD ==== -->
           <div
-            :class="{'next-day': !isToday(date_3), 'current-day': isToday(date_3), 'any-day': !isTodayOnScreen}"
+            :class="{
+              'next-day': !isToday(date_3),
+              'current-day': isToday(date_3),
+              'any-day': !isTodayOnScreen
+            }"
           >
             <div class="days-navbar">
               <div v-if="isToday(date_3)" class="date-day">
                 Today
-                <span class="date-label">{{date_3.getMonth() | toMonth}} {{date_3.getDate()}}</span>
+                <span class="date-label">
+                  {{ date_3.getMonth() | toMonth }}
+                  {{ date_3.getDate() }}
+                </span>
               </div>
               <div v-else class="date-day">
-                {{date_3.getDay() | toDay }}
-                <span
-                  class="date-label"
-                >{{date_3.getMonth() | toMonth}} {{date_3.getDate()}}</span>
+                {{ date_3.getDay() | toDay }}
+                <span class="date-label">
+                  {{ date_3.getMonth() | toMonth }}
+                  {{ date_3.getDate() }}
+                </span>
               </div>
 
               <div class="add-task">
                 <input
                   type="text"
                   placeholder="Add task +"
-                  @keydown.enter="onSubmit_addTask($event.target.value, 2);$event.target.value = ''"
+                  @keydown.enter="
+                    onSubmit_addTask($event.target.value, 2);
+                    $event.target.value = '';
+                  "
                 />
               </div>
             </div>
@@ -520,8 +597,8 @@
               v-model="todo_items_3"
               style="display: flex;"
               group="task"
-              @start="drag=true"
-              @end="drag=false"
+              @start="drag = true"
+              @end="drag = false"
             >
               <v-slide-y-transition
                 class="py-0"
@@ -537,7 +614,11 @@
                 >
                   <v-list-item-action style="margin: 0 16px 0 0">
                     <v-checkbox
-                      :class="{'priority-zero': todo_item.priority == 0, 'priority-one': todo_item.priority == 1, 'priority-two': todo_item.priority == 2}"
+                      :class="{
+                        'priority-zero': todo_item.priority == 0,
+                        'priority-one': todo_item.priority == 1,
+                        'priority-two': todo_item.priority == 2
+                      }"
                       v-model="todo_item.isDone"
                       @click.native="toggleIsDone(2, todo_item.isDone)"
                     ></v-checkbox>
@@ -566,22 +647,25 @@
                     </template>
 
                     <v-list dense>
-                      <v-list-item v-if="isBeforeToday(0)" @click="todo_item_menu_click(0,2,index)">
+                      <v-list-item
+                        v-if="isBeforeToday(0)"
+                        @click="todo_item_menu_click(0, 2, index)"
+                      >
                         <v-list-item-title>Move to today</v-list-item-title>
                       </v-list-item>
-                      <v-list-item @click="todo_item_menu_click(1,2,index)">
+                      <v-list-item @click="todo_item_menu_click(1, 2, index)">
                         <v-list-item-title>Remove</v-list-item-title>
                       </v-list-item>
 
-                      <v-list-item @click="todo_item_menu_click(2,2,index)">
+                      <v-list-item @click="todo_item_menu_click(2, 2, index)">
                         <v-icon color="red">mdi-circle-slice-8</v-icon>
                         <v-list-item-title>High Priority</v-list-item-title>
                       </v-list-item>
-                      <v-list-item @click="todo_item_menu_click(3,2,index)">
+                      <v-list-item @click="todo_item_menu_click(3, 2, index)">
                         <v-icon color="blue">mdi-circle-slice-8</v-icon>
                         <v-list-item-title>Normal Priority</v-list-item-title>
                       </v-list-item>
-                      <v-list-item @click="todo_item_menu_click(4,2,index)">
+                      <v-list-item @click="todo_item_menu_click(4, 2, index)">
                         <v-icon>mdi-circle-slice-8</v-icon>
                         <v-list-item-title>Low Priority</v-list-item-title>
                       </v-list-item>
@@ -638,7 +722,9 @@
                   label="Add subtask..."
                   single-line
                   v-model="inputSubTask"
-                  @keydown.enter="onSubmit_addSubTask($event.target.value, dialogPos)"
+                  @keydown.enter="
+                    onSubmit_addSubTask($event.target.value, dialogPos)
+                  "
                 ></v-text-field>
                 <v-list dense style="width: 100%; min-height: unset;">
                   <v-list-item
@@ -649,16 +735,22 @@
                     <v-list-item-action style="margin: 0 16px 0 0">
                       <v-checkbox
                         v-model="subTask.isDone"
-                        @click.native="toggleIsDone(this.dialogPos, subTask.isDone)"
+                        @click.native="
+                          toggleIsDone(this.dialogPos, subTask.isDone)
+                        "
                       ></v-checkbox>
                     </v-list-item-action>
                     <v-list-item-content>
-                      <v-list-item-title v-if="!subTask.isDone">{{subTask.title}}</v-list-item-title>
+                      <v-list-item-title v-if="!subTask.isDone">
+                        {{
+                        subTask.title
+                        }}
+                      </v-list-item-title>
                       <v-list-item-title
                         v-else
                         style="color: #B3B4B4!important;
     text-decoration: line-through;"
-                      >{{subTask.title}}</v-list-item-title>
+                      >{{ subTask.title }}</v-list-item-title>
                     </v-list-item-content>
                     <v-list-item-action style="margin: 0 0 0 16px">
                       <v-btn @click="deleteSubTask(subTaskIndex)" small icon>
@@ -695,6 +787,9 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
+          <v-btn @click="debug()" color="pink" dark absolute top right fab>
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
         </div>
       </v-content>
     </v-scroll-x-transition>
@@ -735,7 +830,7 @@ export default {
   },
   data: () => ({
     pos: 0,
-    drawer: null,
+    drawerIsShow: false,
 
     navDrawerView: 0,
     editingName: false,
@@ -815,7 +910,8 @@ export default {
         d1.setDate(today.getDate() + 0 + this.pos);
         let tasks = this.$store.state.tasks.filter(task => {
           if (task) {
-            let d2 = new Date(task.date);
+            let dateParts = task.date.split("-");
+            let d2 = new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);
             return (
               d1.getFullYear() === d2.getFullYear() &&
               d1.getMonth() === d2.getMonth() &&
@@ -861,7 +957,8 @@ export default {
         d1.setDate(today.getDate() + 1 + this.pos);
         let tasks = this.$store.state.tasks.filter(task => {
           if (task) {
-            let d2 = new Date(task.date);
+            let dateParts = task.date.split("-");
+            let d2 = new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);
             return (
               d1.getFullYear() === d2.getFullYear() &&
               d1.getMonth() === d2.getMonth() &&
@@ -907,7 +1004,8 @@ export default {
         d1.setDate(today.getDate() + 2 + this.pos);
         let tasks = this.$store.state.tasks.filter(task => {
           if (task) {
-            let d2 = new Date(task.date);
+            let dateParts = task.date.split("-");
+            let d2 = new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);
             return (
               d1.getFullYear() === d2.getFullYear() &&
               d1.getMonth() === d2.getMonth() &&
@@ -982,11 +1080,11 @@ export default {
     },
     events() {
       let events = [];
-      this.$store.state.tasks.forEach((task, index) => {
+      this.$store.state.tasks.forEach(task => {
         let d = new Date(task.date);
         let date = formatDate(d);
         if (task.list !== undefined || task.list !== 0) {
-          task.list.forEach((list, index) => {
+          task.list.forEach(list => {
             events.push({
               name: list.title,
               start: date
@@ -1020,7 +1118,7 @@ export default {
   },
   methods: {
     debug(a) {
-      //
+      this.drawerIsShow = !this.drawerIsShow;
       // console.log(a)
     },
     isBeforeToday(pos) {
@@ -1120,7 +1218,8 @@ export default {
 
       let task_index;
       this.$store.state.tasks.forEach((task, index) => {
-        let d2 = new Date(task.date);
+        let dateParts = task.date.split("-");
+        let d2 = new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);
         if (
           d1.getFullYear() === d2.getFullYear() &&
           d1.getMonth() === d2.getMonth() &&
@@ -1184,7 +1283,7 @@ export default {
         taskIndex: this.taskEditDialog.task_index,
         listIndex: this.taskEditDialog.list_index,
         subTaskIndex: subTaskIndex,
-        date: this.taskEditDialog.date,
+        date: this.taskEditDialog.date
       });
     },
     todo_item_dblclick(pos, list_index) {
@@ -1265,7 +1364,7 @@ export default {
           .updateProfile({
             displayName: this.inputName
           })
-          .then(_ => {
+          .then(() => {
             this.inputName = "";
             var user = firebase.auth().currentUser;
             this.$store.commit("setUser", user);
@@ -1273,6 +1372,7 @@ export default {
           })
           .catch(function(error) {
             // An error happened.
+            console.log(error);
           });
       }
     },
@@ -1293,7 +1393,7 @@ export default {
           this.editingPassword = false;
           user
             .updatePassword(newPassword)
-            .then(_ => {
+            .then(() => {
               this.inputPassword = "";
               this.inputPasswordConfirmation = "";
               var user = firebase.auth().currentUser;
