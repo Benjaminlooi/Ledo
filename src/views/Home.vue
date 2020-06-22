@@ -1,7 +1,10 @@
 <template>
   <div>
     <v-scroll-y-transition>
-      <v-navigation-drawer v-model="drawerIsShow" app>
+      <v-navigation-drawer
+        :v-model="$vuetify.breakpoint.mdAndUp ? true : false"
+        app
+      >
         <template v-slot:prepend>
           <v-list-item two-line>
             <v-list-item-avatar>
@@ -10,9 +13,7 @@
 
             <v-list-item-content v-if="$store.state.user">
               <v-list-item-title>
-                {{
-                $store.state.user.displayName
-                }}
+                {{ $store.state.user.displayName }}
               </v-list-item-title>
               <v-list-item-subtitle>
                 <v-btn
@@ -21,7 +22,8 @@
                   x-small
                   outlined
                   style="font-size: 0.7em;"
-                >Edit Profile</v-btn>
+                  >Edit Profile</v-btn
+                >
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
@@ -69,11 +71,16 @@
                 right
                 absolute
                 @click="listPriority = undefined"
-              >Clear filter</v-btn>
+                >Clear filter</v-btn
+              >
             </v-list-item-title>
           </v-list-item-content>
           <v-list-item-group v-model="listPriority">
-            <v-list-item @click="doNothing()" v-for="(list, i) in priorityList" :key="i">
+            <v-list-item
+              @click="doNothing()"
+              v-for="(list, i) in priorityList"
+              :key="i"
+            >
               <v-list-item-icon>
                 <v-icon :color="list.iconColor">mdi-circle-slice-8</v-icon>
               </v-list-item-icon>
@@ -103,7 +110,9 @@
         absolute
         style="z-index: 99;"
       >
-        <v-subheader style="font-weight: bold; font-size: 1rem; color: rgba(0, 0, 0, 0.74);">
+        <v-subheader
+          style="font-weight: bold; font-size: 1rem; color: rgba(0, 0, 0, 0.74);"
+        >
           Personal information
           <div class="flex-grow-1"></div>
           <v-btn icon @click="navDrawerView = 0">
@@ -117,7 +126,9 @@
         </v-list-item-content>-->
         <v-list-item>
           <v-list-item-content>
-            <v-list-item-title style="font-size: 13px; color: gray;">Photo</v-list-item-title>
+            <v-list-item-title style="font-size: 13px; color: gray;"
+              >Photo</v-list-item-title
+            >
             <v-list-item-title style="font-size: 13px;">
               <v-hover v-slot:default="{ hover }">
                 <v-list-item-avatar size="62" style="margin: 0;">
@@ -136,7 +147,9 @@
         </v-list-item>
         <v-list-item>
           <v-list-item-content>
-            <v-list-item-title style="font-size: 13px; color: gray;">Name</v-list-item-title>
+            <v-list-item-title style="font-size: 13px; color: gray;"
+              >Name</v-list-item-title
+            >
             <v-list-item-title v-if="!editingName" style="font-size: 13px;">
               {{ $store.state.user.displayName }}
               <v-btn
@@ -148,10 +161,14 @@
                   editingName = true;
                   inputName = $store.state.user.displayName;
                 "
-              >Edit</v-btn>
+                >Edit</v-btn
+              >
             </v-list-item-title>
             <v-list-item-subtitle v-else style="font-size: 13px;">
-              <v-form v-model="formChangeNameHasErrors" :lazy-validation="false">
+              <v-form
+                v-model="formChangeNameHasErrors"
+                :lazy-validation="false"
+              >
                 <v-text-field
                   type="text"
                   ref="inputNameChange"
@@ -168,7 +185,8 @@
                   color="#F0595A"
                   style="font-size: 12px; margin-left: 5px;"
                   @click="changeName"
-                >Save</v-btn>
+                  >Save</v-btn
+                >
                 <v-btn
                   x-small
                   text
@@ -178,24 +196,27 @@
                     editingName = false;
                     inputName = '';
                   "
-                >Cancel</v-btn>
+                  >Cancel</v-btn
+                >
               </v-form>
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
         <v-list-item>
           <v-list-item-content>
-            <v-list-item-title style="font-size: 13px; color: gray;">Email</v-list-item-title>
+            <v-list-item-title style="font-size: 13px; color: gray;"
+              >Email</v-list-item-title
+            >
             <v-list-item-title style="font-size: 13px;">
-              {{
-              $store.state.user.email
-              }}
+              {{ $store.state.user.email }}
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <v-list-item>
           <v-list-item-content>
-            <v-list-item-title style="font-size: 13px; color: gray;">Password</v-list-item-title>
+            <v-list-item-title style="font-size: 13px; color: gray;"
+              >Password</v-list-item-title
+            >
             <v-list-item-title v-if="!editingPassword" style="font-size: 13px;">
               ******
               <v-btn
@@ -205,10 +226,14 @@
                 color="#F0595A"
                 style="font-size: 12px; margin-left: 5px;"
                 @click="editingPassword = true"
-              >Edit</v-btn>
+                >Edit</v-btn
+              >
             </v-list-item-title>
             <v-list-item-subtitle v-else style="font-size: 13px;">
-              <v-form v-model="formChangePasswordHasErrors" :lazy-validation="false">
+              <v-form
+                v-model="formChangePasswordHasErrors"
+                :lazy-validation="false"
+              >
                 <v-text-field
                   ref="inputPasswordChange"
                   v-model="inputPassword"
@@ -251,7 +276,8 @@
                   color="#F0595A"
                   style="font-size: 12px; margin-left: 5px;"
                   @click="changePassword"
-                >Save</v-btn>
+                  >Save</v-btn
+                >
                 <v-btn
                   x-small
                   text
@@ -262,14 +288,17 @@
                     inputPassword = '';
                     inputPasswordConfirmation = '';
                   "
-                >Cancel</v-btn>
+                  >Cancel</v-btn
+                >
               </v-form>
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
         <v-list-item v-if="userAccountProvider == 'google.com'">
           <v-list-item-content>
-            <v-list-item-subtitle>Your account is linked with Google</v-list-item-subtitle>
+            <v-list-item-subtitle
+              >Your account is linked with Google</v-list-item-subtitle
+            >
           </v-list-item-content>
         </v-list-item>
       </v-navigation-drawer>
@@ -403,7 +432,9 @@
                     <template v-slot:activator="{ on: taskMenu }">
                       <v-list-item-action style="margin: 0 0 0 16px">
                         <v-btn small icon v-on="taskMenu">
-                          <v-icon color="grey lighten-1">mdi-dots-vertical</v-icon>
+                          <v-icon color="grey lighten-1"
+                            >mdi-dots-vertical</v-icon
+                          >
                         </v-btn>
                       </v-list-item-action>
                     </template>
@@ -522,7 +553,9 @@
                     <template v-slot:activator="{ on: taskMenu }">
                       <v-list-item-action style="margin: 0 0 0 16px">
                         <v-btn small icon v-on="taskMenu">
-                          <v-icon color="grey lighten-1">mdi-dots-vertical</v-icon>
+                          <v-icon color="grey lighten-1"
+                            >mdi-dots-vertical</v-icon
+                          >
                         </v-btn>
                       </v-list-item-action>
                     </template>
@@ -641,7 +674,9 @@
                     <template v-slot:activator="{ on: taskMenu }">
                       <v-list-item-action style="margin: 0 0 0 16px">
                         <v-btn small icon v-on="taskMenu">
-                          <v-icon color="grey lighten-1">mdi-dots-vertical</v-icon>
+                          <v-icon color="grey lighten-1"
+                            >mdi-dots-vertical</v-icon
+                          >
                         </v-btn>
                       </v-list-item-action>
                     </template>
@@ -685,7 +720,12 @@
             right
           >
             Task Completed
-            <v-btn color="white" text @click="snackbar_taskCompleteSuccess = false">Close</v-btn>
+            <v-btn
+              color="white"
+              text
+              @click="snackbar_taskCompleteSuccess = false"
+              >Close</v-btn
+            >
           </v-snackbar>
 
           <v-snackbar
@@ -696,7 +736,12 @@
             right
           >
             Task Deleted
-            <v-btn color="white" text @click="snackbar_taskDeleteSuccess = false">Close</v-btn>
+            <v-btn
+              color="white"
+              text
+              @click="snackbar_taskDeleteSuccess = false"
+              >Close</v-btn
+            >
           </v-snackbar>
 
           <v-dialog v-model="taskEditDialog.isShow" max-width="500px">
@@ -742,15 +787,14 @@
                     </v-list-item-action>
                     <v-list-item-content>
                       <v-list-item-title v-if="!subTask.isDone">
-                        {{
-                        subTask.title
-                        }}
+                        {{ subTask.title }}
                       </v-list-item-title>
                       <v-list-item-title
                         v-else
                         style="color: #B3B4B4!important;
     text-decoration: line-through;"
-                      >{{ subTask.title }}</v-list-item-title>
+                        >{{ subTask.title }}</v-list-item-title
+                      >
                     </v-list-item-content>
                     <v-list-item-action style="margin: 0 0 0 16px">
                       <v-btn @click="deleteSubTask(subTaskIndex)" small icon>
@@ -783,7 +827,8 @@
                   color="light-blue darken-1"
                   dark
                   @click="updateTask"
-                >Save task and close</v-btn>
+                  >Save task and close</v-btn
+                >
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -1421,6 +1466,7 @@ export default {
     }
   },
   created() {
+    console.log(this.$vuetify.breakpoint.mdAndUp);
     //
     let date = new Date();
     this.date.month = months[date.getMonth()];
