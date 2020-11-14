@@ -13,11 +13,10 @@
       <v-icon>mdi-arrow-left-drop-circle-outline</v-icon>
     </v-btn>
 
-    <v-tooltip bottom>
+    <v-tooltip bottom v-if="pos > 1 || pos < -1">
       <template v-slot:activator="{ on }">
         <v-btn
           v-on="on"
-          v-if="pos > 1 || pos < -1"
           absolute
           x-small
           icon
@@ -971,16 +970,6 @@ export default {
         listIndex: this.taskEditDialog.list_index,
         priority: this.taskEditDialog.priority
       })
-    },
-    calendarDateOnClick(payload) {
-      let d = new Date(payload.date)
-      let today = new Date()
-      d.setHours(0, 0, 0, 0)
-      today.setHours(0, 0, 0, 0)
-      const diffTime = d - today
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-      this.pos = diffDays
-      // TODO: redirect to home
     }
   },
   created() {
