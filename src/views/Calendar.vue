@@ -13,7 +13,8 @@
 </template>
 
 <script>
-import { formatDate } from '@/utils/date'
+import { formatDate, getDaysInMonth } from '@/utils/date'
+
 export default {
   name: 'Calendar',
   computed: {
@@ -33,6 +34,35 @@ export default {
       })
       return events
     }
+  },
+  methods: {
+    getRemainingTasksForMonth() {
+      let today = new Date()
+      let currentMonth = today.getMonth()
+      let currentYear = today.getFullYear()
+      let daysInCurrentMonth = getDaysInMonth(currentMonth, currentYear)
+      // console.log(daysInCurrentMonth)
+      daysInCurrentMonth.forEach(days => {
+        let d1 = new Date(days)
+        let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`
+        if (!this.$store.state.gettedList.includes(date)) {
+          this.$store.dispatch('getDayList', { date: d1 })
+        }
+      })
+    },
+    calendarDateOnClick(payload) {
+      let d = new Date(payload.date)
+      let today = new Date()
+      d.setHours(0, 0, 0, 0)
+      today.setHours(0, 0, 0, 0)
+      const diffTime = d - today
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+      this.pos = diffDays
+      // TODO: redirect to home
+    }
+  },
+  mounted() {
+    this.getRemainingTasksForMonth()
   }
 }
 </script>

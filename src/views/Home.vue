@@ -30,6 +30,7 @@
       </template>
       <span>Reset</span>
     </v-tooltip>
+
     <v-btn
       absolute
       icon
@@ -42,6 +43,7 @@
     >
       <v-icon>mdi-arrow-right-drop-circle-outline</v-icon>
     </v-btn>
+
     <div class="todo-main">
       <!-- ==== FIRST ==== -->
       <div
@@ -508,7 +510,17 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-btn @click="debug()" color="pink" dark absolute top right fab>
+
+      <v-btn
+        @click="debug()"
+        color="pink"
+        x-small
+        dark
+        absolute
+        bottom
+        right
+        fab
+      >
         <v-icon>mdi-plus</v-icon>
       </v-btn>
     </div>
@@ -518,7 +530,7 @@
 <script>
 import { auth } from '@/plugins/firebase'
 import draggable from 'vuedraggable'
-import { months, day, getDaysInMonth, formatDate } from '@/utils/date'
+import { months, day, formatDate } from '@/utils/date'
 
 export default {
   components: {
@@ -530,10 +542,9 @@ export default {
   data: () => ({
     pos: 0,
 
-    navDrawerView: 0,
-
     snackbar_taskCompleteSuccess: false,
     snackbar_taskDeleteSuccess: false,
+
     contentView: 0,
     taskEditDialog: {
       date: null,
@@ -753,13 +764,6 @@ export default {
       return formatDate(d)
     }
   },
-  watch: {
-    contentView: function(val) {
-      if (val === 1) {
-        this.getRemainingTasksForMonth()
-      }
-    }
-  },
   methods: {
     debug() {
       this.isSidebarOpen = !this.isSidebarOpen
@@ -968,20 +972,6 @@ export default {
         priority: this.taskEditDialog.priority
       })
     },
-    getRemainingTasksForMonth() {
-      let today = new Date()
-      let currentMonth = today.getMonth()
-      let currentYear = today.getFullYear()
-      let daysInCurrentMonth = getDaysInMonth(currentMonth, currentYear)
-      // console.log(daysInCurrentMonth)
-      daysInCurrentMonth.forEach(days => {
-        let d1 = new Date(days)
-        let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`
-        if (!this.$store.state.gettedList.includes(date)) {
-          this.$store.dispatch('getDayList', { date: d1 })
-        }
-      })
-    },
     calendarDateOnClick(payload) {
       let d = new Date(payload.date)
       let today = new Date()
@@ -990,11 +980,10 @@ export default {
       const diffTime = d - today
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
       this.pos = diffDays
-      this.contentView = 0
+      // TODO: redirect to home
     }
   },
   created() {
-    //
     let date = new Date()
     this.date.month = months[date.getMonth()]
     this.date.date = date.getDate()
