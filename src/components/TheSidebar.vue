@@ -1,6 +1,6 @@
 <template>
   <v-scroll-y-transition>
-    <v-navigation-drawer v-model="drawerIsShow" permanent app>
+    <v-navigation-drawer :value="open" mobile-breakpoint="1030" app>
       <template v-slot:prepend>
         <v-list-item two-line>
           <v-list-item-avatar>
@@ -13,7 +13,7 @@
             </v-list-item-title>
             <v-list-item-subtitle>
               <v-btn
-                @click="navDrawerView = 1"
+                @click="handleSettingsSidebarOpen()"
                 color="#F0595A"
                 x-small
                 outlined
@@ -45,14 +45,14 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item @click="debug">
+        <!-- <v-list-item @click="debug">
           <v-list-item-action>
             <v-icon>mdi-logout</v-icon>
           </v-list-item-action>
           <v-list-item-content>
             <v-list-item-title>Debug</v-list-item-title>
           </v-list-item-content>
-        </v-list-item>
+        </v-list-item> -->
       </v-list>
 
       <v-list dense nav>
@@ -100,26 +100,24 @@
 </template>
 
 <script>
-import { auth } from '@/plugins/firebase';
 export default {
   props: {
-    drawerIsShow: Boolean,
+    open: Boolean,
+    handleSettingsSidebarOpen: Function,
+    signOut: Function
   },
-  methods: {
-    signOut() {
-      auth
-        .signOut()
-        .then(() => {
-          // Sign-out successful.
-          this.$store.commit("clearTasksArr");
-        })
-        .catch(function(error) {
-          // An error happened.
-          console.log(error);
-        });
-    },
-  },
-};
+  data: () => ({
+    listPriority: undefined,
+    priorityList: [
+      { iconColor: '#F0595A', title: 'High priority' },
+      { iconColor: 'blue', title: 'Normal priority' },
+      { iconColor: '', title: 'Low priority' }
+    ]
+  }),
+  computed: {
+    //
+  }
+}
 </script>
 
 <style></style>

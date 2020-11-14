@@ -13,7 +13,7 @@
       <v-btn text @click="dialogSignUp = true">Signup</v-btn>
     </v-app-bar>
 
-    <v-content>
+    <v-main>
       <v-container fluid style="height: 100vh; padding: 0;">
         <div class="intro">
           <div class="intro-text px-12 py-8">
@@ -38,7 +38,7 @@
           <div class="intro-right"></div>
         </div>
       </v-container>
-    </v-content>
+    </v-main>
 
     <v-dialog v-model="dialogLogIn" max-width="410px" persistent>
       <v-card>
@@ -99,8 +99,8 @@
               Don't have an account?
               <a
                 @click="
-                  dialogLogIn = false;
-                  dialogSignUp = true;
+                  dialogLogIn = false
+                  dialogSignUp = true
                 "
                 class="text-center"
                 style="color: #F0595A"
@@ -180,8 +180,8 @@
               Already have an account?
               <a
                 @click="
-                  dialogSignUp = false;
-                  dialogLogIn = true;
+                  dialogSignUp = false
+                  dialogLogIn = true
                 "
                 class="text-center"
                 style="color: #F0595A"
@@ -196,16 +196,16 @@
 </template>
 
 <script>
-import { firebase } from "@/plugins/firebase";
+import { auth, firebase } from '@/plugins/firebase'
 const gradients = [
-  ["#222"],
-  ["#42b3f4"],
-  ["red", "orange", "yellow"],
-  ["purple", "violet"],
-  ["#00c6ff", "#F0F", "#FF0"],
-  ["#f72047", "#ffd200", "#1feaea"],
-  ["#F0595A", "#ffd200", "#1FEAEA", "#40596B"]
-];
+  ['#222'],
+  ['#42b3f4'],
+  ['red', 'orange', 'yellow'],
+  ['purple', 'violet'],
+  ['#00c6ff', '#F0F', '#FF0'],
+  ['#f72047', '#ffd200', '#1feaea'],
+  ['#F0595A', '#ffd200', '#1FEAEA', '#40596B']
+]
 
 export default {
   data: () => ({
@@ -216,21 +216,21 @@ export default {
     inputEmail: undefined,
     inputPassword: undefined,
     inputPasswordLoginShow: false,
-    nameRules: [v => !!v || "Name is required"],
+    nameRules: [v => !!v || 'Name is required'],
     emailRules: [
-      v => !!v || "E-mail is required",
-      v => /.+@.+\..+/.test(v) || "E-mail must be valid"
+      v => !!v || 'E-mail is required',
+      v => /.+@.+\..+/.test(v) || 'E-mail must be valid'
     ],
     passwordRules: [
-      v => !!v || "Password is required",
-      v => (v && v.length >= 6) || "Password must be at least 6 characters"
+      v => !!v || 'Password is required',
+      v => (v && v.length >= 6) || 'Password must be at least 6 characters'
     ],
     formLoginIsValid: false,
     formSignUpIsValid: false,
     errorLogin: false,
-    errorLoginMessage: "",
+    errorLoginMessage: '',
     errorSignUp: false,
-    errorSignUpMessage: "",
+    errorSignUpMessage: '',
 
     auth: {
       provider: null
@@ -239,18 +239,18 @@ export default {
     width: 4,
     radius: 10,
     padding: 3,
-    lineCap: "round",
+    lineCap: 'round',
     gradient: gradients[6],
     value: [0, 2, 3, 5, 2, 5, 1, 3, 4, 3, 6, 8, 6, 9, 10],
-    gradientDirection: "top",
+    gradientDirection: 'top',
     gradients,
     fill: false,
-    type: "trend",
+    type: 'trend',
     autoLineWidth: false
   }),
   methods: {
     debug1() {
-      console.log(this.$store.state.user);
+      console.log(this.$store.state.user)
     },
     googleLogin() {
       firebase
@@ -259,14 +259,14 @@ export default {
         .then(result => {
           // console.log("result: ", result);
           // This gives you a Google Access Token. You can use it to access the Google API.
-          this.$store.commit("setAccessToken", result.credential.accessToken);
+          this.$store.commit('setAccessToken', result.credential.accessToken)
           // The signed-in user info.
-          this.$store.commit("setUser", result.user);
+          this.$store.commit('setUser', result.user)
 
-          this.$router.push({ path: "/home" });
+          this.$router.push({ path: '/home' })
         })
         .catch(function(error) {
-          console.log("error: ", error);
+          console.log('error: ', error)
           // Handle Errors here.
           // var errorCode = error.code;
           // var errorMessage = error.message;
@@ -274,7 +274,7 @@ export default {
           // var email = error.email;
           // The firebase.auth.AuthCredential type that was used.
           // var credential = error.credential;
-        });
+        })
     },
     passwordLogin() {
       firebase
@@ -283,12 +283,12 @@ export default {
         .catch(error => {
           // Handle Errors here.
           // var errorCode = error.code;
-          var errorMessage = error.message;
+          var errorMessage = error.message
           // ...
-          console.log("error! ", error);
-          this.errorLogin = true;
-          this.errorLoginMessage = errorMessage;
-        });
+          console.log('error! ', error)
+          this.errorLogin = true
+          this.errorLoginMessage = errorMessage
+        })
     },
     passwordSignup() {
       firebase
@@ -296,7 +296,7 @@ export default {
         .createUserWithEmailAndPassword(this.inputEmail, this.inputPassword)
         .then(user => {
           if (user) {
-            var u = firebase.auth().currentUser;
+            var u = auth.currentUser
             u.updateProfile({
               displayName: this.inputName
             })
@@ -305,17 +305,17 @@ export default {
               })
               .catch(function(error) {
                 // An error happened.
-                console.log(error);
-              });
+                console.log(error)
+              })
           }
         })
         .catch(function(error) {
           // Handle Errors here.
           // var errorCode = error.code;
           // var errorMessage = error.message;
-          console.log("error! ", error);
+          console.log('error! ', error)
           // ...
-        });
+        })
     },
     googleLogout() {
       firebase
@@ -326,23 +326,23 @@ export default {
         })
         .catch(function(error) {
           // An error happened.
-          console.log(error);
-        });
+          console.log(error)
+        })
     }
   },
   created() {
     //check if login(ed)
-    firebase.auth().onAuthStateChanged(user => {
+    auth.onAuthStateChanged(user => {
       if (user) {
         // User is signed in.
-        this.$store.commit("setUser", user);
-        this.$router.push({ path: "/home" });
+        this.$store.commit('setUser', user)
+        this.$router.push({ path: '/home' })
       }
-    });
+    })
 
-    this.auth.provider = new firebase.auth.GoogleAuthProvider();
+    this.auth.provider = new firebase.auth.GoogleAuthProvider()
   }
-};
+}
 </script>
 
 <style lang="scss" scoped>
