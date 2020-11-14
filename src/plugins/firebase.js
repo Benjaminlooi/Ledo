@@ -13,11 +13,12 @@ var firebaseConfig = {
   projectId: "ledo-fyp",
   storageBucket: "ledo-fyp.appspot.com",
   messagingSenderId: "179153107381",
-  appId: "1:179153107381:web:aa44768cc157ed68"
+  appId: "1:179153107381:web:aa44768cc157ed68",
 };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
 const firestore = firebase.firestore();
+const auth = firebase.auth();
 
-export { firebase, firestore };
+export { firebase, firestore, auth };
