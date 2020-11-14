@@ -1,100 +1,6 @@
 <template>
   <div>
-    <v-scroll-y-transition>
-      <v-navigation-drawer v-model="drawerIsShow" app>
-        <template v-slot:prepend>
-          <v-list-item two-line>
-            <v-list-item-avatar>
-              <img v-if="$store.state.user" :src="$store.state.user.photoURL" />
-            </v-list-item-avatar>
-
-            <v-list-item-content v-if="$store.state.user">
-              <v-list-item-title>
-                {{
-                $store.state.user.displayName
-                }}
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                <v-btn
-                  @click="navDrawerView = 1"
-                  color="#F0595A"
-                  x-small
-                  outlined
-                  style="font-size: 0.7em;"
-                >Edit Profile</v-btn>
-              </v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </template>
-
-        <v-divider></v-divider>
-        <v-list dense>
-          <v-list-item @click="contentView = 0">
-            <v-list-item-action>
-              <v-icon>mdi-home</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title>Home</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-
-          <v-list-item @click="contentView = 1">
-            <v-list-item-action>
-              <v-icon>mdi-calendar</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title>Month View</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-
-          <v-list-item @click="debug">
-            <v-list-item-action>
-              <v-icon>mdi-logout</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title>Debug</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-
-        <v-list dense nav>
-          <v-list-item-content>
-            <v-list-item-title>
-              Filter
-              <v-btn
-                v-if="listPriority !== undefined"
-                text
-                x-small
-                color="primary"
-                right
-                absolute
-                @click="listPriority = undefined"
-              >Clear filter</v-btn>
-            </v-list-item-title>
-          </v-list-item-content>
-          <v-list-item-group v-model="listPriority">
-            <v-list-item @click="doNothing()" v-for="(list, i) in priorityList" :key="i">
-              <v-list-item-icon>
-                <v-icon :color="list.iconColor">mdi-circle-slice-8</v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>{{ list.title }}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
-
-        <template v-slot:append>
-          <div class="pa-2">
-            <v-btn block color="#F0595A" dark @click="signOut">
-              Logout
-              <v-icon right dark>mdi-logout</v-icon>
-            </v-btn>
-          </div>
-        </template>
-      </v-navigation-drawer>
-    </v-scroll-y-transition>
-
+    <TheSidebar />
     <v-scroll-y-transition>
       <v-navigation-drawer
         v-if="navDrawerView == 1"
@@ -103,7 +9,9 @@
         absolute
         style="z-index: 99;"
       >
-        <v-subheader style="font-weight: bold; font-size: 1rem; color: rgba(0, 0, 0, 0.74);">
+        <v-subheader
+          style="font-weight: bold; font-size: 1rem; color: rgba(0, 0, 0, 0.74);"
+        >
           Personal information
           <div class="flex-grow-1"></div>
           <v-btn icon @click="navDrawerView = 0">
@@ -117,7 +25,9 @@
         </v-list-item-content>-->
         <v-list-item>
           <v-list-item-content>
-            <v-list-item-title style="font-size: 13px; color: gray;">Photo</v-list-item-title>
+            <v-list-item-title style="font-size: 13px; color: gray;"
+              >Photo</v-list-item-title
+            >
             <v-list-item-title style="font-size: 13px;">
               <v-hover v-slot:default="{ hover }">
                 <v-list-item-avatar size="62" style="margin: 0;">
@@ -136,7 +46,9 @@
         </v-list-item>
         <v-list-item>
           <v-list-item-content>
-            <v-list-item-title style="font-size: 13px; color: gray;">Name</v-list-item-title>
+            <v-list-item-title style="font-size: 13px; color: gray;"
+              >Name</v-list-item-title
+            >
             <v-list-item-title v-if="!editingName" style="font-size: 13px;">
               {{ $store.state.user.displayName }}
               <v-btn
@@ -148,10 +60,14 @@
                   editingName = true;
                   inputName = $store.state.user.displayName;
                 "
-              >Edit</v-btn>
+                >Edit</v-btn
+              >
             </v-list-item-title>
             <v-list-item-subtitle v-else style="font-size: 13px;">
-              <v-form v-model="formChangeNameHasErrors" :lazy-validation="false">
+              <v-form
+                v-model="formChangeNameHasErrors"
+                :lazy-validation="false"
+              >
                 <v-text-field
                   type="text"
                   ref="inputNameChange"
@@ -168,7 +84,8 @@
                   color="#F0595A"
                   style="font-size: 12px; margin-left: 5px;"
                   @click="changeName"
-                >Save</v-btn>
+                  >Save</v-btn
+                >
                 <v-btn
                   x-small
                   text
@@ -178,24 +95,27 @@
                     editingName = false;
                     inputName = '';
                   "
-                >Cancel</v-btn>
+                  >Cancel</v-btn
+                >
               </v-form>
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
         <v-list-item>
           <v-list-item-content>
-            <v-list-item-title style="font-size: 13px; color: gray;">Email</v-list-item-title>
+            <v-list-item-title style="font-size: 13px; color: gray;"
+              >Email</v-list-item-title
+            >
             <v-list-item-title style="font-size: 13px;">
-              {{
-              $store.state.user.email
-              }}
+              {{ $store.state.user.email }}
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
         <v-list-item>
           <v-list-item-content>
-            <v-list-item-title style="font-size: 13px; color: gray;">Password</v-list-item-title>
+            <v-list-item-title style="font-size: 13px; color: gray;"
+              >Password</v-list-item-title
+            >
             <v-list-item-title v-if="!editingPassword" style="font-size: 13px;">
               ******
               <v-btn
@@ -205,10 +125,14 @@
                 color="#F0595A"
                 style="font-size: 12px; margin-left: 5px;"
                 @click="editingPassword = true"
-              >Edit</v-btn>
+                >Edit</v-btn
+              >
             </v-list-item-title>
             <v-list-item-subtitle v-else style="font-size: 13px;">
-              <v-form v-model="formChangePasswordHasErrors" :lazy-validation="false">
+              <v-form
+                v-model="formChangePasswordHasErrors"
+                :lazy-validation="false"
+              >
                 <v-text-field
                   ref="inputPasswordChange"
                   v-model="inputPassword"
@@ -251,7 +175,8 @@
                   color="#F0595A"
                   style="font-size: 12px; margin-left: 5px;"
                   @click="changePassword"
-                >Save</v-btn>
+                  >Save</v-btn
+                >
                 <v-btn
                   x-small
                   text
@@ -262,14 +187,17 @@
                     inputPassword = '';
                     inputPasswordConfirmation = '';
                   "
-                >Cancel</v-btn>
+                  >Cancel</v-btn
+                >
               </v-form>
             </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
         <v-list-item v-if="userAccountProvider == 'google.com'">
           <v-list-item-content>
-            <v-list-item-subtitle>Your account is linked with Google</v-list-item-subtitle>
+            <v-list-item-subtitle
+              >Your account is linked with Google</v-list-item-subtitle
+            >
           </v-list-item-content>
         </v-list-item>
       </v-navigation-drawer>
@@ -325,7 +253,7 @@
             :class="{
               'next-day': !isToday(date_1),
               'current-day': isToday(date_1),
-              'any-day': !isTodayOnScreen
+              'any-day': !isTodayOnScreen,
             }"
           >
             <div class="days-navbar">
@@ -379,7 +307,7 @@
                       :class="{
                         'priority-zero': todo_item.priority == 0,
                         'priority-one': todo_item.priority == 1,
-                        'priority-two': todo_item.priority == 2
+                        'priority-two': todo_item.priority == 2,
                       }"
                       v-model="todo_item.isDone"
                       @click.native="toggleIsDone(0, todo_item.isDone)"
@@ -403,7 +331,9 @@
                     <template v-slot:activator="{ on: taskMenu }">
                       <v-list-item-action style="margin: 0 0 0 16px">
                         <v-btn small icon v-on="taskMenu">
-                          <v-icon color="grey lighten-1">mdi-dots-vertical</v-icon>
+                          <v-icon color="grey lighten-1"
+                            >mdi-dots-vertical</v-icon
+                          >
                         </v-btn>
                       </v-list-item-action>
                     </template>
@@ -444,7 +374,7 @@
             :class="{
               'next-day': !isToday(date_2),
               'current-day': isToday(date_2),
-              'any-day': !isTodayOnScreen
+              'any-day': !isTodayOnScreen,
             }"
           >
             <div class="days-navbar">
@@ -498,7 +428,7 @@
                       :class="{
                         'priority-zero': todo_item.priority == 0,
                         'priority-one': todo_item.priority == 1,
-                        'priority-two': todo_item.priority == 2
+                        'priority-two': todo_item.priority == 2,
                       }"
                       v-model="todo_item.isDone"
                       @click.native="toggleIsDone(1, todo_item.isDone)"
@@ -522,7 +452,9 @@
                     <template v-slot:activator="{ on: taskMenu }">
                       <v-list-item-action style="margin: 0 0 0 16px">
                         <v-btn small icon v-on="taskMenu">
-                          <v-icon color="grey lighten-1">mdi-dots-vertical</v-icon>
+                          <v-icon color="grey lighten-1"
+                            >mdi-dots-vertical</v-icon
+                          >
                         </v-btn>
                       </v-list-item-action>
                     </template>
@@ -563,7 +495,7 @@
             :class="{
               'next-day': !isToday(date_3),
               'current-day': isToday(date_3),
-              'any-day': !isTodayOnScreen
+              'any-day': !isTodayOnScreen,
             }"
           >
             <div class="days-navbar">
@@ -617,7 +549,7 @@
                       :class="{
                         'priority-zero': todo_item.priority == 0,
                         'priority-one': todo_item.priority == 1,
-                        'priority-two': todo_item.priority == 2
+                        'priority-two': todo_item.priority == 2,
                       }"
                       v-model="todo_item.isDone"
                       @click.native="toggleIsDone(2, todo_item.isDone)"
@@ -641,7 +573,9 @@
                     <template v-slot:activator="{ on: taskMenu }">
                       <v-list-item-action style="margin: 0 0 0 16px">
                         <v-btn small icon v-on="taskMenu">
-                          <v-icon color="grey lighten-1">mdi-dots-vertical</v-icon>
+                          <v-icon color="grey lighten-1"
+                            >mdi-dots-vertical</v-icon
+                          >
                         </v-btn>
                       </v-list-item-action>
                     </template>
@@ -685,7 +619,12 @@
             right
           >
             Task Completed
-            <v-btn color="white" text @click="snackbar_taskCompleteSuccess = false">Close</v-btn>
+            <v-btn
+              color="white"
+              text
+              @click="snackbar_taskCompleteSuccess = false"
+              >Close</v-btn
+            >
           </v-snackbar>
 
           <v-snackbar
@@ -696,13 +635,18 @@
             right
           >
             Task Deleted
-            <v-btn color="white" text @click="snackbar_taskDeleteSuccess = false">Close</v-btn>
+            <v-btn
+              color="white"
+              text
+              @click="snackbar_taskDeleteSuccess = false"
+              >Close</v-btn
+            >
           </v-snackbar>
 
           <v-dialog v-model="taskEditDialog.isShow" max-width="500px">
-            <template v-slot:activator="{ on }">
-              <!-- <v-btn color="primary" dark v-on="on">Open Dialog</v-btn> -->
-            </template>
+            <!-- <template v-slot:activator="{ on }"> -->
+            <!-- <v-btn color="primary" dark v-on="on">Open Dialog</v-btn> -->
+            <!-- </template> -->
             <v-card>
               <v-card-title style="border-bottom: 1px solid #acacac">
                 <v-text-field
@@ -742,15 +686,14 @@
                     </v-list-item-action>
                     <v-list-item-content>
                       <v-list-item-title v-if="!subTask.isDone">
-                        {{
-                        subTask.title
-                        }}
+                        {{ subTask.title }}
                       </v-list-item-title>
                       <v-list-item-title
                         v-else
                         style="color: #B3B4B4!important;
     text-decoration: line-through;"
-                      >{{ subTask.title }}</v-list-item-title>
+                        >{{ subTask.title }}</v-list-item-title
+                      >
                     </v-list-item-content>
                     <v-list-item-action style="margin: 0 0 0 16px">
                       <v-btn @click="deleteSubTask(subTaskIndex)" small icon>
@@ -783,7 +726,8 @@
                   color="light-blue darken-1"
                   dark
                   @click="updateTask"
-                >Save task and close</v-btn>
+                  >Save task and close</v-btn
+                >
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -820,10 +764,12 @@
 import { firebase } from "@/plugins/firebase";
 import draggable from "vuedraggable";
 import { months, day, getDaysInMonth, formatDate } from "@/utils/date";
+import TheSidebar from "../components/TheSidebar.vue";
 
 export default {
   components: {
-    draggable
+    draggable,
+    TheSidebar,
   },
   props: {
     // source: String
@@ -835,7 +781,7 @@ export default {
     navDrawerView: 0,
     editingName: false,
     inputName: "",
-    nameRules: [v => !!v || "Name is required"],
+    nameRules: [(v) => !!v || "Name is required"],
     formChangeNameHasErrors: true,
     editingPassword: false,
     inputPassword: "",
@@ -843,11 +789,11 @@ export default {
     inputPasswordChangeShow: false,
     inputPasswordChangeConfirmationShow: false,
     passwordRules: [
-      v => !!v || "Password is required",
-      v => (v && v.length >= 6) || "Password must be at least 6 characters"
+      (v) => !!v || "Password is required",
+      (v) => (v && v.length >= 6) || "Password must be at least 6 characters",
     ],
     passwordConfirmationRules: [
-      v => !!v || "Password Confirmation is required"
+      (v) => !!v || "Password Confirmation is required",
     ],
     formChangePasswordHasErrors: true,
 
@@ -861,7 +807,7 @@ export default {
       notes: "",
       task_index: null,
       list_index: null,
-      subTasks: []
+      subTasks: [],
     },
     inputSubTask: "",
     dialogPos: null,
@@ -870,16 +816,16 @@ export default {
     priorityList: [
       { iconColor: "#F0595A", title: "High priority" },
       { iconColor: "blue", title: "Normal priority" },
-      { iconColor: "", title: "Low priority" }
+      { iconColor: "", title: "Low priority" },
     ],
 
     userid: null,
     date: {
       month: null,
-      date: null
+      date: null,
     },
 
-    items: [{ title: "Complete" }, { title: "Remove" }, { title: "Label" }]
+    items: [{ title: "Complete" }, { title: "Remove" }, { title: "Label" }],
   }),
   computed: {
     date_1() {
@@ -908,7 +854,7 @@ export default {
         let today = new Date();
         let d1 = new Date();
         d1.setDate(today.getDate() + 0 + this.pos);
-        let tasks = this.$store.state.tasks.filter(task => {
+        let tasks = this.$store.state.tasks.filter((task) => {
           if (task) {
             let dateParts = task.date.split("-");
             let d2 = new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);
@@ -934,7 +880,7 @@ export default {
                 break;
             }
             let list = tasks[0].list.filter(
-              taskList => taskList.priority == priorityFilter
+              (taskList) => taskList.priority == priorityFilter
             );
             return list;
           } else return tasks[0].list;
@@ -946,16 +892,16 @@ export default {
         d1.setDate(today.getDate() + this.pos);
         this.$store.dispatch("reorderUserTask", {
           date: d1,
-          data: value
+          data: value,
         });
-      }
+      },
     },
     todo_items_2: {
       get() {
         let today = new Date();
         let d1 = new Date();
         d1.setDate(today.getDate() + 1 + this.pos);
-        let tasks = this.$store.state.tasks.filter(task => {
+        let tasks = this.$store.state.tasks.filter((task) => {
           if (task) {
             let dateParts = task.date.split("-");
             let d2 = new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);
@@ -981,7 +927,7 @@ export default {
                 break;
             }
             let list = tasks[0].list.filter(
-              taskList => taskList.priority == priorityFilter
+              (taskList) => taskList.priority == priorityFilter
             );
             return list;
           } else return tasks[0].list;
@@ -993,16 +939,16 @@ export default {
         d1.setDate(today.getDate() + 1 + this.pos);
         this.$store.dispatch("reorderUserTask", {
           date: d1,
-          data: value
+          data: value,
         });
-      }
+      },
     },
     todo_items_3: {
       get() {
         let today = new Date();
         let d1 = new Date();
         d1.setDate(today.getDate() + 2 + this.pos);
-        let tasks = this.$store.state.tasks.filter(task => {
+        let tasks = this.$store.state.tasks.filter((task) => {
           if (task) {
             let dateParts = task.date.split("-");
             let d2 = new Date(dateParts[2], dateParts[0] - 1, dateParts[1]);
@@ -1028,7 +974,7 @@ export default {
                 break;
             }
             let list = tasks[0].list.filter(
-              taskList => taskList.priority == priorityFilter
+              (taskList) => taskList.priority == priorityFilter
             );
             return list;
           } else return tasks[0].list;
@@ -1040,9 +986,9 @@ export default {
         d1.setDate(today.getDate() + 2 + this.pos);
         this.$store.dispatch("reorderUserTask", {
           date: d1,
-          data: value
+          data: value,
         });
-      }
+      },
     },
     isTodayOnScreen() {
       if (
@@ -1066,7 +1012,7 @@ export default {
           this.$store.commit("initSubTask", {
             date: this.taskEditDialog.date,
             taskIndex: this.taskEditDialog.task_index,
-            listIndex: this.taskEditDialog.list_index
+            listIndex: this.taskEditDialog.list_index,
           });
         }
         return this.$store.state.tasks[this.taskEditDialog.task_index].list[
@@ -1080,14 +1026,14 @@ export default {
     },
     events() {
       let events = [];
-      this.$store.state.tasks.forEach(task => {
+      this.$store.state.tasks.forEach((task) => {
         let d = new Date(task.date);
         let date = formatDate(d);
         if (task.list !== undefined || task.list !== 0) {
-          task.list.forEach(list => {
+          task.list.forEach((list) => {
             events.push({
               name: list.title,
-              start: date
+              start: date,
             });
           });
         }
@@ -1096,28 +1042,28 @@ export default {
     },
     nameChangeForm() {
       return {
-        inputNameChange: this.inputName
+        inputNameChange: this.inputName,
       };
     },
     passwordChangeForm() {
       return {
         inputPasswordChange: this.inputPassword,
-        inputPasswordChangeConfirmation: this.inputPasswordConfirmation
+        inputPasswordChangeConfirmation: this.inputPasswordConfirmation,
       };
     },
     userAccountProvider() {
       return this.$store.state.user.providerData[0].providerId;
-    }
+    },
   },
   watch: {
     contentView: function(val) {
       if (val === 1) {
         this.getRemainingTasksForMonth();
       }
-    }
+    },
   },
   methods: {
-    debug(a) {
+    debug() {
       this.drawerIsShow = !this.drawerIsShow;
       // console.log(a)
     },
@@ -1181,7 +1127,7 @@ export default {
       this.$store.dispatch("addUserTask", {
         title: inputVal,
         isDone: false,
-        date: theDate
+        date: theDate,
       });
     },
     onSubmit_addSubTask(inputVal, pos) {
@@ -1195,7 +1141,7 @@ export default {
         isDone: false,
         date: this.taskEditDialog.date,
         taskIndex: this.taskEditDialog.task_index,
-        listIndex: this.taskEditDialog.list_index
+        listIndex: this.taskEditDialog.list_index,
       });
     },
     toggleIsDone(pos, isDone) {
@@ -1208,7 +1154,7 @@ export default {
       theDate.setDate(today.getDate() + pos + this.pos);
 
       this.$store.dispatch("pushDayList", {
-        date: theDate
+        date: theDate,
       });
     },
     searchForTaskIndexGivenDate(pos) {
@@ -1241,14 +1187,14 @@ export default {
           this.$store.dispatch("moveTaskToToday", {
             taskIndex: task_index,
             listIndex: list_index,
-            date: d1
+            date: d1,
           });
           break;
         case 1:
           this.$store.dispatch("removeUserTask", {
             taskIndex: task_index,
             listIndex: list_index,
-            date: d1
+            date: d1,
           });
           this.snackbar_taskDeleteSuccess = true;
           break;
@@ -1257,7 +1203,7 @@ export default {
             taskIndex: task_index,
             listIndex: list_index,
             date: d1,
-            priority: 2
+            priority: 2,
           });
           break;
         case 3:
@@ -1265,7 +1211,7 @@ export default {
             taskIndex: task_index,
             listIndex: list_index,
             date: d1,
-            priority: 1
+            priority: 1,
           });
           break;
         case 4:
@@ -1273,7 +1219,7 @@ export default {
             taskIndex: task_index,
             listIndex: list_index,
             date: d1,
-            priority: 0
+            priority: 0,
           });
           break;
       }
@@ -1283,7 +1229,7 @@ export default {
         taskIndex: this.taskEditDialog.task_index,
         listIndex: this.taskEditDialog.list_index,
         subTaskIndex: subTaskIndex,
-        date: this.taskEditDialog.date
+        date: this.taskEditDialog.date,
       });
     },
     todo_item_dblclick(pos, list_index) {
@@ -1321,7 +1267,7 @@ export default {
         notes: this.taskEditDialog.notes,
         taskIndex: this.taskEditDialog.task_index,
         listIndex: this.taskEditDialog.list_index,
-        priority: this.taskEditDialog.priority
+        priority: this.taskEditDialog.priority,
       });
     },
     getRemainingTasksForMonth() {
@@ -1330,7 +1276,7 @@ export default {
       let currentYear = today.getFullYear();
       let daysInCurrentMonth = getDaysInMonth(currentMonth, currentYear);
       // console.log(daysInCurrentMonth)
-      daysInCurrentMonth.forEach(days => {
+      daysInCurrentMonth.forEach((days) => {
         let d1 = new Date(days);
         let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`;
         if (!this.$store.state.gettedList.includes(date)) {
@@ -1351,7 +1297,7 @@ export default {
     changeName() {
       this.formChangeNameHasErrors = false;
 
-      Object.keys(this.nameChangeForm).forEach(f => {
+      Object.keys(this.nameChangeForm).forEach((f) => {
         if (!this.nameChangeForm[f]) this.formChangeNameHasErrors = true;
 
         this.$refs[f].validate(true);
@@ -1362,7 +1308,7 @@ export default {
         this.editingName = false;
         user
           .updateProfile({
-            displayName: this.inputName
+            displayName: this.inputName,
           })
           .then(() => {
             this.inputName = "";
@@ -1379,7 +1325,7 @@ export default {
     changePassword() {
       this.formChangePasswordHasErrors = false;
 
-      Object.keys(this.passwordChangeForm).forEach(f => {
+      Object.keys(this.passwordChangeForm).forEach((f) => {
         if (!this.passwordChangeForm[f])
           this.formChangePasswordHasErrors = true;
 
@@ -1406,19 +1352,6 @@ export default {
         }
       }
     },
-    signOut() {
-      firebase
-        .auth()
-        .signOut()
-        .then(() => {
-          // Sign-out successful.
-          this.$store.commit("clearTasksArr");
-        })
-        .catch(function(error) {
-          // An error happened.
-          console.log(error);
-        });
-    }
   },
   created() {
     //
@@ -1427,7 +1360,7 @@ export default {
     this.date.date = date.getDate();
 
     //check if login(ed)
-    firebase.auth().onAuthStateChanged(user => {
+    firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         // User is signed in.
         this.$store.commit("setUser", user);
@@ -1445,8 +1378,8 @@ export default {
     },
     toMonth: function(value) {
       return months[value];
-    }
-  }
+    },
+  },
 };
 </script>
 
