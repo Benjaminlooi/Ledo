@@ -1,11 +1,21 @@
 <template>
   <v-app id="ledo">
-    <router-view />
+    <component :is="layout">
+      <router-view />
+    </component>
   </v-app>
 </template>
 
 <script>
-export default {};
+const defaultLayout = 'default'
+
+export default {
+  computed: {
+    layout() {
+      return (this.$route.meta.layout || defaultLayout) + '-layout'
+    }
+  }
+}
 </script>
 
 <style lang="scss">
