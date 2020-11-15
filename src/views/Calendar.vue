@@ -57,6 +57,7 @@ export default {
       today.setHours(0, 0, 0, 0)
       const diffTime = d - today
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+      // TODO: fix bottom line by moving pos from Home to store
       this.pos = diffDays
       // TODO: redirect to home
     }
