@@ -407,16 +407,26 @@
       </div>
       <!-- ==== END THIRD ==== -->
 
+      <v-snackbar v-model="snackbar">
+        {{ text }}
+      </v-snackbar>
+
       <v-snackbar
         v-model="snackbar_taskCompleteSuccess"
-        :timeout="3000"
+        :timeout="30000000"
         color="success"
         bottom
         right
       >
         Task Completed
-        <v-btn color="white" text @click="snackbar_taskCompleteSuccess = false"
-          >Close</v-btn
+        <template v-slot:action="{ attrs }">
+          <v-btn
+            color="white"
+            text
+            v-bind="attrs"
+            @click="snackbar_taskCompleteSuccess = false"
+            >Close</v-btn
+          ></template
         >
       </v-snackbar>
 
@@ -428,8 +438,14 @@
         right
       >
         Task Deleted
-        <v-btn color="white" text @click="snackbar_taskDeleteSuccess = false"
-          >Close</v-btn
+        <template v-slot:action="{ attrs }">
+          <v-btn
+            color="white"
+            text
+            v-bind="attrs"
+            @click="snackbar_taskDeleteSuccess = false"
+            >Close</v-btn
+          ></template
         >
       </v-snackbar>
 
