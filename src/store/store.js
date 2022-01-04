@@ -46,8 +46,6 @@ export default new Vuex.Store({
       })
 
       if (getTaskByDateIndex >= 0) {
-        console.log(getTaskByDateIndex)
-        console.log(state.tasksByDate[getTaskByDateIndex])
         // If date is Initialized in tasksByDate
         state.tasksByDate[getTaskByDateIndex].list.push({
           isDone: payload.isDone,
