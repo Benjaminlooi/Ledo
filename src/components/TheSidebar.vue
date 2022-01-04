@@ -73,11 +73,7 @@
           </v-list-item-title>
         </v-list-item-content>
         <v-list-item-group v-model="listPriority">
-          <v-list-item
-            @click="doNothing()"
-            v-for="(list, i) in priorityList"
-            :key="i"
-          >
+          <v-list-item v-for="(list, i) in priorityList" :key="i">
             <v-list-item-icon>
               <v-icon :color="list.iconColor">mdi-circle-slice-8</v-icon>
             </v-list-item-icon>
@@ -128,7 +124,8 @@ export default {
         return this.storeListPriority
       }
     }
-  }
+  },
+  methods: {}
 }
 </script>
 
