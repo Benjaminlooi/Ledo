@@ -56,15 +56,15 @@
           <div v-if="isToday(date_1)" class="date-day">
             Today
             <span class="date-label">
-              {{ date_1.getMonth() | toMonth }}
-              {{ date_1.getDate() }}
+              {{ date_1.toFormat('MMM') }}
+              {{ date_1.toFormat('d') }}
             </span>
           </div>
           <div v-else class="date-day">
-            {{ date_1.getDay() | toDay }}
+            {{ date_1.toFormat('EEEE') }}
             <span class="date-label">
-              {{ date_1.getMonth() | toMonth }}
-              {{ date_1.getDate() }}
+              {{ date_1.toFormat('MMM') }}
+              {{ date_1.toFormat('d') }}
             </span>
           </div>
 
@@ -148,16 +148,20 @@
                     <v-list-item-title>Remove</v-list-item-title>
                   </v-list-item>
 
+                  <v-divider></v-divider>
+
                   <v-list-item @click="todo_item_menu_click(2, 0, index)">
-                    <v-icon color="red">mdi-circle-slice-8</v-icon>
+                    <v-icon color="red" class="mr-1">mdi-circle-slice-8</v-icon>
                     <v-list-item-title>High Priority</v-list-item-title>
                   </v-list-item>
                   <v-list-item @click="todo_item_menu_click(3, 0, index)">
-                    <v-icon color="blue">mdi-circle-slice-8</v-icon>
+                    <v-icon color="blue" class="mr-1"
+                      >mdi-circle-slice-8</v-icon
+                    >
                     <v-list-item-title>Normal Priority</v-list-item-title>
                   </v-list-item>
                   <v-list-item @click="todo_item_menu_click(4, 0, index)">
-                    <v-icon>mdi-circle-slice-8</v-icon>
+                    <v-icon class="mr-1">mdi-circle-slice-8</v-icon>
                     <v-list-item-title>Low Priority</v-list-item-title>
                   </v-list-item>
                 </v-list>
@@ -180,15 +184,15 @@
           <div v-if="isToday(date_2)" class="date-day">
             Today
             <span class="date-label">
-              {{ date_2.getMonth() | toMonth }}
-              {{ date_2.getDate() }}
+              {{ date_2.toFormat('MMM') }}
+              {{ date_2.toFormat('d') }}
             </span>
           </div>
           <div v-else class="date-day">
-            {{ date_2.getDay() | toDay }}
+            {{ date_2.toFormat('EEEE') }}
             <span class="date-label">
-              {{ date_2.getMonth() | toMonth }}
-              {{ date_2.getDate() }}
+              {{ date_2.toFormat('MMM') }}
+              {{ date_2.toFormat('d') }}
             </span>
           </div>
 
@@ -258,11 +262,12 @@
 
                 <v-list dense>
                   <v-list-item
-                    v-if="isBeforeToday(0)"
+                    v-if="isBeforeToday(1)"
                     @click="todo_item_menu_click(0, 1, index)"
                   >
                     <v-list-item-title>Move to today</v-list-item-title>
                   </v-list-item>
+
                   <v-list-item @click="todo_item_menu_click(1, 1, index)">
                     <v-list-item-title>Remove</v-list-item-title>
                   </v-list-item>
@@ -299,15 +304,15 @@
           <div v-if="isToday(date_3)" class="date-day">
             Today
             <span class="date-label">
-              {{ date_3.getMonth() | toMonth }}
-              {{ date_3.getDate() }}
+              {{ date_3.toFormat('MMM') }}
+              {{ date_3.toFormat('d') }}
             </span>
           </div>
           <div v-else class="date-day">
-            {{ date_3.getDay() | toDay }}
+            {{ date_3.toFormat('EEEE') }}
             <span class="date-label">
-              {{ date_3.getMonth() | toMonth }}
-              {{ date_3.getDate() }}
+              {{ date_3.toFormat('MMM') }}
+              {{ date_3.toFormat('d') }}
             </span>
           </div>
 
@@ -377,7 +382,7 @@
 
                 <v-list dense>
                   <v-list-item
-                    v-if="isBeforeToday(0)"
+                    v-if="isBeforeToday(2)"
                     @click="todo_item_menu_click(0, 2, index)"
                   >
                     <v-list-item-title>Move to today</v-list-item-title>
@@ -408,14 +413,20 @@
 
       <v-snackbar
         v-model="snackbar_taskCompleteSuccess"
-        :timeout="3000"
+        :timeout="30000000"
         color="success"
         bottom
         right
       >
         Task Completed
-        <v-btn color="white" text @click="snackbar_taskCompleteSuccess = false"
-          >Close</v-btn
+        <template v-slot:action="{ attrs }">
+          <v-btn
+            color="white"
+            text
+            v-bind="attrs"
+            @click="snackbar_taskCompleteSuccess = false"
+            >Close</v-btn
+          ></template
         >
       </v-snackbar>
 
@@ -427,8 +438,14 @@
         right
       >
         Task Deleted
-        <v-btn color="white" text @click="snackbar_taskDeleteSuccess = false"
-          >Close</v-btn
+        <template v-slot:action="{ attrs }">
+          <v-btn
+            color="white"
+            text
+            v-bind="attrs"
+            @click="snackbar_taskDeleteSuccess = false"
+            >Close</v-btn
+          ></template
         >
       </v-snackbar>
 
@@ -455,9 +472,7 @@
               label="Add subtask..."
               single-line
               v-model="inputSubTask"
-              @keydown.enter="
-                onSubmit_addSubTask($event.target.value, dialogPos)
-              "
+              @keydown.enter="onSubmit_addSubTask($event.target.value)"
             ></v-text-field>
             <v-list dense style="width: 100%; min-height: unset;">
               <v-list-item
@@ -533,8 +548,14 @@
 
 <script>
 import draggable from 'vuedraggable'
-import { months, day } from '@/utils/date'
+import {
+  months,
+  day,
+  getIsoDateFromLuxonDateTime,
+  isSameDate
+} from '@/utils/date'
 import { mapState } from 'vuex'
+import { DateTime } from 'luxon'
 
 export default {
   components: {
@@ -561,53 +582,38 @@ export default {
     inputSubTask: '',
     dialogPos: null,
 
-    currentDate: {
-      month: null,
-      date: null
-    },
-
     items: [{ title: 'Complete' }, { title: 'Remove' }, { title: 'Label' }]
   }),
   computed: {
     ...mapState(['listPriority']),
     date_1() {
-      let today = new Date()
-      let day_1 = new Date()
-      day_1.setDate(today.getDate() + 0 + this.pos)
-      // console.log(day_1 .getDay())
+      const today = DateTime.now().startOf('day')
+      const day_1 = today.plus({ days: 0 + this.pos })
       return day_1
     },
     date_2() {
-      let today = new Date()
-      let day_2 = new Date()
-      day_2.setDate(today.getDate() + 1 + this.pos)
-      // console.log(day_2.getDay())
+      const today = DateTime.now().startOf('day')
+      const day_2 = today.plus({ days: 1 + this.pos })
       return day_2
     },
     date_3() {
-      let today = new Date()
-      let day_3 = new Date()
-      day_3.setDate(today.getDate() + 2 + this.pos)
-      // console.log(day_3.getDay())
+      const today = DateTime.now().startOf('day')
+      const day_3 = today.plus({ days: 2 + this.pos })
       return day_3
     },
     todo_items_1: {
       get() {
-        let today = new Date()
-        let d1 = new Date()
-        d1.setDate(today.getDate() + 0 + this.pos)
-        let tasks = this.$store.state.tasks.filter(task => {
-          if (task) {
-            let dateParts = task.date.split('-')
-            let d2 = new Date(dateParts[2], dateParts[0] - 1, dateParts[1])
-            return (
-              d1.getFullYear() === d2.getFullYear() &&
-              d1.getMonth() === d2.getMonth() &&
-              d1.getDate() === d2.getDate()
-            )
+        const today = DateTime.now().startOf('day')
+        const thisDateTimeObj = today.plus({ days: 0 + this.pos })
+
+        const queriedTaskByDate = this.$store.state.tasksByDate.find(
+          taskByDate => {
+            const taskDateTimeObj = DateTime.fromISO(taskByDate.date)
+            return isSameDate(thisDateTimeObj, taskDateTimeObj)
           }
-        })
-        if (tasks.length) {
+        )
+
+        if (queriedTaskByDate) {
           if (this.listPriority !== undefined) {
             let priorityFilter
             switch (this.listPriority) {
@@ -621,40 +627,35 @@ export default {
                 priorityFilter = 0
                 break
             }
-            let list = tasks[0].list.filter(
+            let list = queriedTaskByDate.list.filter(
               taskList => taskList.priority == priorityFilter
             )
             return list
-          } else return tasks[0].list
+          } else return queriedTaskByDate.list
         } else return null
       },
       set(value) {
-        let today = new Date()
-        let d1 = new Date()
-        d1.setDate(today.getDate() + this.pos)
+        const todayDateObj = DateTime.now().startOf('day')
+        const thisDateObj = todayDateObj.plus({ days: this.pos })
         this.$store.dispatch('reorderUserTask', {
-          date: d1,
+          date: getIsoDateFromLuxonDateTime(thisDateObj),
           data: value
         })
       }
     },
     todo_items_2: {
       get() {
-        let today = new Date()
-        let d1 = new Date()
-        d1.setDate(today.getDate() + 1 + this.pos)
-        let tasks = this.$store.state.tasks.filter(task => {
-          if (task) {
-            let dateParts = task.date.split('-')
-            let d2 = new Date(dateParts[2], dateParts[0] - 1, dateParts[1])
-            return (
-              d1.getFullYear() === d2.getFullYear() &&
-              d1.getMonth() === d2.getMonth() &&
-              d1.getDate() === d2.getDate()
-            )
+        const today = DateTime.now().startOf('day')
+        const thisDateTimeObj = today.plus({ days: 1 + this.pos })
+
+        const queriedTaskByDate = this.$store.state.tasksByDate.find(
+          taskByDate => {
+            const taskDateTimeObj = DateTime.fromISO(taskByDate.date)
+            return isSameDate(thisDateTimeObj, taskDateTimeObj)
           }
-        })
-        if (tasks.length) {
+        )
+
+        if (queriedTaskByDate) {
           if (this.listPriority !== undefined) {
             let priorityFilter
             switch (this.listPriority) {
@@ -668,40 +669,35 @@ export default {
                 priorityFilter = 0
                 break
             }
-            let list = tasks[0].list.filter(
+            let list = queriedTaskByDate.list.filter(
               taskList => taskList.priority == priorityFilter
             )
             return list
-          } else return tasks[0].list
+          } else return queriedTaskByDate.list
         } else return null
       },
       set(value) {
-        let today = new Date()
-        let d1 = new Date()
-        d1.setDate(today.getDate() + 1 + this.pos)
+        const todayDateObj = DateTime.now().startOf('day')
+        const thisDateObj = todayDateObj.plus({ days: 1 + this.pos })
         this.$store.dispatch('reorderUserTask', {
-          date: d1,
+          date: getIsoDateFromLuxonDateTime(thisDateObj),
           data: value
         })
       }
     },
     todo_items_3: {
       get() {
-        let today = new Date()
-        let d1 = new Date()
-        d1.setDate(today.getDate() + 2 + this.pos)
-        let tasks = this.$store.state.tasks.filter(task => {
-          if (task) {
-            let dateParts = task.date.split('-')
-            let d2 = new Date(dateParts[2], dateParts[0] - 1, dateParts[1])
-            return (
-              d1.getFullYear() === d2.getFullYear() &&
-              d1.getMonth() === d2.getMonth() &&
-              d1.getDate() === d2.getDate()
-            )
+        const today = DateTime.now().startOf('day')
+        const thisDateTimeObj = today.plus({ days: 2 + this.pos })
+
+        const queriedTaskByDate = this.$store.state.tasksByDate.find(
+          taskByDate => {
+            const taskDateTimeObj = DateTime.fromISO(taskByDate.date)
+            return isSameDate(thisDateTimeObj, taskDateTimeObj)
           }
-        })
-        if (tasks.length) {
+        )
+
+        if (queriedTaskByDate) {
           if (this.listPriority !== undefined) {
             let priorityFilter
             switch (this.listPriority) {
@@ -715,31 +711,28 @@ export default {
                 priorityFilter = 0
                 break
             }
-            let list = tasks[0].list.filter(
+            let list = queriedTaskByDate.list.filter(
               taskList => taskList.priority == priorityFilter
             )
             return list
-          } else return tasks[0].list
+          } else return queriedTaskByDate.list
         } else return null
       },
       set(value) {
-        let today = new Date()
-        let d1 = new Date()
-        d1.setDate(today.getDate() + 2 + this.pos)
+        const todayDateObj = DateTime.now().startOf('day')
+        const thisDateObj = todayDateObj.plus({ days: 2 + this.pos })
         this.$store.dispatch('reorderUserTask', {
-          date: d1,
+          date: getIsoDateFromLuxonDateTime(thisDateObj),
           data: value
         })
       }
     },
     isTodayOnScreen() {
-      if (
+      return (
         this.isToday(this.date_1) ||
         this.isToday(this.date_2) ||
         this.isToday(this.date_3)
-      ) {
-        return true
-      } else return false
+      )
     },
     taskEditDialogSubTasks() {
       if (
@@ -747,7 +740,7 @@ export default {
         this.taskEditDialog.task_index !== undefined
       ) {
         if (
-          this.$store.state.tasks[this.taskEditDialog.task_index].list[
+          this.$store.state.tasksByDate[this.taskEditDialog.task_index].list[
             this.taskEditDialog.list_index
           ].subTasks == undefined
         ) {
@@ -757,9 +750,8 @@ export default {
             listIndex: this.taskEditDialog.list_index
           })
         }
-        return this.$store.state.tasks[this.taskEditDialog.task_index].list[
-          this.taskEditDialog.list_index
-        ].subTasks
+        return this.$store.state.tasksByDate[this.taskEditDialog.task_index]
+          .list[this.taskEditDialog.list_index].subTasks
       } else return []
     }
   },
@@ -769,60 +761,43 @@ export default {
     //   // console.log(a)
     // },
     isBeforeToday(pos) {
-      let today = new Date()
-      let theDate = new Date()
-      theDate.setDate(today.getDate() + pos + this.pos)
-      today.setHours(12, 0, 0, 0)
-      theDate.setHours(12, 0, 0, 0)
-      if (today.getTime() > theDate.getTime()) {
-        return true
-      } else return false
+      const todayDateObj = DateTime.now().startOf('day')
+      const thisDateObj = todayDateObj.plus({ days: pos + this.pos })
+
+      return todayDateObj > thisDateObj
     },
     movePosPrev() {
       --this.pos
 
-      let d1 = new Date(this.date_1)
-      let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`
-      if (!this.$store.state.gettedList.includes(date)) {
-        this.$store.dispatch('getDayList', { date: this.date_1 })
+      const thisIsoDate = getIsoDateFromLuxonDateTime(this.date_1)
+      if (!this.$store.state.gettedList.includes(thisIsoDate)) {
+        this.$store.dispatch('getDayList', thisIsoDate)
       }
     },
     movePosNext() {
       ++this.pos
 
-      let d1 = new Date(this.date_3)
-      let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`
-      if (!this.$store.state.gettedList.includes(date)) {
-        this.$store.dispatch('getDayList', { date: this.date_3 })
+      const thisIsoDate = getIsoDateFromLuxonDateTime(this.date_3)
+      if (!this.$store.state.gettedList.includes(thisIsoDate)) {
+        this.$store.dispatch('getDayList', thisIsoDate)
       }
     },
     isToday(date) {
-      let d1 = new Date()
-      let d2 = new Date(date)
-      if (
-        d1.getFullYear() === d2.getFullYear() &&
-        d1.getMonth() === d2.getMonth() &&
-        d1.getDate() === d2.getDate()
-      ) {
-        return true
-      } else return false
+      let todayDateObj = DateTime.now().startOf('day')
+      let thisDateObj = DateTime.fromISO(date)
+      return isSameDate(todayDateObj, thisDateObj)
     },
     onSubmit_addTask(inputVal, pos) {
-      let today = new Date()
-      let theDate = new Date()
-      theDate.setDate(today.getDate() + pos + this.pos)
+      const theDate = DateTime.now().plus({ days: pos + this.pos })
 
       this.$store.dispatch('addUserTask', {
         title: inputVal,
         isDone: false,
-        date: theDate
+        dateTime: getIsoDateFromLuxonDateTime(theDate)
       })
     },
-    onSubmit_addSubTask(inputVal, pos) {
+    onSubmit_addSubTask(inputVal) {
       this.inputSubTask = ''
-      let today = new Date()
-      let theDate = new Date()
-      theDate.setDate(today.getDate() + pos + this.pos)
 
       this.$store.dispatch('addUserSubTask', {
         title: inputVal,
@@ -837,76 +812,75 @@ export default {
       this.pushDayList(pos)
     },
     pushDayList(pos) {
-      let today = new Date()
-      let theDate = new Date()
-      theDate.setDate(today.getDate() + pos + this.pos)
+      const todayDateObj = DateTime.now().startOf('day')
+      const theDateObj = todayDateObj.plus({ days: pos + this.pos })
 
-      this.$store.dispatch('pushDayList', {
-        date: theDate
-      })
+      this.$store.dispatch(
+        'pushDayListNew',
+        getIsoDateFromLuxonDateTime(theDateObj)
+      )
     },
     searchForTaskIndexGivenDate(pos) {
-      let today = new Date()
-      let d1 = new Date()
-      d1.setDate(today.getDate() + pos + this.pos)
+      let todayDateObj = DateTime.now().startOf('day')
+      let thisDateObj = todayDateObj.plus({ days: pos + this.pos })
 
-      let task_index
-      this.$store.state.tasks.forEach((task, index) => {
-        let dateParts = task.date.split('-')
-        let d2 = new Date(dateParts[2], dateParts[0] - 1, dateParts[1])
-        if (
-          d1.getFullYear() === d2.getFullYear() &&
-          d1.getMonth() === d2.getMonth() &&
-          d1.getDate() === d2.getDate()
-        ) {
-          task_index = index
+      const getTaskByDateIndex = this.$store.state.tasksByDate.findIndex(
+        taskByDate => {
+          const taskDate = DateTime.fromISO(taskByDate.date)
+          return isSameDate(thisDateObj, taskDate)
         }
-      })
-      return task_index
+      )
+
+      return getTaskByDateIndex
     },
     todo_item_menu_click(menu_index, pos, list_index) {
-      let today = new Date()
-      let d1 = new Date()
-      d1.setDate(today.getDate() + pos + this.pos)
+      let todayDateObj = DateTime.now().startOf('day')
+      let thisDateObj = todayDateObj.plus({ days: pos + this.pos })
+      let thisDateIso = getIsoDateFromLuxonDateTime(thisDateObj)
 
       let task_index = this.searchForTaskIndexGivenDate(pos)
       switch (menu_index) {
+        // Move to today
         case 0:
           this.$store.dispatch('moveTaskToToday', {
             taskIndex: task_index,
             listIndex: list_index,
-            date: d1
+            date: thisDateIso
           })
           break
+        // Remove
         case 1:
           this.$store.dispatch('removeUserTask', {
             taskIndex: task_index,
             listIndex: list_index,
-            date: d1
+            date: thisDateIso
           })
           this.snackbar_taskDeleteSuccess = true
           break
+        // High Priority
         case 2:
           this.$store.dispatch('updateUserTask', {
             taskIndex: task_index,
             listIndex: list_index,
-            date: d1,
+            date: thisDateIso,
             priority: 2
           })
           break
+        // Normal Priority
         case 3:
           this.$store.dispatch('updateUserTask', {
             taskIndex: task_index,
             listIndex: list_index,
-            date: d1,
+            date: thisDateIso,
             priority: 1
           })
           break
+        // Low Priority
         case 4:
           this.$store.dispatch('updateUserTask', {
             taskIndex: task_index,
             listIndex: list_index,
-            date: d1,
+            date: thisDateIso,
             priority: 0
           })
           break
@@ -922,27 +896,27 @@ export default {
     },
     todo_item_dblclick(pos, list_index) {
       this.dialogPos = pos
-      let today = new Date()
-      let theDate = new Date()
-      theDate.setDate(today.getDate() + pos + this.pos)
+      const todayDateObj = DateTime.now().startOf('day')
+      const thisDateObj = todayDateObj.plus({ days: pos + this.pos })
 
-      let task_index = this.searchForTaskIndexGivenDate(pos)
-      this.taskEditDialog.title = this.$store.state.tasks[task_index].list[
-        list_index
-      ].title
-      this.taskEditDialog.notes = this.$store.state.tasks[task_index].list[
-        list_index
-      ].notes
-      this.taskEditDialog.date = theDate
+      const task_index = this.searchForTaskIndexGivenDate(pos)
+
+      this.taskEditDialog.title = this.$store.state.tasksByDate[
+        task_index
+      ].list[list_index].title
+      this.taskEditDialog.notes = this.$store.state.tasksByDate[
+        task_index
+      ].list[list_index].notes
+      this.taskEditDialog.date = getIsoDateFromLuxonDateTime(thisDateObj)
       this.taskEditDialog.task_index = task_index
       this.taskEditDialog.list_index = list_index
       this.taskEditDialog.isShow = true
-      this.taskEditDialog.priority = this.$store.state.tasks[task_index].list[
-        list_index
-      ].priority
-      this.taskEditDialog.subTasks = this.$store.state.tasks[task_index].list[
-        list_index
-      ].subTasks
+      this.taskEditDialog.priority = this.$store.state.tasksByDate[
+        task_index
+      ].list[list_index].priority
+      this.taskEditDialog.subTasks = this.$store.state.tasksByDate[
+        task_index
+      ].list[list_index].subTasks
     },
     updateTask() {
       this.taskEditDialog.notes = !this.taskEditDialog.notes
@@ -960,17 +934,7 @@ export default {
     }
   },
   created() {
-    let date = new Date()
-    this.currentDate.month = months[date.getMonth()]
-    this.currentDate.date = date.getDate()
-  },
-  filters: {
-    toDay: function(value) {
-      return day[value]
-    },
-    toMonth: function(value) {
-      return months[value]
-    }
+    //
   }
 }
 </script>

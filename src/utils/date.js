@@ -1,61 +1,34 @@
-export var monthsFull = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December'
-]
-
-export var months = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sept',
-  'Oct',
-  'Nov',
-  'Dec'
-]
-
-export var day = [
-  'Sunday',
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday'
-]
-
-export function getDaysInMonth(month, year) {
-  var date = new Date(year, month, 1)
-  var days = []
-  while (date.getMonth() === month) {
-    days.push(new Date(date))
-    date.setDate(date.getDate() + 1)
+export function* getDaysInMonth(interval) {
+  let cursor = interval.start.startOf('day')
+  while (cursor < interval.end) {
+    yield cursor
+    cursor = cursor.plus({
+      days: 1
+    })
   }
-  return days
 }
 
-export function formatDate(date) {
-  var d = new Date(date),
-    month = '' + (d.getMonth() + 1),
-    day = '' + d.getDate(),
-    year = d.getFullYear()
+export function getIsoDateFromLuxonDateTime(luxonDateTime) {
+  if (luxonDateTime.isLuxonDateTime) return luxonDateTime.toISODate()
+  else {
+    console.warn(
+      'getIsoDateFromLuxonDateTime error: argument is not valid luxon DateTime object.',
+      'Argument: ',
+      luxonDateTime
+    )
 
-  if (month.length < 2) month = '0' + month
-  if (day.length < 2) day = '0' + day
+    return luxonDateTime
+  }
+}
 
-  return [year, month, day].join('-')
+/* 
+ @param date1: luxon DateTime object
+ @param date2: luxon DateTime object
+ */
+export function isSameDate(date1, date2) {
+  return (
+    date1.hasSame(date2, 'year') &&
+    date1.hasSame(date2, 'month') &&
+    date1.hasSame(date2, 'day')
+  )
 }

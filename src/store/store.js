@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { firestore } from '@/plugins/firebase'
+import { getIsoDateFromLuxonDateTime, isSameDate } from '@/utils/date'
+import { DateTime } from 'luxon'
 
 Vue.use(Vuex)
 
@@ -8,7 +10,11 @@ export default new Vuex.Store({
   state: {
     isLoggedIn: false,
     user: null,
-    tasks: [],
+    /* 
+      date: ISODate,
+      list: []
+    */
+    tasksByDate: [],
     gettedList: [],
     listPriority: undefined
   },
@@ -20,44 +26,36 @@ export default new Vuex.Store({
       state.user = payload
     },
     setDayList(state, payload) {
-      state.tasks.push(payload)
+      state.tasksByDate.push(payload)
     },
     setListPriority(state, value) {
       state.listPriority = value
     },
-    initDayTask(state, payload) {
-      let d1 = new Date(payload.date)
-      let date = `${d1.getMonth() + 1}-${d1.getDate()}-${d1.getFullYear()}`
-      state.tasks.push({
-        date: date,
+    initDayTask(state, dateTime) {
+      state.tasksByDate.push({
+        date: dateTime,
         list: []
       })
     },
     addTask(state, payload) {
-      let d1 = new Date(payload.date)
-      let isWrote = false
-      state.tasks.forEach((task, index) => {
-        if (task) {
-          let dateParts = task.date.split('-')
-          let d2 = new Date(dateParts[2], dateParts[0] - 1, dateParts[1])
-          if (
-            d1.getFullYear() === d2.getFullYear() &&
-            d1.getMonth() === d2.getMonth() &&
-            d1.getDate() === d2.getDate()
-          ) {
-            state.tasks[index].list.push({
-              isDone: payload.isDone,
-              title: payload.title,
-              priority: 0
-            })
-            isWrote = true
-          }
-        }
+      let thisDateTimeObj = DateTime.fromISO(payload.dateTime)
+
+      const getTaskByDateIndex = state.tasksByDate.findIndex(taskByDate => {
+        const taskDate = DateTime.fromISO(taskByDate.date)
+        return isSameDate(thisDateTimeObj, taskDate)
       })
-      if (!isWrote) {
-        let date = `${d1.getMonth() + 1}-${d1.getDate()}-${d1.getFullYear()}`
-        state.tasks.push({
-          date: date,
+
+      if (getTaskByDateIndex >= 0) {
+        // If date is Initialized in tasksByDate
+        state.tasksByDate[getTaskByDateIndex].list.push({
+          isDone: payload.isDone,
+          title: payload.title,
+          priority: 0
+        })
+      } else {
+        // If date is NOT Initialized in tasksByDate
+        state.tasksByDate.push({
+          date: thisDateTimeObj.toISODate(),
           list: [
             {
               isDone: payload.isDone,
@@ -69,155 +67,143 @@ export default new Vuex.Store({
       }
     },
     initSubTask(state, payload) {
-      if (!state.tasks[payload.taskIndex].list[payload.listIndex].subTasks) {
-        state.tasks[payload.taskIndex].list[payload.listIndex].subTasks = []
+      if (
+        !state.tasksByDate[payload.taskIndex].list[payload.listIndex].subTasks
+      ) {
+        state.tasksByDate[payload.taskIndex].list[
+          payload.listIndex
+        ].subTasks = []
       }
     },
     addSubTask(state, payload) {
-      if (!state.tasks[payload.taskIndex].list[payload.listIndex].subTasks) {
-        state.tasks[payload.taskIndex].list[payload.listIndex].subTasks = []
+      if (
+        !state.tasksByDate[payload.taskIndex].list[payload.listIndex].subTasks
+      ) {
+        state.tasksByDate[payload.taskIndex].list[
+          payload.listIndex
+        ].subTasks = []
       }
-      state.tasks[payload.taskIndex].list[payload.listIndex].subTasks.push({
+      state.tasksByDate[payload.taskIndex].list[
+        payload.listIndex
+      ].subTasks.push({
         isDone: payload.isDone,
         title: payload.title
       })
     },
     removeSubTask(state, payload) {
-      state.tasks[payload.taskIndex].list[payload.listIndex].subTasks.splice(
-        payload.subTaskIndex,
-        1
-      )
+      state.tasksByDate[payload.taskIndex].list[
+        payload.listIndex
+      ].subTasks.splice(payload.subTaskIndex, 1)
     },
     removeTask(state, payload) {
-      state.tasks[payload.taskIndex].list.splice(payload.listIndex, 1)
+      state.tasksByDate[payload.taskIndex].list.splice(payload.listIndex, 1)
     },
-    updateTaskOrder(state, payload) {
-      let d1 = new Date(payload.date)
-      let i
-      state.tasks.forEach((task, index) => {
-        let dateParts = task.date.split('-')
-        let d2 = new Date(dateParts[2], dateParts[0] - 1, dateParts[1])
-        if (
-          d1.getFullYear() === d2.getFullYear() &&
-          d1.getMonth() === d2.getMonth() &&
-          d1.getDate() === d2.getDate()
-        ) {
-          i = index
-        }
+    modifyTasksByDateValue(state, payload) {
+      let thisDateObj = DateTime.fromISO(payload.date)
+
+      const getTaskByDateIndex = state.tasksByDate.findIndex(taskByDate => {
+        const taskDate = DateTime.fromISO(taskByDate.date)
+        return isSameDate(thisDateObj, taskDate)
       })
-      state.tasks[i].list = payload.data
+
+      if (getTaskByDateIndex >= 0) {
+        state.tasksByDate[getTaskByDateIndex].list = payload.data
+      }
     },
     updateTask(state, payload) {
       if (payload.title)
-        state.tasks[payload.taskIndex].list[payload.listIndex].title =
+        state.tasksByDate[payload.taskIndex].list[payload.listIndex].title =
           payload.title
       if (payload.notes)
-        state.tasks[payload.taskIndex].list[payload.listIndex].notes =
+        state.tasksByDate[payload.taskIndex].list[payload.listIndex].notes =
           payload.notes
       if (payload.priority || payload.priority === 0)
-        state.tasks[payload.taskIndex].list[payload.listIndex].priority =
+        state.tasksByDate[payload.taskIndex].list[payload.listIndex].priority =
           payload.priority
     },
     clearTasksArr(state) {
-      state.tasks = []
+      state.tasksByDate = []
     }
   },
   actions: {
-    getDayList({ dispatch, commit, state }, payload) {
-      let d1 = new Date(payload.date)
-      let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`
-      state.gettedList.push(date)
+    getDayList({ dispatch, commit, state }, dateTime) {
+      let thisIsoDate = dateTime
+
+      state.gettedList.push(thisIsoDate)
 
       if (state.user) {
         firestore
           .collection(state.user.uid)
-          .doc(date)
+          .doc(thisIsoDate)
           .get()
           .then(doc => {
             if (doc.exists) {
               commit('setDayList', doc.data())
             } else {
-              commit('initDayTask', {
-                date: d1
-              })
-              dispatch('pushDayList', payload)
+              commit('initDayTask', thisIsoDate)
+              dispatch('pushDayListNew', thisIsoDate)
             }
           })
       }
     },
     addUserTask({ dispatch, commit }, payload) {
       commit('addTask', payload)
-      dispatch('pushDayList', payload)
+      dispatch('pushDayListNew', payload.dateTime)
     },
     addUserSubTask({ dispatch, commit }, payload) {
       commit('addSubTask', payload)
-      dispatch('pushDayList', payload)
+      dispatch('pushDayListNew', payload.date)
     },
     removeUserSubTask({ dispatch, commit }, payload) {
       commit('removeSubTask', payload)
-      dispatch('pushDayList', payload)
+      dispatch('pushDayListNew', payload.date)
     },
     removeUserTask({ dispatch, commit }, payload) {
       if (payload.listIndex > -1) {
         commit('removeTask', payload)
-        dispatch('pushDayList', {
-          date: payload.date
-        })
+        dispatch('pushDayListNew', payload.date)
       }
     },
     updateUserTask({ dispatch, commit }, payload) {
       commit('updateTask', payload)
-      dispatch('pushDayList', payload)
+      dispatch('pushDayListNew', payload.date)
     },
     moveTaskToToday({ state, dispatch }, payload) {
-      let today = new Date()
-      let i
-      state.tasks.forEach((task, index) => {
-        let dateParts = task.date.split('-')
-        let d2 = new Date(dateParts[2], dateParts[0] - 1, dateParts[1])
-        if (
-          today.getFullYear() === d2.getFullYear() &&
-          today.getMonth() === d2.getMonth() &&
-          today.getDate() === d2.getDate()
-        ) {
-          i = index
+      let todayDateObj = DateTime.now().startOf('day')
+
+      const getTodayTaskByDateIndex = state.tasksByDate.findIndex(
+        taskByDate => {
+          const taskDate = DateTime.fromISO(taskByDate.date)
+          return isSameDate(todayDateObj, taskDate)
         }
-      })
-      state.tasks[i].list.push(
-        state.tasks[payload.taskIndex].list[payload.listIndex]
       )
 
-      state.tasks[payload.taskIndex].list.splice(payload.listIndex, 1)
-      dispatch('pushDayList', {
-        date: payload.date
-      })
-      dispatch('pushDayList', {
-        date: today
-      })
+      if (getTodayTaskByDateIndex >= 0) {
+        state.tasksByDate[getTodayTaskByDateIndex].list.push(
+          state.tasksByDate[payload.taskIndex].list[payload.listIndex]
+        )
+
+        state.tasksByDate[payload.taskIndex].list.splice(payload.listIndex, 1)
+
+        dispatch('pushDayListNew', payload.date)
+        dispatch('pushDayListNew', getIsoDateFromLuxonDateTime(todayDateObj))
+      }
     },
     reorderUserTask({ dispatch, commit }, payload) {
-      commit('updateTaskOrder', payload)
-      dispatch('pushDayList', payload)
+      commit('modifyTasksByDateValue', payload)
+      dispatch('pushDayListNew', payload.date)
     },
-    pushDayList({ state }, payload) {
-      let d1 = new Date(payload.date)
-      let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`
-      let i
-      state.tasks.forEach((task, index) => {
-        let dateParts = task.date.split('-')
-        let d2 = new Date(dateParts[2], dateParts[0] - 1, dateParts[1])
-        if (
-          d1.getFullYear() === d2.getFullYear() &&
-          d1.getMonth() === d2.getMonth() &&
-          d1.getDate() === d2.getDate()
-        ) {
-          i = index
-        }
+    pushDayListNew({ state }, dateTime) {
+      const getTaskByDateOfDate = state.tasksByDate.find(taskByDate => {
+        const thisDateTimeObj = DateTime.fromISO(dateTime)
+        const taskDate = DateTime.fromISO(taskByDate.date)
+        return isSameDate(thisDateTimeObj, taskDate)
       })
+
       firestore
         .collection(state.user.uid)
-        .doc(date)
-        .set(state.tasks[i])
+        .doc(dateTime)
+        .set(getTaskByDateOfDate)
     }
     // makingSureDateIsInFirestore({ commit }, payload) {
 
