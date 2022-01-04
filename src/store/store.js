@@ -67,24 +67,33 @@ export default new Vuex.Store({
       }
     },
     initSubTask(state, payload) {
-      if (!state.tasks[payload.taskIndex].list[payload.listIndex].subTasks) {
-        state.tasks[payload.taskIndex].list[payload.listIndex].subTasks = []
+      if (
+        !state.tasksByDate[payload.taskIndex].list[payload.listIndex].subTasks
+      ) {
+        state.tasksByDate[payload.taskIndex].list[
+          payload.listIndex
+        ].subTasks = []
       }
     },
     addSubTask(state, payload) {
-      if (!state.tasks[payload.taskIndex].list[payload.listIndex].subTasks) {
-        state.tasks[payload.taskIndex].list[payload.listIndex].subTasks = []
+      if (
+        !state.tasksByDate[payload.taskIndex].list[payload.listIndex].subTasks
+      ) {
+        state.tasksByDate[payload.taskIndex].list[
+          payload.listIndex
+        ].subTasks = []
       }
-      state.tasks[payload.taskIndex].list[payload.listIndex].subTasks.push({
+      state.tasksByDate[payload.taskIndex].list[
+        payload.listIndex
+      ].subTasks.push({
         isDone: payload.isDone,
         title: payload.title
       })
     },
     removeSubTask(state, payload) {
-      state.tasks[payload.taskIndex].list[payload.listIndex].subTasks.splice(
-        payload.subTaskIndex,
-        1
-      )
+      state.tasksByDate[payload.taskIndex].list[
+        payload.listIndex
+      ].subTasks.splice(payload.subTaskIndex, 1)
     },
     removeTask(state, payload) {
       state.tasksByDate[payload.taskIndex].list.splice(payload.listIndex, 1)
@@ -143,11 +152,11 @@ export default new Vuex.Store({
     },
     addUserSubTask({ dispatch, commit }, payload) {
       commit('addSubTask', payload)
-      dispatch('pushDayList', payload)
+      dispatch('pushDayListNew', payload.date)
     },
     removeUserSubTask({ dispatch, commit }, payload) {
       commit('removeSubTask', payload)
-      dispatch('pushDayList', payload)
+      dispatch('pushDayListNew', payload.date)
     },
     removeUserTask({ dispatch, commit }, payload) {
       if (payload.listIndex > -1) {
@@ -184,27 +193,9 @@ export default new Vuex.Store({
       commit('modifyTasksByDateValue', payload)
       dispatch('pushDayListNew', payload.date)
     },
-    pushDayList({ state }, payload) {
-      let d1 = new Date(payload.date)
-      let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`
-      let i
-      state.tasks.forEach((task, index) => {
-        let dateParts = task.date.split('-')
-        let d2 = new Date(dateParts[2], dateParts[0] - 1, dateParts[1])
-        if (
-          d1.getFullYear() === d2.getFullYear() &&
-          d1.getMonth() === d2.getMonth() &&
-          d1.getDate() === d2.getDate()
-        ) {
-          i = index
-        }
-      })
-      firestore
-        .collection(state.user.uid)
-        .doc(date)
-        .set(state.tasks[i])
-    },
     pushDayListNew({ state }, dateTime) {
+      console.log(dateTime)
+
       const getTaskByDateOfDate = state.tasksByDate.find(taskByDate => {
         const thisDateTimeObj = DateTime.fromISO(dateTime)
         const taskDate = DateTime.fromISO(taskByDate.date)

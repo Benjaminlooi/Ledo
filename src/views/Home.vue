@@ -148,16 +148,20 @@
                     <v-list-item-title>Remove</v-list-item-title>
                   </v-list-item>
 
+                  <v-divider></v-divider>
+
                   <v-list-item @click="todo_item_menu_click(2, 0, index)">
-                    <v-icon color="red">mdi-circle-slice-8</v-icon>
+                    <v-icon color="red" class="mr-1">mdi-circle-slice-8</v-icon>
                     <v-list-item-title>High Priority</v-list-item-title>
                   </v-list-item>
                   <v-list-item @click="todo_item_menu_click(3, 0, index)">
-                    <v-icon color="blue">mdi-circle-slice-8</v-icon>
+                    <v-icon color="blue" class="mr-1"
+                      >mdi-circle-slice-8</v-icon
+                    >
                     <v-list-item-title>Normal Priority</v-list-item-title>
                   </v-list-item>
                   <v-list-item @click="todo_item_menu_click(4, 0, index)">
-                    <v-icon>mdi-circle-slice-8</v-icon>
+                    <v-icon class="mr-1">mdi-circle-slice-8</v-icon>
                     <v-list-item-title>Low Priority</v-list-item-title>
                   </v-list-item>
                 </v-list>
@@ -407,10 +411,6 @@
       </div>
       <!-- ==== END THIRD ==== -->
 
-      <v-snackbar v-model="snackbar">
-        {{ text }}
-      </v-snackbar>
-
       <v-snackbar
         v-model="snackbar_taskCompleteSuccess"
         :timeout="30000000"
@@ -472,9 +472,7 @@
               label="Add subtask..."
               single-line
               v-model="inputSubTask"
-              @keydown.enter="
-                onSubmit_addSubTask($event.target.value, dialogPos)
-              "
+              @keydown.enter="onSubmit_addSubTask($event.target.value)"
             ></v-text-field>
             <v-list dense style="width: 100%; min-height: unset;">
               <v-list-item
@@ -742,7 +740,7 @@ export default {
         this.taskEditDialog.task_index !== undefined
       ) {
         if (
-          this.$store.state.tasks[this.taskEditDialog.task_index].list[
+          this.$store.state.tasksByDate[this.taskEditDialog.task_index].list[
             this.taskEditDialog.list_index
           ].subTasks == undefined
         ) {
@@ -752,9 +750,8 @@ export default {
             listIndex: this.taskEditDialog.list_index
           })
         }
-        return this.$store.state.tasks[this.taskEditDialog.task_index].list[
-          this.taskEditDialog.list_index
-        ].subTasks
+        return this.$store.state.tasksByDate[this.taskEditDialog.task_index]
+          .list[this.taskEditDialog.list_index].subTasks
       } else return []
     }
   },
@@ -799,12 +796,9 @@ export default {
         dateTime: getIsoDateFromLuxonDateTime(theDate)
       })
     },
-    onSubmit_addSubTask(inputVal, pos) {
+    onSubmit_addSubTask(inputVal) {
       // Todo: Subtask
       this.inputSubTask = ''
-      let today = new Date()
-      let theDate = new Date()
-      theDate.setDate(today.getDate() + pos + this.pos)
 
       this.$store.dispatch('addUserSubTask', {
         title: inputVal,
@@ -907,27 +901,27 @@ export default {
     todo_item_dblclick(pos, list_index) {
       // Todo
       this.dialogPos = pos
-      let today = new Date()
-      let theDate = new Date()
-      theDate.setDate(today.getDate() + pos + this.pos)
+      const todayDateObj = DateTime.now().startOf('day')
+      const thisDateObj = todayDateObj.plus({ days: pos + this.pos })
 
-      let task_index = this.searchForTaskIndexGivenDate(pos)
-      this.taskEditDialog.title = this.$store.state.tasks[task_index].list[
-        list_index
-      ].title
-      this.taskEditDialog.notes = this.$store.state.tasks[task_index].list[
-        list_index
-      ].notes
-      this.taskEditDialog.date = theDate
+      const task_index = this.searchForTaskIndexGivenDate(pos)
+
+      this.taskEditDialog.title = this.$store.state.tasksByDate[
+        task_index
+      ].list[list_index].title
+      this.taskEditDialog.notes = this.$store.state.tasksByDate[
+        task_index
+      ].list[list_index].notes
+      this.taskEditDialog.date = getIsoDateFromLuxonDateTime(thisDateObj)
       this.taskEditDialog.task_index = task_index
       this.taskEditDialog.list_index = list_index
       this.taskEditDialog.isShow = true
-      this.taskEditDialog.priority = this.$store.state.tasks[task_index].list[
-        list_index
-      ].priority
-      this.taskEditDialog.subTasks = this.$store.state.tasks[task_index].list[
-        list_index
-      ].subTasks
+      this.taskEditDialog.priority = this.$store.state.tasksByDate[
+        task_index
+      ].list[list_index].priority
+      this.taskEditDialog.subTasks = this.$store.state.tasksByDate[
+        task_index
+      ].list[list_index].subTasks
     },
     updateTask() {
       // Todo
