@@ -33,6 +33,10 @@ export default {
         }
       })
       return events
+    },
+    calendarNow() {
+      let d = new Date()
+      return formatDate(d)
     }
   },
   methods: {

@@ -249,9 +249,6 @@ export default {
     autoLineWidth: false
   }),
   methods: {
-    debug1() {
-      console.log(this.$store.state.user)
-    },
     googleLogin() {
       firebase
         .auth()

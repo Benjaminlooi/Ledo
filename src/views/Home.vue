@@ -86,6 +86,11 @@
           @start="drag = true"
           @end="drag = false"
         >
+          <!-- 
+          ! Error:
+          Unknown custom element: <v-list> - did you register the component correctly? For recursive components, make sure to provide the "name" option.
+            If don't use v-list in tag attribute, will cause transition not working (on new task added)
+           -->
           <v-slide-y-transition
             class="py-0"
             style="width: 100%; min-height: 50px;"
@@ -510,7 +515,7 @@
         </v-card>
       </v-dialog>
 
-      <v-btn
+      <!-- <v-btn
         @click="debug()"
         color="pink"
         x-small
@@ -521,15 +526,14 @@
         fab
       >
         <v-icon>mdi-plus</v-icon>
-      </v-btn>
+      </v-btn> -->
     </div>
   </div>
 </template>
 
 <script>
-import { auth } from '@/plugins/firebase'
 import draggable from 'vuedraggable'
-import { months, day, formatDate } from '@/utils/date'
+import { months, day } from '@/utils/date'
 
 export default {
   components: {
@@ -544,7 +548,6 @@ export default {
     snackbar_taskCompleteSuccess: false,
     snackbar_taskDeleteSuccess: false,
 
-    contentView: 0,
     taskEditDialog: {
       date: null,
       isShow: false,
@@ -557,8 +560,7 @@ export default {
     inputSubTask: '',
     dialogPos: null,
 
-    userid: null,
-    date: {
+    currentDate: {
       month: null,
       date: null
     },
@@ -757,17 +759,13 @@ export default {
           this.taskEditDialog.list_index
         ].subTasks
       } else return []
-    },
-    calendarNow() {
-      let d = new Date()
-      return formatDate(d)
     }
   },
   methods: {
-    debug() {
-      this.isSidebarOpen = !this.isSidebarOpen
-      // console.log(a)
-    },
+    // debug() {
+    //   this.isSidebarOpen = !this.isSidebarOpen
+    //   // console.log(a)
+    // },
     isBeforeToday(pos) {
       let today = new Date()
       let theDate = new Date()
@@ -806,19 +804,6 @@ export default {
       ) {
         return true
       } else return false
-    },
-    getLists() {
-      let d = new Date()
-      let d1 = new Date()
-      d1.setDate(d.getDate() + 0)
-      let d2 = new Date()
-      d2.setDate(d.getDate() + 1)
-      let d3 = new Date()
-      d3.setDate(d.getDate() + 2)
-
-      this.$store.dispatch('getDayList', { date: d1 })
-      this.$store.dispatch('getDayList', { date: d2 })
-      this.$store.dispatch('getDayList', { date: d3 })
     },
     onSubmit_addTask(inputVal, pos) {
       let today = new Date()
@@ -974,21 +959,8 @@ export default {
   },
   created() {
     let date = new Date()
-    this.date.month = months[date.getMonth()]
-    this.date.date = date.getDate()
-
-    //check if login(ed)
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        // User is signed in.
-        this.$store.commit('setUser', user)
-        //get user's tasks
-        this.getLists()
-      } else {
-        // User is signed out. Redirect to login
-        this.$router.push({ path: '/login' })
-      }
-    })
+    this.currentDate.month = months[date.getMonth()]
+    this.currentDate.date = date.getDate()
   },
   filters: {
     toDay: function(value) {

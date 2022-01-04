@@ -31,6 +31,20 @@ export default {
     isSidebarOpen: true,
     isSettingsSidebarOpen: false
   }),
+  created() {
+    //check if login(ed)
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        // User is signed in.
+        this.$store.commit('setUser', user)
+        //get user's tasks
+        this.getLists()
+      } else {
+        // User is signed out. Redirect to login
+        this.$router.push({ path: '/login' })
+      }
+    })
+  },
   methods: {
     openSettingsSidebar() {
       this.isSettingsSidebarOpen = true
@@ -49,6 +63,19 @@ export default {
           // An error happened.
           console.log(error)
         })
+    },
+    getLists() {
+      let d = new Date()
+      let d1 = new Date()
+      d1.setDate(d.getDate() + 0)
+      let d2 = new Date()
+      d2.setDate(d.getDate() + 1)
+      let d3 = new Date()
+      d3.setDate(d.getDate() + 2)
+
+      this.$store.dispatch('getDayList', { date: d1 })
+      this.$store.dispatch('getDayList', { date: d2 })
+      this.$store.dispatch('getDayList', { date: d3 })
     }
   }
 }

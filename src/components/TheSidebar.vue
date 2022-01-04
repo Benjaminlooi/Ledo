@@ -26,8 +26,9 @@
       </template>
 
       <v-divider></v-divider>
+
       <v-list dense>
-        <v-list-item @click="contentView = 0">
+        <v-list-item @click="$router.push('home')">
           <v-list-item-action>
             <v-icon>mdi-home</v-icon>
           </v-list-item-action>
@@ -36,7 +37,7 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item @click="contentView = 1">
+        <v-list-item @click="$router.push('calendar')">
           <v-list-item-action>
             <v-icon>mdi-calendar</v-icon>
           </v-list-item-action>
