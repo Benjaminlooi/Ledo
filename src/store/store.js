@@ -194,8 +194,6 @@ export default new Vuex.Store({
       dispatch('pushDayListNew', payload.date)
     },
     pushDayListNew({ state }, dateTime) {
-      console.log(dateTime)
-
       const getTaskByDateOfDate = state.tasksByDate.find(taskByDate => {
         const thisDateTimeObj = DateTime.fromISO(dateTime)
         const taskDate = DateTime.fromISO(taskByDate.date)
