@@ -767,19 +767,17 @@ export default {
     movePosPrev() {
       --this.pos
 
-      let d1 = new Date(this.date_1)
-      let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`
-      if (!this.$store.state.gettedList.includes(date)) {
-        this.$store.dispatch('getDayList', { date: this.date_1 })
+      const thisIsoDate = getIsoDateFromLuxonDateTime(this.date_1)
+      if (!this.$store.state.gettedList.includes(thisIsoDate)) {
+        this.$store.dispatch('getDayList', thisIsoDate)
       }
     },
     movePosNext() {
       ++this.pos
 
-      let d1 = new Date(this.date_3)
-      let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`
-      if (!this.$store.state.gettedList.includes(date)) {
-        this.$store.dispatch('getDayList', { date: this.date_3 })
+      const thisIsoDate = getIsoDateFromLuxonDateTime(this.date_3)
+      if (!this.$store.state.gettedList.includes(thisIsoDate)) {
+        this.$store.dispatch('getDayList', thisIsoDate)
       }
     },
     isToday(date) {
