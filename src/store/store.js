@@ -222,6 +222,8 @@ export default new Vuex.Store({
         return isSameDate(thisDateTimeObj, taskDate)
       })
 
+      console.log(dateTime)
+
       firestore
         .collection(state.user.uid)
         .doc(dateTime)

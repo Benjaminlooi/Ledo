@@ -567,11 +567,6 @@ export default {
     inputSubTask: '',
     dialogPos: null,
 
-    currentDate: {
-      month: null,
-      date: null
-    },
-
     items: [{ title: 'Complete' }, { title: 'Remove' }, { title: 'Label' }]
   }),
   computed: {
@@ -720,13 +715,11 @@ export default {
       }
     },
     isTodayOnScreen() {
-      if (
+      return (
         this.isToday(this.date_1) ||
         this.isToday(this.date_2) ||
         this.isToday(this.date_3)
-      ) {
-        return true
-      } else return false
+      )
     },
     taskEditDialogSubTasks() {
       if (
@@ -756,14 +749,20 @@ export default {
     //   // console.log(a)
     // },
     isBeforeToday(pos) {
-      let today = new Date()
-      let theDate = new Date()
-      theDate.setDate(today.getDate() + pos + this.pos)
-      today.setHours(12, 0, 0, 0)
-      theDate.setHours(12, 0, 0, 0)
-      if (today.getTime() > theDate.getTime()) {
-        return true
-      } else return false
+      // let today = new Date()
+      // let theDate = new Date()
+      // theDate.setDate(today.getDate() + pos + this.pos)
+      // today.setHours(12, 0, 0, 0)
+      // theDate.setHours(12, 0, 0, 0)
+      // if (today.getTime() > theDate.getTime()) {
+      //   return true
+      // } else return false
+
+      // ! Not Working, check
+      const todayDateObj = DateTime.now().startOf('day')
+      const thisDateObj = todayDateObj.plus({ days: pos + this.pos })
+
+      return todayDateObj > thisDateObj
     },
     movePosPrev() {
       --this.pos
@@ -784,15 +783,9 @@ export default {
       }
     },
     isToday(date) {
-      let d1 = new Date()
-      let d2 = new Date(date)
-      if (
-        d1.getFullYear() === d2.getFullYear() &&
-        d1.getMonth() === d2.getMonth() &&
-        d1.getDate() === d2.getDate()
-      ) {
-        return true
-      } else return false
+      let todayDateObj = DateTime.now().startOf('day')
+      let thisDateObj = DateTime.fromISO(date)
+      return isSameDate(todayDateObj, thisDateObj)
     },
     onSubmit_addTask(inputVal, pos) {
       const theDate = DateTime.now().plus({ days: pos + this.pos })
@@ -822,13 +815,13 @@ export default {
       this.pushDayList(pos)
     },
     pushDayList(pos) {
-      let today = new Date()
-      let theDate = new Date()
-      theDate.setDate(today.getDate() + pos + this.pos)
+      const todayDateObj = DateTime.now().startOf('day')
+      const theDateObj = todayDateObj.plus({ days: pos + this.pos })
 
-      this.$store.dispatch('pushDayList', {
-        date: theDate
-      })
+      this.$store.dispatch(
+        'pushDayListNew',
+        getIsoDateFromLuxonDateTime(theDateObj)
+      )
     },
     searchForTaskIndexGivenDate(pos) {
       let today = new Date()
@@ -945,17 +938,7 @@ export default {
     }
   },
   created() {
-    let date = new Date()
-    this.currentDate.month = months[date.getMonth()]
-    this.currentDate.date = date.getDate()
-  },
-  filters: {
-    toDay: function(value) {
-      return day[value]
-    },
-    toMonth: function(value) {
-      return months[value]
-    }
+    //
   }
 }
 </script>
