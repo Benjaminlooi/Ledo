@@ -87,7 +87,7 @@ export default new Vuex.Store({
       )
     },
     removeTask(state, payload) {
-      state.tasks[payload.taskIndex].list.splice(payload.listIndex, 1)
+      state.tasksByDate[payload.taskIndex].list.splice(payload.listIndex, 1)
     },
     modifyTasksByDateValue(state, payload) {
       let thisDateObj = DateTime.fromISO(payload.date)
@@ -152,9 +152,7 @@ export default new Vuex.Store({
     removeUserTask({ dispatch, commit }, payload) {
       if (payload.listIndex > -1) {
         commit('removeTask', payload)
-        dispatch('pushDayList', {
-          date: payload.date
-        })
+        dispatch('pushDayListNew', payload.date)
       }
     },
     updateUserTask({ dispatch, commit }, payload) {
