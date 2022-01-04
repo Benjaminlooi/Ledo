@@ -263,6 +263,7 @@
                   >
                     <v-list-item-title>Move to today</v-list-item-title>
                   </v-list-item>
+
                   <v-list-item @click="todo_item_menu_click(1, 1, index)">
                     <v-list-item-title>Remove</v-list-item-title>
                   </v-list-item>
@@ -747,16 +748,6 @@ export default {
     //   // console.log(a)
     // },
     isBeforeToday(pos) {
-      // let today = new Date()
-      // let theDate = new Date()
-      // theDate.setDate(today.getDate() + pos + this.pos)
-      // today.setHours(12, 0, 0, 0)
-      // theDate.setHours(12, 0, 0, 0)
-      // if (today.getTime() > theDate.getTime()) {
-      //   return true
-      // } else return false
-
-      // ! Not Working, check
       const todayDateObj = DateTime.now().startOf('day')
       const thisDateObj = todayDateObj.plus({ days: pos + this.pos })
 
@@ -793,6 +784,7 @@ export default {
       })
     },
     onSubmit_addSubTask(inputVal, pos) {
+      // Todo: Subtask
       this.inputSubTask = ''
       let today = new Date()
       let theDate = new Date()
@@ -820,73 +812,74 @@ export default {
       )
     },
     searchForTaskIndexGivenDate(pos) {
-      let today = new Date()
-      let d1 = new Date()
-      d1.setDate(today.getDate() + pos + this.pos)
+      // Todo
+      let todayDateObj = DateTime.now().startOf('day')
+      let thisDateObj = todayDateObj.plus({ days: pos + this.pos })
 
-      let task_index
-      this.$store.state.tasks.forEach((task, index) => {
-        let dateParts = task.date.split('-')
-        let d2 = new Date(dateParts[2], dateParts[0] - 1, dateParts[1])
-        if (
-          d1.getFullYear() === d2.getFullYear() &&
-          d1.getMonth() === d2.getMonth() &&
-          d1.getDate() === d2.getDate()
-        ) {
-          task_index = index
+      const getTaskByDateIndex = this.$store.state.tasksByDate.findIndex(
+        taskByDate => {
+          const taskDate = DateTime.fromISO(taskByDate.date)
+          return isSameDate(thisDateObj, taskDate)
         }
-      })
-      return task_index
+      )
+
+      return getTaskByDateIndex
     },
     todo_item_menu_click(menu_index, pos, list_index) {
-      let today = new Date()
-      let d1 = new Date()
-      d1.setDate(today.getDate() + pos + this.pos)
+      // Todo
+      let todayDateObj = DateTime.now().startOf('day')
+      let thisDateObj = todayDateObj.plus({ days: pos + this.pos })
 
       let task_index = this.searchForTaskIndexGivenDate(pos)
       switch (menu_index) {
+        // Move to today
         case 0:
           this.$store.dispatch('moveTaskToToday', {
             taskIndex: task_index,
             listIndex: list_index,
-            date: d1
+            date: getIsoDateFromLuxonDateTime(thisDateObj)
           })
           break
+        // Remove
         case 1:
           this.$store.dispatch('removeUserTask', {
             taskIndex: task_index,
             listIndex: list_index,
-            date: d1
+            date: thisDateObj
           })
           this.snackbar_taskDeleteSuccess = true
           break
+        // High Priority
         case 2:
           this.$store.dispatch('updateUserTask', {
             taskIndex: task_index,
             listIndex: list_index,
-            date: d1,
+            date: thisDateObj,
             priority: 2
           })
           break
+        // Normal Priority
         case 3:
           this.$store.dispatch('updateUserTask', {
             taskIndex: task_index,
             listIndex: list_index,
-            date: d1,
+            date: thisDateObj,
             priority: 1
           })
           break
+        // Low Priority
         case 4:
           this.$store.dispatch('updateUserTask', {
             taskIndex: task_index,
             listIndex: list_index,
-            date: d1,
+            date: thisDateObj,
             priority: 0
           })
           break
       }
     },
     deleteSubTask(subTaskIndex) {
+      // Todo: Subtask
       this.$store.dispatch('removeUserSubTask', {
         taskIndex: this.taskEditDialog.task_index,
         listIndex: this.taskEditDialog.list_index,
@@ -895,6 +888,7 @@ export default {
       })
     },
     todo_item_dblclick(pos, list_index) {
+      // Todo
       this.dialogPos = pos
       let today = new Date()
       let theDate = new Date()
@@ -919,6 +913,7 @@ export default {
       ].subTasks
     },
     updateTask() {
+      // Todo
       this.taskEditDialog.notes = !this.taskEditDialog.notes
         ? ''
         : this.taskEditDialog.notes

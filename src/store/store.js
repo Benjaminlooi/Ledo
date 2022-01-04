@@ -162,30 +162,25 @@ export default new Vuex.Store({
       dispatch('pushDayList', payload)
     },
     moveTaskToToday({ state, dispatch }, payload) {
-      let today = new Date()
-      let i
-      state.tasks.forEach((task, index) => {
-        let dateParts = task.date.split('-')
-        let d2 = new Date(dateParts[2], dateParts[0] - 1, dateParts[1])
-        if (
-          today.getFullYear() === d2.getFullYear() &&
-          today.getMonth() === d2.getMonth() &&
-          today.getDate() === d2.getDate()
-        ) {
-          i = index
+      let todayDateObj = DateTime.now().startOf('day')
+
+      const getTodayTaskByDateIndex = state.tasksByDate.findIndex(
+        taskByDate => {
+          const taskDate = DateTime.fromISO(taskByDate.date)
+          return isSameDate(todayDateObj, taskDate)
         }
-      })
-      state.tasks[i].list.push(
-        state.tasks[payload.taskIndex].list[payload.listIndex]
       )
 
-      state.tasks[payload.taskIndex].list.splice(payload.listIndex, 1)
-      dispatch('pushDayList', {
-        date: payload.date
-      })
-      dispatch('pushDayList', {
-        date: today
-      })
+      if (getTodayTaskByDateIndex >= 0) {
+        state.tasksByDate[getTodayTaskByDateIndex].list.push(
+          state.tasksByDate[payload.taskIndex].list[payload.listIndex]
+        )
+
+        state.tasksByDate[payload.taskIndex].list.splice(payload.listIndex, 1)
+
+        dispatch('pushDayListNew', payload.date)
+        dispatch('pushDayListNew', getIsoDateFromLuxonDateTime(todayDateObj))
+      }
     },
     reorderUserTask({ dispatch, commit }, payload) {
       commit('modifyTasksByDateValue', payload)
