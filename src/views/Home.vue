@@ -258,7 +258,7 @@
 
                 <v-list dense>
                   <v-list-item
-                    v-if="isBeforeToday(0)"
+                    v-if="isBeforeToday(1)"
                     @click="todo_item_menu_click(0, 1, index)"
                   >
                     <v-list-item-title>Move to today</v-list-item-title>
@@ -377,7 +377,7 @@
 
                 <v-list dense>
                   <v-list-item
-                    v-if="isBeforeToday(0)"
+                    v-if="isBeforeToday(2)"
                     @click="todo_item_menu_click(0, 2, index)"
                   >
                     <v-list-item-title>Move to today</v-list-item-title>

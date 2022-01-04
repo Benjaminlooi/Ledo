@@ -16,8 +16,8 @@
     </v-scroll-x-transition>
 
     <!-- <v-footer color="indigo" app>
-        <span class="white--text">&copy; 2019</span>
-    </v-footer>-->
+      <span class="white--text">&copy; 2019-2021 Benjamin Looi</span>
+    </v-footer> -->
   </div>
 </template>
 
