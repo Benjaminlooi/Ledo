@@ -1,6 +1,6 @@
 <template>
-  <v-scroll-y-transition>
-    <v-navigation-drawer :value="open" mobile-breakpoint="1030" app>
+  <v-scroll-x-transition>
+    <v-navigation-drawer mobile-breakpoint="960" app>
       <template v-slot:prepend>
         <v-list-item two-line>
           <v-list-item-avatar>
@@ -93,14 +93,14 @@
         </div>
       </template>
     </v-navigation-drawer>
-  </v-scroll-y-transition>
+  </v-scroll-x-transition>
 </template>
 
 <script>
 import { mapState } from 'vuex'
 export default {
   props: {
-    open: Boolean,
+    isOpen: Boolean,
     handleSettingsSidebarOpen: Function,
     signOut: Function
   },

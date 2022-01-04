@@ -2,7 +2,6 @@
   <div>
     <TheSidebar
       :signOut="signOut"
-      :open="isSidebarOpen"
       :handleSettingsSidebarOpen="openSettingsSidebar"
     />
     <TheSettingsSidebar
@@ -14,6 +13,8 @@
         <slot />
       </v-main>
     </v-scroll-x-transition>
+
+    <TheBottomBar v-if="$vuetify.breakpoint.smAndDown" />
 
     <!-- <v-footer color="indigo" app>
       <span class="white--text">&copy; 2019-2021 Benjamin Looi</span>
@@ -27,11 +28,11 @@ import TheSidebar from '@/components/TheSidebar.vue'
 import { auth } from '@/plugins/firebase'
 import { DateTime } from 'luxon'
 import { getIsoDateFromLuxonDateTime } from '@/utils/date'
+import TheBottomBar from '@/components/TheBottomBar.vue'
 
 export default {
-  components: { TheSidebar, TheSettingsSidebar },
+  components: { TheSidebar, TheSettingsSidebar, TheBottomBar },
   data: () => ({
-    isSidebarOpen: true,
     isSettingsSidebarOpen: false
   }),
   created() {
@@ -83,6 +84,6 @@ export default {
 
 <style lang="scss" scoped>
 .v-main {
-  height: 100vh;
+  /* height: 100vh; */
 }
 </style>
