@@ -797,7 +797,6 @@ export default {
       })
     },
     onSubmit_addSubTask(inputVal) {
-      // Todo: Subtask
       this.inputSubTask = ''
 
       this.$store.dispatch('addUserSubTask', {
@@ -822,7 +821,6 @@ export default {
       )
     },
     searchForTaskIndexGivenDate(pos) {
-      // Todo
       let todayDateObj = DateTime.now().startOf('day')
       let thisDateObj = todayDateObj.plus({ days: pos + this.pos })
 
@@ -836,7 +834,6 @@ export default {
       return getTaskByDateIndex
     },
     todo_item_menu_click(menu_index, pos, list_index) {
-      // Todo
       let todayDateObj = DateTime.now().startOf('day')
       let thisDateObj = todayDateObj.plus({ days: pos + this.pos })
       let thisDateIso = getIsoDateFromLuxonDateTime(thisDateObj)
@@ -890,7 +887,6 @@ export default {
       }
     },
     deleteSubTask(subTaskIndex) {
-      // Todo: Subtask
       this.$store.dispatch('removeUserSubTask', {
         taskIndex: this.taskEditDialog.task_index,
         listIndex: this.taskEditDialog.list_index,
@@ -899,7 +895,6 @@ export default {
       })
     },
     todo_item_dblclick(pos, list_index) {
-      // Todo
       this.dialogPos = pos
       const todayDateObj = DateTime.now().startOf('day')
       const thisDateObj = todayDateObj.plus({ days: pos + this.pos })
@@ -924,7 +919,6 @@ export default {
       ].list[list_index].subTasks
     },
     updateTask() {
-      // Todo
       this.taskEditDialog.notes = !this.taskEditDialog.notes
         ? ''
         : this.taskEditDialog.notes
