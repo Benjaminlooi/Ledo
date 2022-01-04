@@ -101,6 +101,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   props: {
     open: Boolean,
@@ -108,7 +109,6 @@ export default {
     signOut: Function
   },
   data: () => ({
-    listPriority: undefined,
     priorityList: [
       { iconColor: '#F0595A', title: 'High priority' },
       { iconColor: 'blue', title: 'Normal priority' },
@@ -116,7 +116,18 @@ export default {
     ]
   }),
   computed: {
-    //
+    ...mapState({
+      storeListPriority: 'listPriority'
+    }),
+    listPriority: {
+      set(value) {
+        this.$store.commit('setListPriority', value)
+      },
+      get() {
+        // Or remove mapState and use this.$store.state.values.example
+        return this.storeListPriority
+      }
+    }
   }
 }
 </script>

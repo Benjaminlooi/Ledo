@@ -534,6 +534,7 @@
 <script>
 import draggable from 'vuedraggable'
 import { months, day } from '@/utils/date'
+import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -568,6 +569,7 @@ export default {
     items: [{ title: 'Complete' }, { title: 'Remove' }, { title: 'Label' }]
   }),
   computed: {
+    ...mapState(['listPriority']),
     date_1() {
       let today = new Date()
       let day_1 = new Date()

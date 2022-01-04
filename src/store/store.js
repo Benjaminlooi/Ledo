@@ -9,7 +9,8 @@ export default new Vuex.Store({
     isLoggedIn: false,
     user: null,
     tasks: [],
-    gettedList: []
+    gettedList: [],
+    listPriority: undefined
   },
   mutations: {
     setAccessToken(state, payload) {
@@ -20,6 +21,9 @@ export default new Vuex.Store({
     },
     setDayList(state, payload) {
       state.tasks.push(payload)
+    },
+    setListPriority(state, value) {
+      state.listPriority = value
     },
     initDayTask(state, payload) {
       let d1 = new Date(payload.date)
