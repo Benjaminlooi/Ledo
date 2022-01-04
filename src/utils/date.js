@@ -59,3 +59,24 @@ export function formatDate(date) {
 
   return [year, month, day].join('-')
 }
+
+// Convert Luxon Date Time obj to 042022
+// New: change LedoDateTime to 01012022
+export function getIsoDateFromLuxonDateTime(luxonDateTime) {
+  if (luxonDateTime.isLuxonDateTime) return luxonDateTime.toISODate()
+  else {
+    console.warn(
+      'getIsoDateFromLuxonDateTime error: argument is not valid luxon DateTime object.',
+      'Argument: ',
+      luxonDateTime
+    )
+  }
+}
+
+export function isSameDate(date1, date2) {
+  return (
+    date1.hasSame(date2, 'year') &&
+    date1.hasSame(date2, 'month') &&
+    date1.hasSame(date2, 'day')
+  )
+}

@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { firestore } from '@/plugins/firebase'
+import { getIsoDateFromLuxonDateTime, isSameDate } from '@/utils/date'
+import { DateTime } from 'luxon'
 
 Vue.use(Vuex)
 
@@ -8,7 +10,11 @@ export default new Vuex.Store({
   state: {
     isLoggedIn: false,
     user: null,
-    tasks: [],
+    /* 
+      date: ISODate,
+      list: []
+    */
+    tasksByDate: [],
     gettedList: [],
     listPriority: undefined
   },
@@ -20,44 +26,38 @@ export default new Vuex.Store({
       state.user = payload
     },
     setDayList(state, payload) {
-      state.tasks.push(payload)
+      state.tasksByDate.push(payload)
     },
     setListPriority(state, value) {
       state.listPriority = value
     },
-    initDayTask(state, payload) {
-      let d1 = new Date(payload.date)
-      let date = `${d1.getMonth() + 1}-${d1.getDate()}-${d1.getFullYear()}`
-      state.tasks.push({
-        date: date,
+    initDayTask(state, dateTime) {
+      state.tasksByDate.push({
+        date: dateTime,
         list: []
       })
     },
     addTask(state, payload) {
-      let d1 = new Date(payload.date)
-      let isWrote = false
-      state.tasks.forEach((task, index) => {
-        if (task) {
-          let dateParts = task.date.split('-')
-          let d2 = new Date(dateParts[2], dateParts[0] - 1, dateParts[1])
-          if (
-            d1.getFullYear() === d2.getFullYear() &&
-            d1.getMonth() === d2.getMonth() &&
-            d1.getDate() === d2.getDate()
-          ) {
-            state.tasks[index].list.push({
-              isDone: payload.isDone,
-              title: payload.title,
-              priority: 0
-            })
-            isWrote = true
-          }
-        }
+      let thisDateTimeObj = DateTime.fromISO(payload.dateTime)
+
+      const getTaskByDateIndex = state.tasksByDate.findIndex(taskByDate => {
+        const taskDate = DateTime.fromISO(taskByDate.date)
+        return isSameDate(thisDateTimeObj, taskDate)
       })
-      if (!isWrote) {
-        let date = `${d1.getMonth() + 1}-${d1.getDate()}-${d1.getFullYear()}`
-        state.tasks.push({
-          date: date,
+
+      if (getTaskByDateIndex >= 0) {
+        console.log(getTaskByDateIndex)
+        console.log(state.tasksByDate[getTaskByDateIndex])
+        // If date is Initialized in tasksByDate
+        state.tasksByDate[getTaskByDateIndex].list.push({
+          isDone: payload.isDone,
+          title: payload.title,
+          priority: 0
+        })
+      } else {
+        // If date is NOT Initialized in tasksByDate
+        state.tasksByDate.push({
+          date: thisDateTimeObj.toISODate(),
           list: [
             {
               isDone: payload.isDone,
@@ -123,31 +123,29 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    getDayList({ dispatch, commit, state }, payload) {
-      let d1 = new Date(payload.date)
-      let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`
-      state.gettedList.push(date)
+    getDayList({ dispatch, commit, state }, dateTime) {
+      let thisIsoDate = dateTime
+
+      state.gettedList.push(thisIsoDate)
 
       if (state.user) {
         firestore
           .collection(state.user.uid)
-          .doc(date)
+          .doc(thisIsoDate)
           .get()
           .then(doc => {
             if (doc.exists) {
               commit('setDayList', doc.data())
             } else {
-              commit('initDayTask', {
-                date: d1
-              })
-              dispatch('pushDayList', payload)
+              commit('initDayTask', thisIsoDate)
+              dispatch('pushDayListNew', thisIsoDate)
             }
           })
       }
     },
     addUserTask({ dispatch, commit }, payload) {
       commit('addTask', payload)
-      dispatch('pushDayList', payload)
+      dispatch('pushDayListNew', payload.dateTime)
     },
     addUserSubTask({ dispatch, commit }, payload) {
       commit('addSubTask', payload)
@@ -218,6 +216,18 @@ export default new Vuex.Store({
         .collection(state.user.uid)
         .doc(date)
         .set(state.tasks[i])
+    },
+    pushDayListNew({ state }, dateTime) {
+      const getTaskByDateOfDate = state.tasksByDate.find(taskByDate => {
+        const thisDateTimeObj = DateTime.fromISO(dateTime)
+        const taskDate = DateTime.fromISO(taskByDate.date)
+        return isSameDate(thisDateTimeObj, taskDate)
+      })
+
+      firestore
+        .collection(state.user.uid)
+        .doc(dateTime)
+        .set(getTaskByDateOfDate)
     }
     // makingSureDateIsInFirestore({ commit }, payload) {
 

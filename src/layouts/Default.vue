@@ -25,6 +25,9 @@
 import TheSettingsSidebar from '@/components/TheSettingsSidebar.vue'
 import TheSidebar from '@/components/TheSidebar.vue'
 import { auth } from '@/plugins/firebase'
+import { DateTime } from 'luxon'
+import { getIsoDateFromLuxonDateTime } from '@/utils/date'
+
 export default {
   components: { TheSidebar, TheSettingsSidebar },
   data: () => ({
@@ -65,17 +68,14 @@ export default {
         })
     },
     getLists() {
-      let d = new Date()
-      let d1 = new Date()
-      d1.setDate(d.getDate() + 0)
-      let d2 = new Date()
-      d2.setDate(d.getDate() + 1)
-      let d3 = new Date()
-      d3.setDate(d.getDate() + 2)
+      let currentDate = DateTime.now().startOf('day')
+      let dateOne = currentDate
+      let dateTwo = currentDate.plus({ days: 1 })
+      let dateThree = currentDate.plus({ days: 2 })
 
-      this.$store.dispatch('getDayList', { date: d1 })
-      this.$store.dispatch('getDayList', { date: d2 })
-      this.$store.dispatch('getDayList', { date: d3 })
+      this.$store.dispatch('getDayList', getIsoDateFromLuxonDateTime(dateOne))
+      this.$store.dispatch('getDayList', getIsoDateFromLuxonDateTime(dateTwo))
+      this.$store.dispatch('getDayList', getIsoDateFromLuxonDateTime(dateThree))
     }
   }
 }

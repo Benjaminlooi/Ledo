@@ -533,8 +533,14 @@
 
 <script>
 import draggable from 'vuedraggable'
-import { months, day } from '@/utils/date'
+import {
+  months,
+  day,
+  getIsoDateFromLuxonDateTime,
+  isSameDate
+} from '@/utils/date'
 import { mapState } from 'vuex'
+import { DateTime } from 'luxon'
 
 export default {
   components: {
@@ -593,21 +599,17 @@ export default {
     },
     todo_items_1: {
       get() {
-        let today = new Date()
-        let d1 = new Date()
-        d1.setDate(today.getDate() + 0 + this.pos)
-        let tasks = this.$store.state.tasks.filter(task => {
-          if (task) {
-            let dateParts = task.date.split('-')
-            let d2 = new Date(dateParts[2], dateParts[0] - 1, dateParts[1])
-            return (
-              d1.getFullYear() === d2.getFullYear() &&
-              d1.getMonth() === d2.getMonth() &&
-              d1.getDate() === d2.getDate()
-            )
+        const today = DateTime.now().startOf('day')
+        const thisDateTimeObj = today.plus({ days: 0 + this.pos })
+
+        const queriedTaskByDate = this.$store.state.tasksByDate.find(
+          taskByDate => {
+            const taskDateTimeObj = DateTime.fromISO(taskByDate.date)
+            return isSameDate(thisDateTimeObj, taskDateTimeObj)
           }
-        })
-        if (tasks.length) {
+        )
+
+        if (queriedTaskByDate) {
           if (this.listPriority !== undefined) {
             let priorityFilter
             switch (this.listPriority) {
@@ -621,11 +623,11 @@ export default {
                 priorityFilter = 0
                 break
             }
-            let list = tasks[0].list.filter(
+            let list = queriedTaskByDate.list.filter(
               taskList => taskList.priority == priorityFilter
             )
             return list
-          } else return tasks[0].list
+          } else return queriedTaskByDate.list
         } else return null
       },
       set(value) {
@@ -640,21 +642,17 @@ export default {
     },
     todo_items_2: {
       get() {
-        let today = new Date()
-        let d1 = new Date()
-        d1.setDate(today.getDate() + 1 + this.pos)
-        let tasks = this.$store.state.tasks.filter(task => {
-          if (task) {
-            let dateParts = task.date.split('-')
-            let d2 = new Date(dateParts[2], dateParts[0] - 1, dateParts[1])
-            return (
-              d1.getFullYear() === d2.getFullYear() &&
-              d1.getMonth() === d2.getMonth() &&
-              d1.getDate() === d2.getDate()
-            )
+        const today = DateTime.now().startOf('day')
+        const thisDateTimeObj = today.plus({ days: 1 + this.pos })
+
+        const queriedTaskByDate = this.$store.state.tasksByDate.find(
+          taskByDate => {
+            const taskDateTimeObj = DateTime.fromISO(taskByDate.date)
+            return isSameDate(thisDateTimeObj, taskDateTimeObj)
           }
-        })
-        if (tasks.length) {
+        )
+
+        if (queriedTaskByDate) {
           if (this.listPriority !== undefined) {
             let priorityFilter
             switch (this.listPriority) {
@@ -668,11 +666,11 @@ export default {
                 priorityFilter = 0
                 break
             }
-            let list = tasks[0].list.filter(
+            let list = queriedTaskByDate.list.filter(
               taskList => taskList.priority == priorityFilter
             )
             return list
-          } else return tasks[0].list
+          } else return queriedTaskByDate.list
         } else return null
       },
       set(value) {
@@ -687,21 +685,17 @@ export default {
     },
     todo_items_3: {
       get() {
-        let today = new Date()
-        let d1 = new Date()
-        d1.setDate(today.getDate() + 2 + this.pos)
-        let tasks = this.$store.state.tasks.filter(task => {
-          if (task) {
-            let dateParts = task.date.split('-')
-            let d2 = new Date(dateParts[2], dateParts[0] - 1, dateParts[1])
-            return (
-              d1.getFullYear() === d2.getFullYear() &&
-              d1.getMonth() === d2.getMonth() &&
-              d1.getDate() === d2.getDate()
-            )
+        const today = DateTime.now().startOf('day')
+        const thisDateTimeObj = today.plus({ days: 2 + this.pos })
+
+        const queriedTaskByDate = this.$store.state.tasksByDate.find(
+          taskByDate => {
+            const taskDateTimeObj = DateTime.fromISO(taskByDate.date)
+            return isSameDate(thisDateTimeObj, taskDateTimeObj)
           }
-        })
-        if (tasks.length) {
+        )
+
+        if (queriedTaskByDate) {
           if (this.listPriority !== undefined) {
             let priorityFilter
             switch (this.listPriority) {
@@ -715,11 +709,11 @@ export default {
                 priorityFilter = 0
                 break
             }
-            let list = tasks[0].list.filter(
+            let list = queriedTaskByDate.list.filter(
               taskList => taskList.priority == priorityFilter
             )
             return list
-          } else return tasks[0].list
+          } else return queriedTaskByDate.list
         } else return null
       },
       set(value) {
@@ -808,14 +802,12 @@ export default {
       } else return false
     },
     onSubmit_addTask(inputVal, pos) {
-      let today = new Date()
-      let theDate = new Date()
-      theDate.setDate(today.getDate() + pos + this.pos)
+      const theDate = DateTime.now().plus({ days: pos + this.pos })
 
       this.$store.dispatch('addUserTask', {
         title: inputVal,
         isDone: false,
-        date: theDate
+        dateTime: getIsoDateFromLuxonDateTime(theDate)
       })
     },
     onSubmit_addSubTask(inputVal, pos) {
