@@ -13,21 +13,21 @@
 </template>
 
 <script>
-import { formatDate, getDaysInMonth } from '@/utils/date'
+import { getDaysInMonth, getIsoDateFromLuxonDateTime } from '@/utils/date'
+import { Interval, DateTime } from 'luxon'
+import { auth } from '@/plugins/firebase'
 
 export default {
   name: 'Calendar',
   computed: {
     events() {
       let events = []
-      this.$store.state.tasks.forEach(task => {
-        let d = new Date(task.date)
-        let date = formatDate(d)
+      this.$store.state.tasksByDate.forEach(task => {
         if (task.list !== undefined || task.list !== 0) {
           task.list.forEach(list => {
             events.push({
               name: list.title,
-              start: date
+              start: task.date
             })
           })
         }
@@ -35,24 +35,30 @@ export default {
       return events
     },
     calendarNow() {
-      let d = new Date()
-      return formatDate(d)
+      const todayDateObj = DateTime.now().startOf('day')
+      return todayDateObj.toISODate()
     }
   },
   methods: {
     getRemainingTasksForMonth() {
-      let today = new Date()
-      let currentMonth = today.getMonth()
-      let currentYear = today.getFullYear()
-      let daysInCurrentMonth = getDaysInMonth(currentMonth, currentYear)
-      // console.log(daysInCurrentMonth)
-      daysInCurrentMonth.forEach(days => {
-        let d1 = new Date(days)
-        let date = `${d1.getMonth()}${d1.getDate()}${d1.getFullYear()}`
-        if (!this.$store.state.gettedList.includes(date)) {
-          this.$store.dispatch('getDayList', { date: d1 })
+      let todayDateObj = DateTime.now().startOf('day')
+      let startDateObj = todayDateObj.startOf('month')
+      let endDateObj = todayDateObj.endOf('month')
+      let interval = Interval.fromDateTimes(startDateObj, endDateObj)
+
+      // you can iterate over it
+      for (var dateObj of getDaysInMonth(interval)) {
+        if (
+          !this.$store.state.gettedList.includes(
+            getIsoDateFromLuxonDateTime(dateObj)
+          )
+        ) {
+          this.$store.dispatch(
+            'getDayList',
+            getIsoDateFromLuxonDateTime(dateObj)
+          )
         }
-      })
+      }
     },
     calendarDateOnClick(payload) {
       let d = new Date(payload.date)
@@ -67,7 +73,12 @@ export default {
     }
   },
   mounted() {
-    this.getRemainingTasksForMonth()
+    //check if login(ed)
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        this.getRemainingTasksForMonth()
+      }
+    })
   }
 }
 </script>
