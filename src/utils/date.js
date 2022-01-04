@@ -30,6 +30,8 @@ export function getIsoDateFromLuxonDateTime(luxonDateTime) {
       'Argument: ',
       luxonDateTime
     )
+
+    return luxonDateTime
   }
 }
 

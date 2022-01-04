@@ -620,10 +620,10 @@ export default {
         } else return null
       },
       set(value) {
-        const today = DateTime.now().startOf('day')
-        const thisDateObj = today.plus({ days: this.pos })
+        const todayDateObj = DateTime.now().startOf('day')
+        const thisDateObj = todayDateObj.plus({ days: this.pos })
         this.$store.dispatch('reorderUserTask', {
-          date: thisDateObj,
+          date: getIsoDateFromLuxonDateTime(thisDateObj),
           data: value
         })
       }
@@ -662,11 +662,10 @@ export default {
         } else return null
       },
       set(value) {
-        let today = new Date()
-        let d1 = new Date()
-        d1.setDate(today.getDate() + 1 + this.pos)
+        const todayDateObj = DateTime.now().startOf('day')
+        const thisDateObj = todayDateObj.plus({ days: 1 + this.pos })
         this.$store.dispatch('reorderUserTask', {
-          date: d1,
+          date: getIsoDateFromLuxonDateTime(thisDateObj),
           data: value
         })
       }
@@ -705,11 +704,10 @@ export default {
         } else return null
       },
       set(value) {
-        let today = new Date()
-        let d1 = new Date()
-        d1.setDate(today.getDate() + 2 + this.pos)
+        const todayDateObj = DateTime.now().startOf('day')
+        const thisDateObj = todayDateObj.plus({ days: 2 + this.pos })
         this.$store.dispatch('reorderUserTask', {
-          date: d1,
+          date: getIsoDateFromLuxonDateTime(thisDateObj),
           data: value
         })
       }

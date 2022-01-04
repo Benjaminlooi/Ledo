@@ -89,21 +89,17 @@ export default new Vuex.Store({
     removeTask(state, payload) {
       state.tasks[payload.taskIndex].list.splice(payload.listIndex, 1)
     },
-    updateTaskOrder(state, payload) {
-      let d1 = new Date(payload.date)
-      let i
-      state.tasks.forEach((task, index) => {
-        let dateParts = task.date.split('-')
-        let d2 = new Date(dateParts[2], dateParts[0] - 1, dateParts[1])
-        if (
-          d1.getFullYear() === d2.getFullYear() &&
-          d1.getMonth() === d2.getMonth() &&
-          d1.getDate() === d2.getDate()
-        ) {
-          i = index
-        }
+    modifyTasksByDateValue(state, payload) {
+      let thisDateObj = DateTime.fromISO(payload.date)
+
+      const getTaskByDateIndex = state.tasksByDate.findIndex(taskByDate => {
+        const taskDate = DateTime.fromISO(taskByDate.date)
+        return isSameDate(thisDateObj, taskDate)
       })
-      state.tasks[i].list = payload.data
+
+      if (getTaskByDateIndex >= 0) {
+        state.tasksByDate[getTaskByDateIndex].list = payload.data
+      }
     },
     updateTask(state, payload) {
       if (payload.title)
@@ -192,8 +188,8 @@ export default new Vuex.Store({
       })
     },
     reorderUserTask({ dispatch, commit }, payload) {
-      commit('updateTaskOrder', payload)
-      dispatch('pushDayList', payload)
+      commit('modifyTasksByDateValue', payload)
+      dispatch('pushDayListNew', payload.date)
     },
     pushDayList({ state }, payload) {
       let d1 = new Date(payload.date)
