@@ -73,6 +73,10 @@ export function getIsoDateFromLuxonDateTime(luxonDateTime) {
   }
 }
 
+/* 
+ @param date1: luxon DateTime object
+ @param date2: luxon DateTime object
+ */
 export function isSameDate(date1, date2) {
   return (
     date1.hasSame(date2, 'year') &&

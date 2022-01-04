@@ -56,15 +56,15 @@
           <div v-if="isToday(date_1)" class="date-day">
             Today
             <span class="date-label">
-              {{ date_1.getMonth() | toMonth }}
-              {{ date_1.getDate() }}
+              {{ date_1.toFormat('MMM') }}
+              {{ date_1.toFormat('d') }}
             </span>
           </div>
           <div v-else class="date-day">
-            {{ date_1.getDay() | toDay }}
+            {{ date_1.toFormat('EEEE') }}
             <span class="date-label">
-              {{ date_1.getMonth() | toMonth }}
-              {{ date_1.getDate() }}
+              {{ date_1.toFormat('MMM') }}
+              {{ date_1.toFormat('d') }}
             </span>
           </div>
 
@@ -180,15 +180,15 @@
           <div v-if="isToday(date_2)" class="date-day">
             Today
             <span class="date-label">
-              {{ date_2.getMonth() | toMonth }}
-              {{ date_2.getDate() }}
+              {{ date_2.toFormat('MMM') }}
+              {{ date_2.toFormat('d') }}
             </span>
           </div>
           <div v-else class="date-day">
-            {{ date_2.getDay() | toDay }}
+            {{ date_2.toFormat('EEEE') }}
             <span class="date-label">
-              {{ date_2.getMonth() | toMonth }}
-              {{ date_2.getDate() }}
+              {{ date_2.toFormat('MMM') }}
+              {{ date_2.toFormat('d') }}
             </span>
           </div>
 
@@ -299,15 +299,15 @@
           <div v-if="isToday(date_3)" class="date-day">
             Today
             <span class="date-label">
-              {{ date_3.getMonth() | toMonth }}
-              {{ date_3.getDate() }}
+              {{ date_3.toFormat('MMM') }}
+              {{ date_3.toFormat('d') }}
             </span>
           </div>
           <div v-else class="date-day">
-            {{ date_3.getDay() | toDay }}
+            {{ date_3.toFormat('EEEE') }}
             <span class="date-label">
-              {{ date_3.getMonth() | toMonth }}
-              {{ date_3.getDate() }}
+              {{ date_3.toFormat('MMM') }}
+              {{ date_3.toFormat('d') }}
             </span>
           </div>
 
@@ -577,24 +577,18 @@ export default {
   computed: {
     ...mapState(['listPriority']),
     date_1() {
-      let today = new Date()
-      let day_1 = new Date()
-      day_1.setDate(today.getDate() + 0 + this.pos)
-      // console.log(day_1 .getDay())
+      const today = DateTime.now().startOf('day')
+      const day_1 = today.plus({ days: 0 + this.pos })
       return day_1
     },
     date_2() {
-      let today = new Date()
-      let day_2 = new Date()
-      day_2.setDate(today.getDate() + 1 + this.pos)
-      // console.log(day_2.getDay())
+      const today = DateTime.now().startOf('day')
+      const day_2 = today.plus({ days: 1 + this.pos })
       return day_2
     },
     date_3() {
-      let today = new Date()
-      let day_3 = new Date()
-      day_3.setDate(today.getDate() + 2 + this.pos)
-      // console.log(day_3.getDay())
+      const today = DateTime.now().startOf('day')
+      const day_3 = today.plus({ days: 2 + this.pos })
       return day_3
     },
     todo_items_1: {
@@ -631,11 +625,10 @@ export default {
         } else return null
       },
       set(value) {
-        let today = new Date()
-        let d1 = new Date()
-        d1.setDate(today.getDate() + this.pos)
+        const today = DateTime.now().startOf('day')
+        const thisDateObj = today.plus({ days: this.pos })
         this.$store.dispatch('reorderUserTask', {
-          date: d1,
+          date: thisDateObj,
           data: value
         })
       }
