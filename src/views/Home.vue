@@ -829,6 +829,7 @@ export default {
       // Todo
       let todayDateObj = DateTime.now().startOf('day')
       let thisDateObj = todayDateObj.plus({ days: pos + this.pos })
+      let thisDateIso = getIsoDateFromLuxonDateTime(thisDateObj)
 
       let task_index = this.searchForTaskIndexGivenDate(pos)
       switch (menu_index) {
@@ -837,7 +838,7 @@ export default {
           this.$store.dispatch('moveTaskToToday', {
             taskIndex: task_index,
             listIndex: list_index,
-            date: getIsoDateFromLuxonDateTime(thisDateObj)
+            date: thisDateIso
           })
           break
         // Remove
@@ -845,7 +846,7 @@ export default {
           this.$store.dispatch('removeUserTask', {
             taskIndex: task_index,
             listIndex: list_index,
-            date: thisDateObj
+            date: thisDateIso
           })
           this.snackbar_taskDeleteSuccess = true
           break
@@ -854,7 +855,7 @@ export default {
           this.$store.dispatch('updateUserTask', {
             taskIndex: task_index,
             listIndex: list_index,
-            date: thisDateObj,
+            date: thisDateIso,
             priority: 2
           })
           break
@@ -863,7 +864,7 @@ export default {
           this.$store.dispatch('updateUserTask', {
             taskIndex: task_index,
             listIndex: list_index,
-            date: thisDateObj,
+            date: thisDateIso,
             priority: 1
           })
           break
@@ -872,7 +873,7 @@ export default {
           this.$store.dispatch('updateUserTask', {
             taskIndex: task_index,
             listIndex: list_index,
-            date: thisDateObj,
+            date: thisDateIso,
             priority: 0
           })
           break

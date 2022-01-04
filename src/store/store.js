@@ -103,17 +103,17 @@ export default new Vuex.Store({
     },
     updateTask(state, payload) {
       if (payload.title)
-        state.tasks[payload.taskIndex].list[payload.listIndex].title =
+        state.tasksByDate[payload.taskIndex].list[payload.listIndex].title =
           payload.title
       if (payload.notes)
-        state.tasks[payload.taskIndex].list[payload.listIndex].notes =
+        state.tasksByDate[payload.taskIndex].list[payload.listIndex].notes =
           payload.notes
       if (payload.priority || payload.priority === 0)
-        state.tasks[payload.taskIndex].list[payload.listIndex].priority =
+        state.tasksByDate[payload.taskIndex].list[payload.listIndex].priority =
           payload.priority
     },
     clearTasksArr(state) {
-      state.tasks = []
+      state.tasksByDate = []
     }
   },
   actions: {
@@ -159,7 +159,7 @@ export default new Vuex.Store({
     },
     updateUserTask({ dispatch, commit }, payload) {
       commit('updateTask', payload)
-      dispatch('pushDayList', payload)
+      dispatch('pushDayListNew', payload.date)
     },
     moveTaskToToday({ state, dispatch }, payload) {
       let todayDateObj = DateTime.now().startOf('day')
