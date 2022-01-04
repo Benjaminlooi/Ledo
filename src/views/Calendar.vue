@@ -49,7 +49,7 @@ export default {
       // you can iterate over it
       for (var dateObj of getDaysInMonth(interval)) {
         if (
-          !this.$store.state.gettedList.includes(
+          !this.$store.state.gottenTaskByDate.includes(
             getIsoDateFromLuxonDateTime(dateObj)
           )
         ) {

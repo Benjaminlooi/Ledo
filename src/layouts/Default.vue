@@ -10,7 +10,7 @@
       :handleSettingsSidebarClose="closeSettingsSidebar"
     />
     <v-scroll-x-transition leave-absolute>
-      <v-main>
+      <v-main class="v-main">
         <slot />
       </v-main>
     </v-scroll-x-transition>
@@ -81,4 +81,8 @@ export default {
 }
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.v-main {
+  height: 100vh;
+}
+</style>

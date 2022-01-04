@@ -15,7 +15,7 @@ export default new Vuex.Store({
       list: []
     */
     tasksByDate: [],
-    gettedList: [],
+    gottenTaskByDate: [],
     listPriority: undefined
   },
   mutations: {
@@ -129,7 +129,7 @@ export default new Vuex.Store({
     getDayList({ dispatch, commit, state }, dateTime) {
       let thisIsoDate = dateTime
 
-      state.gettedList.push(thisIsoDate)
+      state.gottenTaskByDate.push(thisIsoDate)
 
       if (state.user) {
         firestore

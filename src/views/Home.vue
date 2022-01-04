@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="home-container">
     <v-btn
       absolute
       icon
@@ -86,18 +86,9 @@
           @start="drag = true"
           @end="drag = false"
         >
-          <!-- 
-          ! Error:
-          Unknown custom element: <v-list> - did you register the component correctly? For recursive components, make sure to provide the "name" option.
-            If don't use v-list in tag attribute, will cause transition not working (on new task added)
-           -->
-          <v-slide-y-transition
-            class="py-0"
-            style="width: 100%; min-height: 50px;"
-            group
-            tag="v-list"
-          >
+          <v-slide-y-transition group style="width: 100%">
             <v-list-item
+              style="min-height: 50px;"
               v-for="(todo_item, index) in todo_items_1"
               :key="index"
               @click.prevent
@@ -214,13 +205,9 @@
           @start="drag = true"
           @end="drag = false"
         >
-          <v-slide-y-transition
-            class="py-0"
-            style="width: 100%; min-height: 50px;"
-            group
-            tag="v-list"
-          >
+          <v-slide-y-transition group style="width: 100%">
             <v-list-item
+              style="min-height: 50px;"
               v-for="(todo_item, index) in todo_items_2"
               :key="index"
               @click.prevent
@@ -334,13 +321,9 @@
           @start="drag = true"
           @end="drag = false"
         >
-          <v-slide-y-transition
-            class="py-0"
-            style="width: 100%; min-height: 50px;"
-            group
-            tag="v-list"
-          >
+          <v-slide-y-transition group style="width: 100%">
             <v-list-item
+              style="min-height: 50px;"
               v-for="(todo_item, index) in todo_items_3"
               :key="index"
               @click.prevent
@@ -548,12 +531,7 @@
 
 <script>
 import draggable from 'vuedraggable'
-import {
-  months,
-  day,
-  getIsoDateFromLuxonDateTime,
-  isSameDate
-} from '@/utils/date'
+import { getIsoDateFromLuxonDateTime, isSameDate } from '@/utils/date'
 import { mapState } from 'vuex'
 import { DateTime } from 'luxon'
 
@@ -770,7 +748,7 @@ export default {
       --this.pos
 
       const thisIsoDate = getIsoDateFromLuxonDateTime(this.date_1)
-      if (!this.$store.state.gettedList.includes(thisIsoDate)) {
+      if (!this.$store.state.gottenTaskByDate.includes(thisIsoDate)) {
         this.$store.dispatch('getDayList', thisIsoDate)
       }
     },
@@ -778,7 +756,7 @@ export default {
       ++this.pos
 
       const thisIsoDate = getIsoDateFromLuxonDateTime(this.date_3)
-      if (!this.$store.state.gettedList.includes(thisIsoDate)) {
+      if (!this.$store.state.gottenTaskByDate.includes(thisIsoDate)) {
         this.$store.dispatch('getDayList', thisIsoDate)
       }
     },
@@ -940,9 +918,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+#home-container {
+  //
+}
 .todo-main {
   display: flex;
   flex-wrap: wrap;
+  height: 100%;
 }
 .current-day {
   flex: 0 0 45%;
