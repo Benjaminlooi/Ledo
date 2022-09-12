@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import { firestore } from '@/plugins/firebase'
 import { getIsoDateFromLuxonDateTime, isSameDate } from '@/utils/date'
 import { DateTime } from 'luxon'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
 
 Vue.use(Vuex)
 
@@ -126,24 +127,21 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    getDayList({ dispatch, commit, state }, dateTime) {
+    async getDayList({ dispatch, commit, state }, dateTime) {
       let thisIsoDate = dateTime
 
       state.gottenTaskByDate.push(thisIsoDate)
 
       if (state.user) {
-        firestore
-          .collection(state.user.uid)
-          .doc(thisIsoDate)
-          .get()
-          .then(doc => {
-            if (doc.exists) {
-              commit('setDayList', doc.data())
-            } else {
-              commit('initDayTask', thisIsoDate)
-              dispatch('pushDayListNew', thisIsoDate)
-            }
-          })
+        const docRef = doc(firestore, state.user.uid, thisIsoDate)
+        const docSnap = await getDoc(docRef)
+
+        if (docSnap.exists()) {
+          commit('setDayList', docSnap.data())
+        } else {
+          commit('initDayTask', thisIsoDate)
+          dispatch('pushDayListNew', thisIsoDate)
+        }
       }
     },
     addUserTask({ dispatch, commit }, payload) {
@@ -193,17 +191,17 @@ export default new Vuex.Store({
       commit('modifyTasksByDateValue', payload)
       dispatch('pushDayListNew', payload.date)
     },
-    pushDayListNew({ state }, dateTime) {
+    async pushDayListNew({ state }, dateTime) {
       const getTaskByDateOfDate = state.tasksByDate.find(taskByDate => {
         const thisDateTimeObj = DateTime.fromISO(dateTime)
         const taskDate = DateTime.fromISO(taskByDate.date)
         return isSameDate(thisDateTimeObj, taskDate)
       })
 
-      firestore
-        .collection(state.user.uid)
-        .doc(dateTime)
-        .set(getTaskByDateOfDate)
+      await setDoc(
+        doc(firestore, state.user.uid, dateTime),
+        getTaskByDateOfDate
+      )
     }
     // makingSureDateIsInFirestore({ commit }, payload) {
 

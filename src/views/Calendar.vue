@@ -16,6 +16,7 @@
 import { getDaysInMonth, getIsoDateFromLuxonDateTime } from '@/utils/date'
 import { Interval, DateTime } from 'luxon'
 import { auth } from '@/plugins/firebase'
+import { onAuthStateChanged } from '@firebase/auth'
 
 export default {
   name: 'Calendar',
@@ -74,7 +75,7 @@ export default {
   },
   mounted() {
     //check if login(ed)
-    auth.onAuthStateChanged(user => {
+    onAuthStateChanged(auth, user => {
       if (user) {
         this.getRemainingTasksForMonth()
       }

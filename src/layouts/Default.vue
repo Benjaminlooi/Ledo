@@ -27,6 +27,7 @@ import TheSidebar from '@/components/TheSidebar.vue'
 import { auth } from '@/plugins/firebase'
 import { DateTime } from 'luxon'
 import { getIsoDateFromLuxonDateTime } from '@/utils/date'
+import { onAuthStateChanged } from '@firebase/auth'
 
 export default {
   components: { TheSidebar, TheSettingsSidebar },
@@ -36,7 +37,7 @@ export default {
   }),
   created() {
     //check if login(ed)
-    auth.onAuthStateChanged(user => {
+    onAuthStateChanged(auth, user => {
       if (user) {
         // User is signed in.
         this.$store.commit('setUser', user)

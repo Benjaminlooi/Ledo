@@ -1,9 +1,9 @@
 <template>
   <v-app id="ledo">
     <v-app-bar dense fixed elevation="0">
-      <v-toolbar-title style="display: flex;">
+      <v-toolbar-title style="display: flex">
         <v-icon color="#F0595A">mdi-clipboard-check</v-icon>
-        <span style="padding-left: 2px;">Ledo</span>
+        <span style="padding-left: 2px">Ledo</span>
       </v-toolbar-title>
 
       <div class="flex-grow-1"></div>
@@ -14,7 +14,7 @@
     </v-app-bar>
 
     <v-main>
-      <v-container fluid style="height: 100vh; padding: 0;">
+      <v-container fluid style="height: 100vh; padding: 0">
         <div class="intro">
           <div class="intro-text px-12 py-8">
             <v-sparkline
@@ -31,7 +31,7 @@
               auto-draw
               class="py-4"
             ></v-sparkline>
-            <h1 style="font-size: 42px;">
+            <h1 style="font-size: 42px">
               Overcome Procrastination and Start Getting Things Done
             </h1>
           </div>
@@ -90,12 +90,12 @@
               color="#F0595A"
               :disabled="!formLoginIsValid"
               @click="passwordLogin"
-              style="color: white;"
+              style="color: white"
               >Log In</v-btn
             >
             <v-divider class="mt-5 mb-3"></v-divider>
 
-            <span style="width: 100%;">
+            <span style="width: 100%">
               Don't have an account?
               <a
                 @click="
@@ -103,7 +103,7 @@
                   dialogSignUp = true
                 "
                 class="text-center"
-                style="color: #F0595A"
+                style="color: #f0595a"
                 >Sign up in seconds</a
               >
             </span>
@@ -169,14 +169,14 @@
             <v-btn
               block
               color="#F0595A"
-              style="color: white;"
+              style="color: white"
               :disabled="!formSignUpIsValid"
               @click="passwordSignup"
               >Create My Account</v-btn
             >
             <v-divider class="mt-5 mb-3"></v-divider>
 
-            <span style="width: 100%;">
+            <span style="width: 100%">
               Already have an account?
               <a
                 @click="
@@ -184,7 +184,7 @@
                   dialogLogIn = true
                 "
                 class="text-center"
-                style="color: #F0595A"
+                style="color: #f0595a"
                 >Log in instead!</a
               >
             </span>
@@ -196,7 +196,13 @@
 </template>
 
 <script>
-import { auth, firebase } from '@/plugins/firebase'
+import { auth } from '@/plugins/firebase'
+import {
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  signInWithPopup
+} from '@firebase/auth'
 const gradients = [
   ['#222'],
   ['#42b3f4'],
@@ -250,48 +256,45 @@ export default {
   }),
   methods: {
     googleLogin() {
-      firebase
-        .auth()
-        .signInWithPopup(this.auth.provider)
+      signInWithPopup(auth, this.auth.provider)
         .then(result => {
-          // console.log("result: ", result);
           // This gives you a Google Access Token. You can use it to access the Google API.
-          this.$store.commit('setAccessToken', result.credential.accessToken)
-          // The signed-in user info.
-          this.$store.commit('setUser', result.user)
+          const credential = GoogleAuthProvider.credentialFromResult(result)
+          const token = credential.accessToken
 
-          this.$router.push({ path: '/home' })
+          this.$store.commit('setAccessToken', token)
         })
-        .catch(function(error) {
-          console.log('error: ', error)
-          // Handle Errors here.
-          // var errorCode = error.code;
-          // var errorMessage = error.message;
-          // The email of the user's account used.
-          // var email = error.email;
-          // The firebase.auth.AuthCredential type that was used.
-          // var credential = error.credential;
+        .catch(error => {
+          // // Handle Errors here.
+          // const errorCode = error.code
+          // const errorMessage = error.message
+          // // The email of the user's account used.
+          // const email = error.customData.email
+          // // The AuthCredential type that was used.
+          // const credential = GoogleAuthProvider.credentialFromError(error)
+          // // ...
         })
     },
     passwordLogin() {
-      firebase
-        .auth()
-        .signInWithEmailAndPassword(this.inputEmail, this.inputPassword)
-        .catch(error => {
-          // Handle Errors here.
-          // var errorCode = error.code;
-          var errorMessage = error.message
+      signInWithEmailAndPassword(auth, this.inputEmail, this.inputPassword)
+        .then(userCredential => {
+          // Signed in
+          const user = userCredential.user
           // ...
-          console.log('error! ', error)
+        })
+        .catch(error => {
+          const errorMessage = error.message
+
           this.errorLogin = true
           this.errorLoginMessage = errorMessage
         })
     },
     passwordSignup() {
-      firebase
-        .auth()
-        .createUserWithEmailAndPassword(this.inputEmail, this.inputPassword)
-        .then(user => {
+      createUserWithEmailAndPassword(auth, this.inputEmail, this.inputPassword)
+        .then(userCredential => {
+          // Signed in
+          const user = userCredential.user
+
           if (user) {
             var u = auth.currentUser
             u.updateProfile({
@@ -306,24 +309,10 @@ export default {
               })
           }
         })
-        .catch(function(error) {
-          // Handle Errors here.
-          // var errorCode = error.code;
-          // var errorMessage = error.message;
+        .catch(error => {
+          const errorCode = error.code
+          const errorMessage = error.message
           console.log('error! ', error)
-          // ...
-        })
-    },
-    googleLogout() {
-      firebase
-        .auth()
-        .signOut()
-        .then(function() {
-          // Sign-out successful.
-        })
-        .catch(function(error) {
-          // An error happened.
-          console.log(error)
         })
     }
   },
@@ -337,7 +326,7 @@ export default {
       }
     })
 
-    this.auth.provider = new firebase.auth.GoogleAuthProvider()
+    this.auth.provider = new GoogleAuthProvider()
   }
 }
 </script>
