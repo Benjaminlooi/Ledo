@@ -8,31 +8,31 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "core-js": "^3.20.2",
-    "firebase": "^9.9.4",
-    "luxon": "^2.3.0",
-    "vue": "^2.6.14",
+    "core-js": "^3.25.5",
+    "firebase": "^9.12.1",
+    "luxon": "^2.5.0",
+    "vue": "^2.7.13",
     "vue-cookie": "^1.1.4",
-    "vue-router": "^3.5.3",
+    "vue-router": "^3.6.5",
     "vuedraggable": "^2.23.2",
-    "vuetify": "^2.6.2",
+    "vuetify": "^2.6.12",
     "vuex": "^3.6.2"
   },
   "devDependencies": {
     "@mdi/font": "^3.9.97",
-    "@vue/cli-plugin-babel": "^4.5.15",
-    "@vue/cli-plugin-eslint": "^4.5.15",
-    "@vue/cli-service": "^4.5.15",
+    "@vue/cli-plugin-babel": "^4.5.19",
+    "@vue/cli-plugin-eslint": "^4.5.19",
+    "@vue/cli-service": "^4.5.19",
     "@vue/eslint-config-prettier": "^6.0.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-prettier": "^3.4.1",
     "eslint-plugin-vue": "^6.1.2",
     "prettier": "^1.19.1",
-    "sass": "^1.45.2",
+    "sass": "~1.32.13",
     "sass-loader": "^7.3.1",
-    "vue-cli-plugin-vuetify": "^2.4.5",
-    "vue-template-compiler": "^2.6.14",
-    "vuetify-loader": "^1.7.3"
+    "vue-cli-plugin-vuetify": "^2.5.8",
+    "vue-template-compiler": "^2.7.13",
+    "vuetify-loader": "^1.9.2"
   }
 }
